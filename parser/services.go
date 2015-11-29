@@ -22,5 +22,5 @@ func serviceCreate(argv []string) error {
 }
 
 func PrintUsage(){
-	fmt.Fprintln(os.Stderr, "Found no matching command, try 'deis help'")
+	fmt.Fprintln(os.Stderr, "Found no matching command, try 'cde help'")
 }

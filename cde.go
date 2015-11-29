@@ -26,7 +26,7 @@ Use 'git push cde master' to deploy to an application.
 		return 1
 	}
 	if len(argv) == 0 {
-		fmt.Fprintln(os.Stderr, "Usage: deis <command> [<args>...]")
+		fmt.Fprintln(os.Stderr, "Usage: cde <command> [<args>...]")
 		return 1
 	}
 
@@ -51,8 +51,6 @@ Use 'git push cde master' to deploy to an application.
 	return 0
 }
 
-// parseArgs returns the provided args with "--help" as the last arg if need be,
-// expands shortcuts and formats commands to be properly routed.
 func parseArgs(argv []string) (string, []string) {
 	if len(argv) == 1 {
 		if argv[0] == "--help" || argv[0] == "-h" {
