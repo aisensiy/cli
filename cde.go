@@ -35,6 +35,8 @@ Use 'git push cde master' to deploy to an application.
 	switch command {
 	case "service":
 		err = parser.Service(argv)
+	case "stacks":
+		err = parser.Stacks(argv)
 	case "help":
 		fmt.Print(usage)
 		return 0
