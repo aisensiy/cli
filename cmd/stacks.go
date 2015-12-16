@@ -7,11 +7,10 @@ import (
 	"net"
 	"golang.org/x/crypto/ssh/agent"
 	"io"
+	"github.com/cde/client/util"
+	"strings"
+	"regexp"
 )
-
-
-var makeKeyring = func() {
-}
 
 func StackCreate() error {
 	sshConfig := &ssh.ClientConfig{
@@ -21,9 +20,20 @@ func StackCreate() error {
 		},
 	}
 
-	connection, err := ssh.Dial("tcp", "192.168.50.4:2222", sshConfig)
+	docker := util.Filter(os.Environ(), func(item string) bool {
+		return strings.HasPrefix(item, "DOCKER_HOST")
+	})
+
+	var dockerHost string = "192.168.99.101";
+	if (len(docker) != 0) {
+		r := regexp.MustCompile(`tcp://([\d.]{7,17}):\d*`)
+		dockerHost = string(r.FindStringSubmatch(docker[0])[1])
+		fmt.Println(dockerHost)
+	}
+
+	connection, err := ssh.Dial("tcp", fmt.Sprintf("%s:%d", dockerHost, 2222), sshConfig)
 	if err != nil {
-		return  fmt.Errorf("Failed to dial: %s", err)
+		return  fmt.Errorf("Failed to dial: %s, you need to set env DOCKER_HOST first", err)
 	}
 
 	session, err := connection.NewSession()
