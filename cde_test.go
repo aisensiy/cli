@@ -18,8 +18,8 @@ func TestHelpReformatting(t *testing.T) {
 			t.Errorf("Expected %s, Got %s", expected, actual)
 		}
 
-		if len(argv) != 0 {
-			t.Errorf("Expected length of 0, Got %d", len(argv))
+		if len(argv) != 1 {
+			t.Errorf("Expected length of 1, Got %d", len(argv))
 		}
 	}
 }
@@ -29,17 +29,17 @@ func TestHelpReformattingWithCommand(t *testing.T) {
 
 	tests := []string{"--help", "-h", "help"}
 	expected := "test"
+	expectedArgv := []string{"test", "--help"}
 
 	for _, test := range tests {
-		actual, argv := parseArgs([]string{"test", test})
+		actual, argv := parseArgs([]string{test, "test"})
 
 		if actual != expected {
 			t.Errorf("Expected %s, Got %s", expected, actual)
 		}
 
-
-		if !reflect.DeepEqual([]string{test}, argv) {
-			t.Errorf("Expected %v, Got %v", []string{test}, argv)
+		if !reflect.DeepEqual(expectedArgv, argv) {
+			t.Errorf("Expected %v, Got %v", expectedArgv, argv)
 		}
 	}
 }

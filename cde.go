@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 	"github.com/cde/client/parser"
 	"github.com/cde/version"
 	docopt "github.com/docopt/docopt-go"
@@ -17,6 +18,10 @@ func Command(argv []string) int {
 The CDE command-line
 Usage: cde <command> [<args>...]
 Use 'git push cde master' to deploy to an application.
+Subcommands, use 'cde help [subcommand]' to learn more::
+
+  apps          manage applications used to provide services
+
 `
 	command, argv := parseArgs(argv)
 
@@ -37,6 +42,8 @@ Use 'git push cde master' to deploy to an application.
 		err = parser.Service(argv)
 	case "stacks":
 		err = parser.Stacks(argv)
+	case "apps":
+		err = parser.Apps(argv)
 	case "help":
 		fmt.Print(usage)
 		return 0
@@ -53,12 +60,34 @@ Use 'git push cde master' to deploy to an application.
 	return 0
 }
 
+// parseArgs returns the provided args with "--help" as the last arg if need be,
+// expands shortcuts and formats commands to be properly routed.
 func parseArgs(argv []string) (string, []string) {
 	if len(argv) == 1 {
+		// rearrange "deis --help" as "deis help"
 		if argv[0] == "--help" || argv[0] == "-h" {
 			argv[0] = "help"
 		}
 	}
 
-	return argv[0], argv[1:]
+	if len(argv) >= 2 {
+		// Rearrange "deis help <command>" to "deis <command> --help".
+		if argv[0] == "help" || argv[0] == "--help" || argv[0] == "-h" {
+			argv = append(argv[1:], "--help")
+		}
+	}
+
+	if len(argv) > 0 {
+
+		index := strings.Index(argv[0], ":")
+
+		if index != -1 {
+			command := argv[0]
+			return command[:index], argv
+		}
+
+		return argv[0], argv
+	}
+
+	return "", argv
 }

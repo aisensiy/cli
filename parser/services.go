@@ -1,8 +1,6 @@
 package parser
 
 import (
-	"fmt"
-	"os"
 	"github.com/cde/client/cmd"
 )
 
@@ -21,6 +19,3 @@ func serviceCreate(argv []string) error {
 	return cmd.ServiceCreate()
 }
 
-func PrintUsage(){
-	fmt.Fprintln(os.Stderr, "Found no matching command, try 'cde help'")
-}
