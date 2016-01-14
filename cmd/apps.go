@@ -2,8 +2,8 @@ package cmd
 import (
 	"fmt"
 	"github.com/cde/apisdk/api"
-	"github.com/cde/apisdk/config"
 	"github.com/cde/apisdk/net"
+	"github.com/cde/client/config"
 )
 
 // AppCreate creates an app.

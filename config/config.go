@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"sync"
@@ -9,11 +9,15 @@ type Data struct {
 
 }
 
+type Persistor struct {
+
+}
+
 type DefaultConfigRepository struct {
 	data      *Data
 	mutex     *sync.RWMutex
 	initOnce  *sync.Once
-	persistor config.Persistor
+	persistor Persistor
 	onError   func(error)
 }
 
@@ -21,10 +25,10 @@ func NewRepositoryFromFilepath(filepath string, errorHandler func(error)) config
 	if errorHandler == nil {
 		return nil
 	}
-	return NewConfigRepositoryFromPersistor(config.NewPersistor(filepath), errorHandler)
+	return NewConfigRepositoryFromPersistor(Persistor{}, errorHandler)
 }
 
-func NewConfigRepositoryFromPersistor(persistor config.Persistor, errorHandler func(error)) config.ConfigRepository {
+func NewConfigRepositoryFromPersistor(persistor Persistor, errorHandler func(error)) config.ConfigRepository {
 	return DefaultConfigRepository{}
 }
 
