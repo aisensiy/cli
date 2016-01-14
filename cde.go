@@ -18,6 +18,13 @@ func Command(argv []string) int {
 The CDE command-line
 Usage: cde <command> [<args>...]
 Use 'git push cde master' to deploy to an application.
+
+Auth commands::
+
+  register      register a new user with a controller
+  login         login to a controller
+  logout        logout from the current controller
+
 Subcommands, use 'cde help [subcommand]' to learn more::
 
   apps          manage applications used to provide services
@@ -80,7 +87,7 @@ func parseArgs(argv []string) (string, []string) {
 	}
 
 	if len(argv) > 0 {
-
+		argv[0] = replaceShortcut(argv[0])
 		index := strings.Index(argv[0], ":")
 
 		if index != -1 {
@@ -92,4 +99,34 @@ func parseArgs(argv []string) (string, []string) {
 	}
 
 	return "", argv
+}
+
+func replaceShortcut(command string) string {
+	shortcuts := map[string]string{
+		"create":         "apps:create",
+		"destroy":        "apps:destroy",
+		"info":           "apps:info",
+		"login":          "auth:login",
+		"logout":         "auth:logout",
+		"logs":           "apps:logs",
+		"open":           "apps:open",
+		"passwd":         "auth:passwd",
+		"pull":           "builds:create",
+		"register":       "auth:register",
+		"rollback":       "releases:rollback",
+		"run":            "apps:run",
+		"scale":          "ps:scale",
+		"sharing":        "perms:list",
+		"sharing:list":   "perms:list",
+		"sharing:add":    "perms:create",
+		"sharing:remove": "perms:delete",
+		"whoami":         "auth:whoami",
+	}
+
+	expandedCommand := shortcuts[command]
+	if expandedCommand == "" {
+		return command
+	}
+
+	return expandedCommand
 }
