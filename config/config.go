@@ -9,10 +9,6 @@ type Data struct {
 
 }
 
-type Persistor struct {
-
-}
-
 type DefaultConfigRepository struct {
 	data      *Data
 	mutex     *sync.RWMutex
@@ -21,33 +17,73 @@ type DefaultConfigRepository struct {
 	onError   func(error)
 }
 
-func NewRepositoryFromFilepath(filepath string, errorHandler func(error)) config.ConfigRepository {
-	if errorHandler == nil {
-		return nil
+func NewConfigRepository(errorHandler func(error)) config.ConfigRepository {
+	p, _ := NewPersistor()
+	return DefaultConfigRepository{
+		persistor: p,
+		mutex:     new(sync.RWMutex),
 	}
-	return NewConfigRepositoryFromPersistor(Persistor{}, errorHandler)
 }
 
-func NewConfigRepositoryFromPersistor(persistor Persistor, errorHandler func(error)) config.ConfigRepository {
-	return DefaultConfigRepository{}
+func (c *DefaultConfigRepository) read(cb func()) {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+
+	cb()
 }
 
-type Reader interface {
-	ApiEndpoint() string
+func (c *DefaultConfigRepository) write(cb func()) {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
+	cb()
+
+	err := c.persistor.Save()
+	if err != nil {
+		c.onError(err)
+	}
 }
 
-type Writer interface {
-	SetApiEndpoint(string)
+
+func (c DefaultConfigRepository) ApiEndpoint() (endpoint string) {
+	c.read(func() {
+		endpoint = c.persistor.Endpoint
+	})
+	return
 }
 
-func(c DefaultConfigRepository) ApiEndpoint() string {
-	return "http://www.tw.com"
+func (c DefaultConfigRepository) SetApiEndpoint(endpoint string) {
+	c.write(func() {
+		c.persistor.Endpoint = endpoint
+	})
 }
 
-func(c DefaultConfigRepository) SetApiEndpoint(endpoint string) {
-
+func (c DefaultConfigRepository) SetEmail(email string) {
+	c.write(func() {
+		c.persistor.Email = email
+	})
 }
 
-func(c DefaultConfigRepository) Close() {
+func (c DefaultConfigRepository) SetAuth(auth string) {
+	c.write(func() {
+		c.persistor.Auth = auth
+	})
+}
+
+func (c DefaultConfigRepository) Email() (email string) {
+	c.read(func() {
+		email = c.persistor.Email
+	})
+	return
+}
+
+func (c DefaultConfigRepository) Auth() (auth string) {
+	c.read(func() {
+		auth = c.persistor.Auth
+	})
+	return
+}
+
+func (c DefaultConfigRepository) Close() {
 
 }

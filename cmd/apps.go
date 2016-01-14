@@ -8,8 +8,8 @@ import (
 
 // AppCreate creates an app.
 func AppCreate(name string, stack string, owner string, memory int, disk int, instances int) error {
-	configRepository := config.NewRepositoryFromFilepath("", func(err error) {})
-	appRepository := api.NewAppRepository(config.NewRepositoryFromFilepath("", func(err error) {}),
+	configRepository := config.NewConfigRepository(func(error) {})
+	appRepository := api.NewAppRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
 	appParams := api.AppParams{Name: name, Stack: stack,
 		Owner:owner, Mem: memory,
