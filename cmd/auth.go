@@ -192,6 +192,16 @@ func readPassword() (string, error) {
 }
 
 func Logout() error {
+	configRepository := config.NewConfigRepository(func(err error) {})
+	token := configRepository.Auth()
+	authRepository := api.NewAuthRepository(
+		configRepository,
+		net.NewCloudControllerGateway(configRepository))
+	err := authRepository.Delete(token)
+
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
