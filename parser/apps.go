@@ -42,7 +42,7 @@ func appCreate(argv []string) error {
 	usage := `
 Creates a new application.
 
-Usage: cde apps:create <name> <stack> <owner> [options]
+Usage: cde apps:create <name> <stack> [options]
 
 Arguments:
   <name>

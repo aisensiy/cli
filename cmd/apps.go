@@ -31,10 +31,10 @@ func AppsList() error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("=== Apps%s", len(apps.Items()))
+	fmt.Printf("=== Apps [%d]\n", len(apps.Items()))
 
 	for _, app := range apps.Items() {
-		fmt.Println(app)
+		fmt.Printf("id: %s\n", app.Id())
 	}
 	return nil
 }
