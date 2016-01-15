@@ -4,6 +4,9 @@ import (
 	"github.com/cde/apisdk/api"
 	"github.com/cde/apisdk/net"
 	"github.com/cde/client/config"
+	"github.com/cde/client/pkg"
+	"net/url"
+	"strings"
 )
 
 // AppCreate creates an app.
@@ -18,9 +21,28 @@ func AppCreate(name string, stack string, memory int, disk int, instances int) e
 		Disk:disk,
 		Instances:instances}
 	createdApp, err := appRepository.Create(appParams)
-	if createdApp != nil {
-		fmt.Println(createdApp)
+	if err != nil {
+		return err
 	}
+	u, err := url.Parse(configRepository.ApiEndpoint())
+	if err != nil {
+		return err
+	}
+	host := u.Host
+	if strings.Index(host, ":") != -1 {
+		splits := strings.Split(host, ":")
+		host = splits[0]
+	}
+	host = "192.168.50.6"
+	if err = git.CreateRemote(host, "cde", createdApp.Id()); err != nil {
+		if err.Error() == "exit status 128" {
+			fmt.Println("To replace the existing git remote entry, run:")
+			fmt.Printf("  git remote rename deis deis.old && deis git:remote -a %s\n", createdApp.Id())
+		}
+		return err
+	}
+
+	fmt.Println("remote available at", git.RemoteURL(host, createdApp.Id()))
 	return err
 }
 
