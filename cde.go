@@ -58,6 +58,8 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 		err = parser.Service(argv)
 	case "stacks":
 		err = parser.Stacks(argv)
+	case "routes":
+		err = parser.Routes(argv)
 	case "help":
 		fmt.Print(usage)
 		return 0

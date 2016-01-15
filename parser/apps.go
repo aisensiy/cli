@@ -27,7 +27,6 @@ Use 'cde help [command]' to learn more.
 		return appInfo(argv)
 	case "apps":
 		fmt.Print(usage)
-		return nil
 	default:
 		if printHelp(argv, usage) {
 			return nil
@@ -35,7 +34,7 @@ Use 'cde help [command]' to learn more.
 		PrintUsage()
 		return nil
 	}
-
+	return nil
 }
 
 func appCreate(argv []string) error {
