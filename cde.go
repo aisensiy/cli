@@ -24,11 +24,13 @@ Auth commands::
   register      register a new user with a controller
   login         login to a controller
   logout        logout from the current controller
+  whoami        display the current user
 
 Subcommands, use 'cde help [subcommand]' to learn more::
 
   apps          manage applications used to provide services
   stacks        manage stacks
+  domains       manage domains
 
 `
 	command, argv := parseArgs(argv)
@@ -107,22 +109,10 @@ func parseArgs(argv []string) (string, []string) {
 func replaceShortcut(command string) string {
 	shortcuts := map[string]string{
 		"create":         "apps:create",
-		"destroy":        "apps:destroy",
 		"info":           "apps:info",
 		"login":          "auth:login",
 		"logout":         "auth:logout",
-		"logs":           "apps:logs",
-		"open":           "apps:open",
-		"passwd":         "auth:passwd",
-		"pull":           "builds:create",
 		"register":       "auth:register",
-		"rollback":       "releases:rollback",
-		"run":            "apps:run",
-		"scale":          "ps:scale",
-		"sharing":        "perms:list",
-		"sharing:list":   "perms:list",
-		"sharing:add":    "perms:create",
-		"sharing:remove": "perms:delete",
 		"whoami":         "auth:whoami",
 	}
 

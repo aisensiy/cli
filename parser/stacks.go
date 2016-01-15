@@ -12,7 +12,6 @@ Valid commands for apps:
 
 stacks:create        create a new stack
 stacks:list          list accessible stacks
-stacks:info          view info about an stack
 
 Use 'cde help [command]' to learn more.
 `

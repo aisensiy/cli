@@ -20,8 +20,8 @@ Use 'deis help [command]' to learn more.
 	switch argv[0] {
 	case "domains:add":
 		return domainsAdd(argv)
-//	case "domains:list":
-//		return domainsList(argv)
+	case "domains:list":
+		return domainsList(argv)
 //	case "domains:remove":
 //		return domainsRemove(argv)
 	case "domains":
@@ -62,34 +62,23 @@ Arguments:
 	return cmd.DomainsAdd(safeGetValue(args, "<domain>"))
 }
 
-//func domainsList(argv []string) error {
-//	usage := `
-//Lists domains bound to an application.
-//
-//Usage: deis domains:list [options]
-//
-//Options:
-//  -a --app=<app>
-//    the uniquely identifiable name for the application.
-//  -l --limit=<num>
-//    the maximum number of results to display, defaults to config setting
-//`
-//
-//	args, err := docopt.Parse(usage, argv, true, "", false, true)
-//
-//	if err != nil {
-//		return err
-//	}
-//
-//	results, err := responseLimit(safeGetValue(args, "--limit"))
-//
-//	if err != nil {
-//		return err
-//	}
-//
-//	return cmd.DomainsList(safeGetValue(args, "--app"), results)
-//}
-//
+func domainsList(argv []string) error {
+	usage := `
+Lists domains bound to an application.
+
+Usage: deis domains:list
+`
+
+	_, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+
+	return cmd.DomainsList()
+}
+
 //func domainsRemove(argv []string) error {
 //	usage := `
 //Unbinds a domain for an application.

@@ -21,3 +21,18 @@ func DomainsAdd(name string) error {
 	fmt.Printf("create domain %s\n", name)
 	return nil
 }
+
+func DomainsList() error {
+	configRepository := config.NewConfigRepository(func(err error) {})
+	domainRepository := api.NewDomainRepository(configRepository, net.NewCloudControllerGateway(configRepository))
+	domains, err := domainRepository.GetDomains()
+	if err != nil {
+		return err
+	}
+	fmt.Printf("=== Domains [%d]\n", len(domains.Items()))
+
+	for _, domain := range domains.Items() {
+		fmt.Printf("%s %s\n", domain.Id(), domain.Name())
+	}
+	return nil
+}
