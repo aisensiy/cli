@@ -39,3 +39,23 @@ func AppsList() error {
 	}
 	return nil
 }
+
+func GetApp(appId string) error {
+	configRepository := config.NewConfigRepository(func(error) {})
+	appRepository := api.NewAppRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+	app, err := appRepository.GetApp(appId)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("=== %s Application\n", app.Id())
+	fmt.Println("id:        ", app.Id())
+	fmt.Println("instances: ", app.Instances())
+	fmt.Println("memory:    ", app.Mem())
+	fmt.Println("disk:      ", app.Disk())
+
+	fmt.Println()
+
+	return nil
+}

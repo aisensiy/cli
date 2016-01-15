@@ -97,5 +97,23 @@ func appList() error {
 }
 
 func appInfo(argv []string) error {
-	return nil
+	usage := `
+Prints info about the current application.
+
+Usage: deis apps:info [options]
+
+Options:
+  -a --app=<app>
+    the uniquely identifiable id for the application.
+`
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	appId := safeGetValue(args, "--app")
+
+	return cmd.GetApp(appId)
+
 }
