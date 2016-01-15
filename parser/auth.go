@@ -16,8 +16,6 @@ auth:register          register a new user
 auth:login             authenticate against a controller
 auth:logout            clear the current user session
 auth:whoami            display the current user
-auth:cancel            remove the current user account
-auth:regenerate        regenerate user tokens
 
 Use 'cde help [command]' to learn more.
 `

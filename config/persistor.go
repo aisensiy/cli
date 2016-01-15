@@ -13,6 +13,7 @@ type Persistor struct {
 	Email    string `json:"email"`
 	Endpoint string `json:"endpoint"`
 	Auth     string `json:"auth"`
+	Id       string `json:"id"`
 }
 
 func NewPersistor() (Persistor, error) {
@@ -45,21 +46,7 @@ func NewPersistor() (Persistor, error) {
 
 }
 
-func(p Persistor) Save() error {
-	settingsContents, err := json.Marshal(p)
-
-	if err != nil {
-		return err
-	}
-
-	if err = os.MkdirAll(path.Join(FindHome(), "/.cde/"), 0775); err != nil {
-		return err
-	}
-
-	return ioutil.WriteFile(locateSettingsFile(), settingsContents, 0775)
-}
-
-func SavePersistor(p Persistor) error {
+func (p Persistor) Save() error {
 	settingsContents, err := json.Marshal(p)
 
 	if err != nil {

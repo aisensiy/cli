@@ -70,6 +70,12 @@ func (c DefaultConfigRepository) SetAuth(auth string) {
 	})
 }
 
+func (c DefaultConfigRepository) SetId(id string) {
+	c.write(func() {
+		c.persistor.Id = id
+	})
+}
+
 func (c DefaultConfigRepository) Email() (email string) {
 	c.read(func() {
 		email = c.persistor.Email
@@ -80,6 +86,13 @@ func (c DefaultConfigRepository) Email() (email string) {
 func (c DefaultConfigRepository) Auth() (auth string) {
 	c.read(func() {
 		auth = c.persistor.Auth
+	})
+	return
+}
+
+func (c DefaultConfigRepository) Id() (id string) {
+	c.read(func() {
+		id = c.persistor.Id
 	})
 	return
 }

@@ -214,5 +214,9 @@ func Regenerate() error {
 }
 
 func Whoami() error {
+	configRepository := config.NewConfigRepository(func(err error) {})
+
+	fmt.Printf("You are %s at %s\n", configRepository.Email(), configRepository.ApiEndpoint())
+
 	return nil
 }
