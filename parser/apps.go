@@ -25,6 +25,9 @@ Use 'cde help [command]' to learn more.
 		return appList(argv)
 	case "apps:info":
 		return appInfo(argv)
+	case "apps":
+		fmt.Print(usage)
+		return nil
 	default:
 		if printHelp(argv, usage) {
 			return nil
@@ -39,20 +42,20 @@ func appCreate(argv []string) error {
 	usage := `
 Creates a new application.
 
-Usage: cde apps:create [options]
+Usage: cde apps:create <name> <stack> <owner> [options]
+
+Arguments:
+  <name>
+  	a uniquely identifiable name for the application. No other app can already
+    exist with this name.
+  <stack>
 
 Options:
-  --name
-  	unique name for this app.
-  --stack
-    a stack url to use for this app.
-  --owner
-    the owner url.
   --mem
   	allocated memory for this app. [default: 512]
   --disk
   	max allocated disk size. [default: 20]
-  --intances
+  --instances
   	default started instance number. [default: 1]
 `
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
@@ -61,12 +64,12 @@ Options:
 		return err
 	}
 
-	stack := safeGetValue(args, "--stack")
-	name := safeGetValue(args, "--name")
-	owner := safeGetValue(args, "--owner")
-	if stack == "" || name == "" || owner == "" {
-		return errors.New("--stack --name --owner are essential parameters")
+	name := safeGetValue(args, "<name>")
+	stack := safeGetValue(args, "<stack>")
+	if stack == "" || name == "" {
+		return errors.New("<name> <stack> are essential parameters")
 	}
+	fmt.Println(args)
 	memory := safeGetOrDefault(args, "--mem", "512")
 	disk := safeGetOrDefault(args, "--disk", "20")
 	instances := safeGetOrDefault(args, "--instances", "1")
