@@ -36,3 +36,14 @@ func DomainsList() error {
 	}
 	return nil
 }
+
+func DomainsRemove(domainId string) error {
+	configRepository := config.NewConfigRepository(func(err error) {})
+	domainRepository := api.NewDomainRepository(configRepository, net.NewCloudControllerGateway(configRepository))
+	err := domainRepository.Delete(domainId)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("=== Domain [%d] deleted\n", domainId)
+	return nil
+}

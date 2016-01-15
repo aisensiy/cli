@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	"github.com/cde/client/cmd"
 	docopt "github.com/docopt/docopt-go"
 )
@@ -22,20 +21,17 @@ Use 'deis help [command]' to learn more.
 		return domainsAdd(argv)
 	case "domains:list":
 		return domainsList(argv)
-//	case "domains:remove":
-//		return domainsRemove(argv)
-	case "domains":
-		fmt.Print(usage)
-		return nil
+	case "domains:remove":
+		return domainsRemove(argv)
 	default:
 		if printHelp(argv, usage) {
 			return nil
 		}
 
-//		if argv[0] == "domains" {
-//			argv[0] = "domains:list"
-//			return domainsList(argv)
-//		}
+		if argv[0] == "domains" {
+			argv[0] = "domains:list"
+			return domainsList(argv)
+		}
 
 		PrintUsage()
 		return nil
@@ -79,26 +75,22 @@ Usage: deis domains:list
 	return cmd.DomainsList()
 }
 
-//func domainsRemove(argv []string) error {
-//	usage := `
-//Unbinds a domain for an application.
-//
-//Usage: deis domains:remove <domain> [options]
-//
-//Arguments:
-//  <domain>
-//    the domain name to be removed from the application.
-//
-//Options:
-//  -a --app=<app>
-//    the uniquely identifiable name for the application.
-//`
-//
-//	args, err := docopt.Parse(usage, argv, true, "", false, true)
-//
-//	if err != nil {
-//		return err
-//	}
-//
-//	return cmd.DomainsRemove(safeGetValue(args, "--app"), safeGetValue(args, "<domain>"))
-//}
+func domainsRemove(argv []string) error {
+	usage := `
+Unbinds a domain for an application.
+
+Usage: deis domains:remove <domain>
+
+Arguments:
+  <domain>
+    the domain id to be removed.
+`
+
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	return cmd.DomainsRemove(safeGetValue(args, "<domain>"))
+}
