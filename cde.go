@@ -45,14 +45,16 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 	// Dispatch the command, passing the argv through so subcommands can
 	// re-parse it according to their usage strings.
 	switch command {
+	case "apps":
+		err = parser.Apps(argv)
 	case "auth":
 		err = parser.Auth(argv)
+	case "domains":
+		err = parser.Domains(argv)
 	case "service":
 		err = parser.Service(argv)
 	case "stacks":
 		err = parser.Stacks(argv)
-	case "apps":
-		err = parser.Apps(argv)
 	case "help":
 		fmt.Print(usage)
 		return 0

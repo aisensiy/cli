@@ -97,7 +97,7 @@ func Register(controller string, email string, password string) error {
 	configRepository.SetApiEndpoint(controllerURL)
 
 	userRepository := api.NewUserRepository(config.NewConfigRepository(func(err error) {}),
-		net.NewCloudControllerGateway(configRepository))
+		net.NewCloudControllerGateway(config.NewConfigRepository(func(err error) {})))
 	userParams := api.UserParams{
 		Email: email,
 		Password: password,
