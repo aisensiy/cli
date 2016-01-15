@@ -17,9 +17,10 @@ func AppCreate(name string, stack string, memory int, disk int, instances int) e
 		Mem: memory,
 		Disk:disk,
 		Instances:instances}
-	fmt.Println(appParams)
 	createdApp, err := appRepository.Create(appParams)
-	fmt.Println(createdApp)
+	if createdApp != nil {
+		fmt.Println(createdApp)
+	}
 	return err
 }
 

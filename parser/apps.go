@@ -69,7 +69,6 @@ Options:
 	if stack == "" || name == "" {
 		return errors.New("<name> <stack> are essential parameters")
 	}
-	fmt.Println(args)
 	memory := safeGetOrDefault(args, "--mem", "512")
 	disk := safeGetOrDefault(args, "--disk", "20")
 	instances := safeGetOrDefault(args, "--instances", "1")
