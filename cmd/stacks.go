@@ -21,3 +21,20 @@ func StackCreate(name string) error {
 	fmt.Printf("create stack %s with uuid %s\n", stackModel.Name(), stackModel.Id())
 	return nil
 }
+
+
+func StacksList() error {
+	configRepository := config.NewConfigRepository(func(error) {})
+	stackRepository := api.NewStackRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+	stacks, err := stackRepository.GetStacks()
+	if err != nil {
+		return err
+	}
+	fmt.Printf("=== Stacks: [%d]\n", len(stacks.Items()))
+
+	for _, stack := range stacks.Items() {
+		fmt.Printf("name: %s id: %s\n", stack.Name(), stack.Id())
+	}
+	return nil
+}

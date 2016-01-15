@@ -23,7 +23,18 @@ func AppCreate(name string, stack string, memory int, disk int, instances int) e
 	return err
 }
 
-// AppsList lists apps on the Deis controller.
-func AppsList(results int) error {
+func AppsList() error {
+	configRepository := config.NewConfigRepository(func(error) {})
+	appRepository := api.NewAppRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+	apps, err := appRepository.GetApps()
+	if err != nil {
+		return err
+	}
+	fmt.Printf("=== Apps%s", len(apps.Items()))
+
+	for _, app := range apps.Items() {
+		fmt.Println(app)
+	}
 	return nil
 }

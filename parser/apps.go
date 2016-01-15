@@ -22,7 +22,7 @@ Use 'cde help [command]' to learn more.
 	case "apps:create":
 		return appCreate(argv)
 	case "apps:list":
-		return appList(argv)
+		return appList()
 	case "apps:info":
 		return appInfo(argv)
 	case "apps":
@@ -93,29 +93,8 @@ Options:
 	return cmd.AppCreate(name, stack, mem, diskSize, ins)
 }
 
-func appList(argv []string) error {
-	usage := `
-Lists applications visible to the current user.
-
-Usage: cde apps:list [options]
-
-Options:
-  -l --limit=<num>
-    the maximum number of results to display, defaults to config setting
-`
-	args, err := docopt.Parse(usage, argv, true, "", false, true)
-
-	if err != nil {
-		return err
-	}
-
-	results, err:= strconv.Atoi(safeGetOrDefault(args, "--limit", "20"))
-
-	if err != nil {
-		return err
-	}
-
-	return cmd.AppsList(results)
+func appList() error {
+	return cmd.AppsList()
 }
 
 func appInfo(argv []string) error {

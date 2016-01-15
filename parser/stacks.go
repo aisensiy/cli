@@ -19,6 +19,8 @@ Use 'cde help [command]' to learn more.
 	switch argv[0] {
 	case "stacks:create":
 		return stackCreate(argv)
+	case "stacks:list":
+		return stackList()
 	case "stacks":
 		fmt.Print(usage)
 		return nil
@@ -47,4 +49,9 @@ Arguments:
 	}
 
 	return cmd.StackCreate(safeGetValue(args, "<stack>"))
+}
+
+func stackList() error {
+	return cmd.StacksList()
+
 }
