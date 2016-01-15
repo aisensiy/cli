@@ -90,7 +90,7 @@ Options:
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		return err
 	}
-	return cmd.AppCreate(name, stack, owner, mem, diskSize, ins)
+	return cmd.AppCreate(name, stack, mem, diskSize, ins)
 }
 
 func appList(argv []string) error {

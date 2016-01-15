@@ -7,13 +7,16 @@ import (
 )
 
 // AppCreate creates an app.
-func AppCreate(name string, stack string, owner string, memory int, disk int, instances int) error {
+func AppCreate(name string, stack string, memory int, disk int, instances int) error {
 	configRepository := config.NewConfigRepository(func(error) {})
 	appRepository := api.NewAppRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
-	appParams := api.AppParams{Name: name, Stack: stack,
-		Owner:owner, Mem: memory,
-		Disk:disk, Instances:instances}
+	appParams := api.AppParams{
+		Name: name,
+		Stack: stack,
+		Mem: memory,
+		Disk:disk,
+		Instances:instances}
 	fmt.Println(appParams)
 	createdApp, err := appRepository.Create(appParams)
 	fmt.Println(createdApp)

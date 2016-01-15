@@ -28,6 +28,7 @@ Auth commands::
 Subcommands, use 'cde help [subcommand]' to learn more::
 
   apps          manage applications used to provide services
+  stacks        manage stacks
 
 `
 	command, argv := parseArgs(argv)
