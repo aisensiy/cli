@@ -23,6 +23,8 @@ func AddKey(userId, public string) error {
 		fmt.Println(err)
 		return err
 	}
+
+	fmt.Println("Upload key successfully")
 	return err
 }
 
@@ -31,16 +33,14 @@ func RemoveKey(userId, keyId string) error {
 	userRepo := api.NewUserRepository(configRepository, net.NewCloudControllerGateway(configRepository))
 	user, err := userRepo.GetUser(userId)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 
 	err = user.DeleteKey(keyId)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
-
+	fmt.Println("Delete the key successfully")
 	return err
 }
 

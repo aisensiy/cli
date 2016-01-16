@@ -103,8 +103,8 @@ func Register(controller string, email string, password string) error {
 		Password: password,
 	}
 	fmt.Println(userParams)
-	_, err = userRepository.Create(userParams)
-
+	user, err := userRepository.Create(userParams)
+	fmt.Println("user id: "+user.Id())
 	if err != nil {
 		return err
 	}
@@ -179,7 +179,7 @@ func doLogin(email string, password string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(auth.Id())
+	fmt.Println("auth id: "+auth.Id())
 	configRepository.SetEmail(auth.UserEmail())
 	configRepository.SetAuth(auth.Id())
 	return nil

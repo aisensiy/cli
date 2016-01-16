@@ -18,6 +18,7 @@ func RoutesCreate(domain string, path string) error {
 	if err != nil {
 		fmt.Println(err)
 	}
+
 	return err
 }
 
@@ -41,7 +42,6 @@ func RouteBindWithApp(route, appName string) error {
 	appRepo := api.NewAppRepository(configRepository, net.NewCloudControllerGateway(configRepository))
 	app, err := appRepo.GetApp(appName)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 	routeParams := api.AppRouteParams{
@@ -49,8 +49,10 @@ func RouteBindWithApp(route, appName string) error {
 	}
 	err = app.AssociateRoute(routeParams)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
+
+	fmt.Printf("=== Bind successfully\n")
+
 	return err
 }
