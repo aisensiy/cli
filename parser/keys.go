@@ -59,13 +59,11 @@ func addKey(argv []string) error {
 	usage := `
 Add a key.
 
-Usage: cde keys:add <user> <ssh>
+Usage: cde keys:add <ssh>
 
 Arguments:
-  <user>
-    the logged user itself.
   <ssh>
-  	the ssh content
+  	the ssh file path
 `
 
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
@@ -74,9 +72,8 @@ Arguments:
 		return err
 	}
 
-	user := safeGetValue(args, "<user>")
-	ssh := safeGetValue(args, "<ssh>")
-	return cmd.AddKey(user, ssh)
+	sshFilePath := safeGetValue(args, "<ssh>")
+	return cmd.AddKey(sshFilePath)
 }
 
 func removeKey(argv []string) error {
