@@ -39,10 +39,10 @@ func AddKey(sshFilePath string) error {
 	return err
 }
 
-func RemoveKey(userId, keyId string) error {
+func RemoveKey(keyId string) error {
 	configRepository := config.NewConfigRepository(func(error) {})
 	userRepo := api.NewUserRepository(configRepository, net.NewCloudControllerGateway(configRepository))
-	user, err := userRepo.GetUser(userId)
+	user, err := userRepo.GetUser(configRepository.Id())
 	if err != nil {
 		return err
 	}

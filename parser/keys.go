@@ -80,11 +80,9 @@ func removeKey(argv []string) error {
 	usage := `
 Remove a key.
 
-Usage: cde keys:remove <user> <key>
+Usage: cde keys:remove <key>
 
 Arguments:
-  <user>
-    the logged user itself.
   <key>
   	the key id
 `
@@ -95,7 +93,6 @@ Arguments:
 		return err
 	}
 
-	user := safeGetValue(args, "<user>")
 	keyId := safeGetValue(args, "<key>")
-	return cmd.RemoveKey(user, keyId)
+	return cmd.RemoveKey(keyId)
 }
