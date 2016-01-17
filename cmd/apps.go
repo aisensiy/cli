@@ -10,13 +10,23 @@ import (
 )
 
 // AppCreate creates an app.
-func AppCreate(name string, stack string, memory int, disk int, instances int) error {
+func AppCreate(name string, stackName string, memory int, disk int, instances int) error {
 	configRepository := config.NewConfigRepository(func(error) {})
 	appRepository := api.NewAppRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
+
+	stackRepo := api.NewStackRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+
+	stacks, err := stackRepo.GetStackByName(stackName)
+	if err != nil {
+		return err
+	}
+	stackId := stacks.Items()[0].Id()
+
 	appParams := api.AppParams{
 		Name: name,
-		Stack: stack,
+		Stack: stackId,
 		Mem: memory,
 		Disk:disk,
 		Instances:instances}

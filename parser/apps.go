@@ -48,6 +48,7 @@ Arguments:
   	a uniquely identifiable name for the application. No other app can already
     exist with this name.
   <stack>
+  	a stack name
 
 Options:
   --mem
