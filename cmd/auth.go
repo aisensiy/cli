@@ -108,7 +108,8 @@ func Register(controller string, email string, password string) error {
 	if err != nil {
 		return err
 	}
-
+	configRepository.SetId(user.Id())
+//	configRepository.Close()
 	fmt.Printf("Registered %s\n", email)
 	return doLogin(email, password)
 }
@@ -129,7 +130,7 @@ func chooseScheme(u url.URL) (url.URL, error) {
 }
 
 func CheckConnection(client *http.Client, apiURL url.URL) error {
-	errorMessage := `%s does not appear to be a valid Deis controller.
+	errorMessage := `%s does not appear to be a valid Cde controller.
 Make sure that the Controller URI is correct and the server is running.`
 
 	baseURL := apiURL.String()
@@ -179,9 +180,18 @@ func doLogin(email string, password string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("auth id: "+auth.Id())
-	configRepository.SetEmail(auth.UserEmail())
-	configRepository.SetAuth(auth.Id())
+
+//	configRepository.SetEmail(auth.UserEmail())
+//	configRepository.SetId("abcde")
+//	configRepository.SetAuth(auth.Id())
+	persistor, err := config.NewPersistor()
+	if err != nil {
+		return err
+	}
+
+	persistor.Email = email
+	persistor.Auth = auth.Id()
+	persistor.Save()
 	return nil
 }
 
