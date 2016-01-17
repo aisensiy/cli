@@ -102,9 +102,7 @@ func Register(controller string, email string, password string) error {
 		Email: email,
 		Password: password,
 	}
-	fmt.Println(userParams)
 	user, err := userRepository.Create(userParams)
-	fmt.Println("user id: "+user.Id())
 	if err != nil {
 		return err
 	}
