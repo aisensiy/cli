@@ -83,7 +83,7 @@ Usage: deis domains:remove <domain>
 
 Arguments:
   <domain>
-    the domain id to be removed.
+    the domain name to be removed.
 `
 
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
