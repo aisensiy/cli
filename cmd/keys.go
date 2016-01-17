@@ -65,18 +65,11 @@ func printKeys(keys api.Keys) {
 	}
 }
 
-func ListKeys(userId string) error {
+func ListKeys() error {
 	configRepository := config.NewConfigRepository(func(error) {})
 
-	if userId == "" {
-		keyRepo := api.NewKeyRepository(configRepository, net.NewCloudControllerGateway(configRepository))
-		keys, err := keyRepo.GetKeys()
-		printKeys(keys)
-		return err
-	}
-
 	userRepo := api.NewUserRepository(configRepository, net.NewCloudControllerGateway(configRepository))
-	user, err := userRepo.GetUser(userId)
+	user, err := userRepo.GetUser(configRepository.Id())
 	if err != nil {
 		return err
 	}

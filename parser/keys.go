@@ -39,20 +39,16 @@ func keyList(argv []string) error {
 	usage := `
 List keys.
 
-Usage: cde keys:list [<user>]
+Usage: cde keys:list
 
-Arguments:
-  <user>
-    the logged user itself.
 `
-	args, err := docopt.Parse(usage, argv, true, "", false, true)
+	_, err := docopt.Parse(usage, argv, true, "", false, true)
 
 	if err != nil {
 		return err
 	}
 
-	user := safeGetValue(args, "<user>")
-	return cmd.ListKeys(user)
+	return cmd.ListKeys()
 }
 
 func addKey(argv []string) error {
