@@ -60,8 +60,8 @@ func printKeys(keys api.Keys) {
 
 	for _, key := range keys.Items() {
 		fmt.Printf("id: %s\n", key.ID())
+		fmt.Printf("name: %s\n", key.Name())
 		fmt.Printf("fingerprint: %s\n", key.Fingerprint())
-		fmt.Printf("ssh: %s\n", key.Public())
 	}
 }
 
