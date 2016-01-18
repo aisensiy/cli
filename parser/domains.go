@@ -42,11 +42,11 @@ func domainsAdd(argv []string) error {
 	usage := `
 Binds a domain to an application.
 
-Usage: deis domains:add <domain>
+Usage: cde domains:add <domain>
 
 Arguments:
   <domain>
-    the domain name to be bound to the application, such as 'domain.deisapp.com'.
+    the domain name to be bound to the application, such as 'domain.testapp.com'.
 `
 
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
@@ -62,7 +62,7 @@ func domainsList(argv []string) error {
 	usage := `
 Lists domains bound to an application.
 
-Usage: deis domains:list
+Usage: cde domains:list
 `
 
 	_, err := docopt.Parse(usage, argv, true, "", false, true)
@@ -79,7 +79,7 @@ func domainsRemove(argv []string) error {
 	usage := `
 Unbinds a domain for an application.
 
-Usage: deis domains:remove <domain>
+Usage: cde domains:remove <domain>
 
 Arguments:
   <domain>

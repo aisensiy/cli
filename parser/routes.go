@@ -1,6 +1,5 @@
 package parser
 import (
-	"fmt"
 	"github.com/docopt/docopt-go"
 	"github.com/cde/client/cmd"
 )
@@ -12,7 +11,7 @@ Valid commands for routes:
 
 routes:create        create a new routes
 routes:list          list accessible routes
-routes:bind			bind a route with an app
+routes:bind          bind a route with an app
 Use 'cde help [command]' to learn more.
 `
 	switch argv[0] {
@@ -22,12 +21,16 @@ Use 'cde help [command]' to learn more.
 		return routesList()
 	case "routes:bind":
 		return bindRouteWithApp(argv)
-	case "routes":
-		fmt.Print(usage)
 	default:
 		if printHelp(argv, usage) {
 			return nil
 		}
+
+		if argv[0] == "routes" {
+			argv[0] = "routes:list"
+			return routesList()
+		}
+
 		PrintUsage()
 		return nil
 	}
@@ -46,7 +49,7 @@ Usage: cde routes:create <domain> <path>
 
 Arguments:
   <domain>
-    the domain id.
+    the domain name.
   <path>
   	the route path
 `

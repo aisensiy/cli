@@ -2,8 +2,7 @@ package parser
 
 import (
 	"github.com/cde/client/cmd"
-	"fmt"
-"github.com/docopt/docopt-go"
+	"github.com/docopt/docopt-go"
 )
 
 func Stacks(argv []string) error {
@@ -20,10 +19,16 @@ Use 'cde help [command]' to learn more.
 		return stackCreate(argv)
 	case "stacks:list":
 		return stackList()
-	case "stacks":
-		fmt.Print(usage)
-		return nil
 	default:
+		if printHelp(argv, usage) {
+			return nil
+		}
+
+		if argv[0] == "stacks" {
+			argv[0] = "stacks:list"
+			return stackList()
+		}
+
 		PrintUsage()
 		return nil
 	}

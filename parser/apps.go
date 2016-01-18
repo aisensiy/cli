@@ -25,12 +25,16 @@ Use 'cde help [command]' to learn more.
 		return appList()
 	case "apps:info":
 		return appInfo(argv)
-	case "apps":
-		fmt.Print(usage)
 	default:
 		if printHelp(argv, usage) {
 			return nil
 		}
+
+		if argv[0] == "apps" {
+			argv[0] = "apps:list"
+			return appList()
+		}
+
 		PrintUsage()
 		return nil
 	}
