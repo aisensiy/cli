@@ -186,6 +186,7 @@ func doLogin(email string, password string) error {
 	configRepository.SetEmail(auth.UserEmail())
 	configRepository.SetId(userId)
 	configRepository.SetAuth(auth.Id())
+	fmt.Printf("Welcome %s\n", auth.UserEmail())
 	return nil
 }
 
@@ -206,6 +207,7 @@ func Logout() error {
 	if err != nil {
 		return err
 	}
+	fmt.Println("Logout successfully")
 	return nil
 }
 
