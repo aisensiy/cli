@@ -7,14 +7,20 @@ import (
 )
 
 // RouteCreate creates an route.
-func RoutesCreate(domain string, path string) error {
+func RoutesCreate(domainName string, path string) error {
 	configRepository := config.NewConfigRepository(func(error) {})
 	routeRepository := api.NewRouteRepository(configRepository, net.NewCloudControllerGateway(configRepository))
+	domainRepository := api.NewDomainRepository(configRepository, net.NewCloudControllerGateway(configRepository))
+	domains, err := domainRepository.GetDomainByName(domainName)
+	if err != nil {
+		return err
+	}
+	domainId := domains.Items()[0].Id()
 	routeParams := api.RouteParams{
-		Domain: domain,
+		Domain: domainId,
 		Path: path,
 	}
-	err := routeRepository.Create(routeParams)
+	err = routeRepository.Create(routeParams)
 	if err != nil {
 		fmt.Println(err)
 	}
