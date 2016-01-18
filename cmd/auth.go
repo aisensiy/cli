@@ -182,19 +182,9 @@ func doLogin(email string, password string) error {
 		return err
 	}
 	userId := user.Items()[0].Id()
-//	configRepository.SetEmail(auth.UserEmail())
-//	configRepository.SetId(userId)
-//	configRepository.SetAuth(auth.Id())
-
-	persistor, err := config.NewPersistor()
-	if err != nil {
-		return err
-	}
-
-	persistor.Id = userId
-	persistor.Email = email
-	persistor.Auth = auth.Id()
-	persistor.Save()
+	configRepository.SetEmail(auth.UserEmail())
+	configRepository.SetId(userId)
+	configRepository.SetAuth(auth.Id())
 	return nil
 }
 

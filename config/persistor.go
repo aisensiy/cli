@@ -1,76 +1,88 @@
 package config
 
 import (
-	"encoding/json"
-	"os"
-	"errors"
-	"path"
-	"net/url"
 	"io/ioutil"
+	"os"
+	"path/filepath"
 )
 
-type Persistor struct {
-	Email    string `json:"email"`
-	Endpoint string `json:"endpoint"`
-	Auth     string `json:"auth"`
-	Id       string `json:"id"`
+const (
+	filePermissions = 0600
+	dirPermissions  = 0700
+)
+
+//go:generate counterfeiter -o fakes/fake_persistor.go . Persistor
+type Persistor interface {
+	Delete()
+	Exists() bool
+	Load(DataInterface) error
+	Save(DataInterface) error
 }
 
-func NewPersistor() (Persistor, error) {
-	filename := locateSettingsFile()
-
-	if _, err := os.Stat(filename); err != nil {
-		if os.IsNotExist(err) {
-			return Persistor{}, errors.New("Not logged in. Use 'cde login' or 'cde register' to get started.")
-		}
-
-		return Persistor{}, err
-	}
-
-	contents, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return Persistor{}, err
-	}
-
-	settings := Persistor{}
-	if err = json.Unmarshal(contents, &settings); err != nil {
-		return Persistor{}, err
-	}
-
-	_, err = url.Parse(settings.Endpoint)
-	if err != nil {
-		return Persistor{}, err
-	}
-
-	return settings, nil
-
+type DataInterface interface {
+	JsonMarshalV3() ([]byte, error)
+	JsonUnmarshalV3([]byte) error
 }
 
-func (p Persistor) Save() error {
-	settingsContents, err := json.Marshal(p)
+type DiskPersistor struct {
+	filePath string
+}
 
+func NewDiskPersistor(path string) (dp DiskPersistor) {
+	return DiskPersistor{
+		filePath: path,
+	}
+}
+
+func (dp DiskPersistor) Exists() bool {
+	_, err := os.Stat(dp.filePath)
+	if err != nil && !os.IsExist(err) {
+		return false
+	}
+	return true
+}
+
+func (dp DiskPersistor) Delete() {
+	os.Remove(dp.filePath)
+}
+
+func (dp DiskPersistor) Load(data DataInterface) error {
+	err := dp.read(data)
+	if os.IsPermission(err) {
+		return err
+	}
+
+	if err != nil {
+		err = dp.write(data)
+	}
+	return err
+}
+
+func (dp DiskPersistor) Save(data DataInterface) (err error) {
+	return dp.write(data)
+}
+
+func (dp DiskPersistor) read(data DataInterface) error {
+	err := os.MkdirAll(filepath.Dir(dp.filePath), dirPermissions)
 	if err != nil {
 		return err
 	}
 
-	if err = os.MkdirAll(path.Join(FindHome(), "/.cde/"), 0775); err != nil {
+	jsonBytes, err := ioutil.ReadFile(dp.filePath)
+	if err != nil {
 		return err
 	}
 
-	return ioutil.WriteFile(locateSettingsFile(), settingsContents, 0775)
+	err = data.JsonUnmarshalV3(jsonBytes)
+	return err
 }
 
-func FindHome() string {
-	return os.Getenv("HOME")
-}
-
-func locateSettingsFile() string {
-	filename := os.Getenv("CDE_PROFILE")
-
-	if filename == "" {
-		filename = "client"
+func (dp DiskPersistor) write(data DataInterface) error {
+	bytes, err := data.JsonMarshalV3()
+	if err != nil {
+		return err
 	}
 
-	return path.Join(FindHome(), ".cde", filename + ".json")
+	err = ioutil.WriteFile(dp.filePath, bytes, filePermissions)
+	return err
 }
-
