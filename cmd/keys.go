@@ -56,9 +56,8 @@ func printKeys(keys api.Keys) {
 	fmt.Printf("=== Keys [%d]\n", len(keys.Items()))
 
 	for _, key := range keys.Items() {
-		fmt.Printf("id: %s\n", key.ID())
-		fmt.Printf("name: %s\n", key.Name())
-		fmt.Printf("fingerprint: %s\n", key.Fingerprint())
+		var public = key.Public()
+		fmt.Printf("%s %s \"%s...%s\"\n", key.ID(), key.Name(), public[:16], public[len(public)-30:len(public)-1])
 	}
 }
 
