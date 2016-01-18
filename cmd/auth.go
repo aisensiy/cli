@@ -92,8 +92,11 @@ func Register(controller string, email string, password string) error {
 		fmt.Scanln(&email)
 	}
 
-	userRepository := api.NewUserRepository(config.NewConfigRepository(func(err error) {}),
-		net.NewCloudControllerGateway(config.NewConfigRepository(func(err error) {})))
+	configRepository := config.NewConfigRepository(func(err error) {})
+	configRepository.SetApiEndpoint(controllerURL)
+
+	userRepository := api.NewUserRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
 	userParams := api.UserParams{
 		Email: email,
 		Password: password,
@@ -103,8 +106,6 @@ func Register(controller string, email string, password string) error {
 		return err
 	}
 
-	configRepository := config.NewConfigRepository(func(err error) {})
-	configRepository.SetApiEndpoint(controllerURL)
 	fmt.Printf("Registered %s\n", email)
 	return doLogin(email, password)
 }

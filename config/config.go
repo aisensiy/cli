@@ -5,7 +5,6 @@ import (
 	"github.com/cde/apisdk/config"
 	"path/filepath"
 	"os"
-	"fmt"
 )
 
 type DefaultConfigRepository struct {
