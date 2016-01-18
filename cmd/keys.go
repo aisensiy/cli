@@ -17,12 +17,10 @@ func AddKey(sshFilePath string) error {
 
 	user, err := userRepo.GetUser(configRepository.Id())
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 	public, name, err := getKey(sshFilePath)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 	keyParams := api.KeyParams{
@@ -31,8 +29,7 @@ func AddKey(sshFilePath string) error {
 	}
 	_, err = user.UploadKey(keyParams)
 	if err != nil {
-		fmt.Println(err)
-		return err
+		return fmt.Errorf("Key already exists")
 	}
 
 	fmt.Println("Upload key successfully")
