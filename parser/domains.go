@@ -14,7 +14,7 @@ domains:add           create a domain
 domains:list          list domains
 domains:remove        remove a domain
 
-Use 'deis help [command]' to learn more.
+Use 'cde help [command]' to learn more.
 `
 	switch argv[0] {
 	case "domains:add":

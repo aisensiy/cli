@@ -47,7 +47,7 @@ func AppCreate(name string, stackName string, memory int, disk int, instances in
 	if err = git.CreateRemote(host, "cde", createdApp.Id()); err != nil {
 		if err.Error() == "exit status 128" {
 			fmt.Println("To replace the existing git remote entry, run:")
-			fmt.Printf("  git remote rename deis deis.old && deis git:remote -a %s\n", createdApp.Id())
+			fmt.Printf("  git remote rename cde cde.old && cde git:remote -a %s\n", createdApp.Id())
 		}
 		return err
 	}

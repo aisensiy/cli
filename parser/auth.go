@@ -46,7 +46,7 @@ Use 'cde help [command]' to learn more.
 
 func authRegister(argv []string) error {
 	usage := `
-Registers a new user with a Deis controller.
+Registers a new user with a Cde controller.
 
 Usage: cde auth:register <controller> [options]
 

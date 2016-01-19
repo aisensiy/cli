@@ -70,7 +70,7 @@ func remoteNameFromAppID(appID string) (string, error) {
 	return "", errors.New("Could not find remote matching app in 'git remote -v'")
 }
 
-// DetectAppName detects if there is deis remote in git.
+// DetectAppName detects if there is cde remote in git.
 func DetectAppName(host string) (string, error) {
 	remote, err := findRemote(host)
 
@@ -101,7 +101,7 @@ func findRemote(host string) (string, error) {
 		}
 	}
 
-	return "", errors.New("Could not find deis remote in 'git remote -v'")
+	return "", errors.New("Could not find cde remote in 'git remote -v'")
 }
 
 // RemoteURL returns the git URL of app.

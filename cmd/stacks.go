@@ -38,3 +38,20 @@ func StacksList() error {
 	}
 	return nil
 }
+
+func StackRemove(name string) error {
+	configRepository := config.NewConfigRepository(func(err error) {})
+	stackRepository := api.NewStackRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+	stacks, err := stackRepository.GetStackByName(name)
+	if err != nil {
+		return err
+	}
+	stackId := stacks.Items()[0].Id()
+	err = stackRepository.Delete(stackId)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("delete stack successfully\n")
+	return nil
+}

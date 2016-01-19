@@ -86,14 +86,14 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 // expands shortcuts and formats commands to be properly routed.
 func parseArgs(argv []string) (string, []string) {
 	if len(argv) == 1 {
-		// rearrange "deis --help" as "deis help"
+		// rearrange "cde --help" as "cde help"
 		if argv[0] == "--help" || argv[0] == "-h" {
 			argv[0] = "help"
 		}
 	}
 
 	if len(argv) >= 2 {
-		// Rearrange "deis help <command>" to "deis <command> --help".
+		// Rearrange "cde help <command>" to "cde <command> --help".
 		if argv[0] == "help" || argv[0] == "--help" || argv[0] == "-h" {
 			argv = append(argv[1:], "--help")
 		}

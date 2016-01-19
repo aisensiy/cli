@@ -11,6 +11,7 @@ Valid commands for apps:
 
 stacks:create        create a new stack
 stacks:list          list accessible stacks
+stacks:remove        remove an existing stack
 
 Use 'cde help [command]' to learn more.
 `
@@ -19,6 +20,8 @@ Use 'cde help [command]' to learn more.
 		return stackCreate(argv)
 	case "stacks:list":
 		return stackList()
+	case "stacks:remove":
+		return stackRemove(argv)
 	default:
 		if printHelp(argv, usage) {
 			return nil
@@ -39,7 +42,7 @@ func stackCreate(argv []string) error {
 	usage := `
 Create a stack.
 
-Usage: deis stacks:create <stack>
+Usage: cde stacks:create <stack>
 
 Arguments:
   <stack>
@@ -58,4 +61,24 @@ Arguments:
 func stackList() error {
 	return cmd.StacksList()
 
+}
+
+func stackRemove(argv []string) error {
+	usage := `
+Remove an existing stack.
+
+Usage: cde stacks:remove <stack>
+
+Arguments:
+  <stack>
+    the stack name.
+`
+
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	return cmd.StackRemove(safeGetValue(args, "<stack>"))
 }

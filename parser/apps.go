@@ -104,7 +104,7 @@ func appInfo(argv []string) error {
 	usage := `
 Prints info about the current application.
 
-Usage: deis apps:info [options]
+Usage: cde apps:info [options]
 
 Options:
   -a --app=<app>
