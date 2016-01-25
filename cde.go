@@ -35,6 +35,8 @@ Subcommands, use 'cde help [subcommand]' to learn more::
   stacks      	manage stacks
   routes      	manage routes
   keys      	manage keys
+  git           manage git for applications
+
 
 `
 	command, argv := parseArgs(argv)
@@ -66,6 +68,8 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 		err = parser.Routes(argv)
 	case "keys":
 		err = parser.Keys(argv)
+	case "git":
+		err = parser.Git(argv)
 	case "help":
 		fmt.Print(usage)
 		return 0
