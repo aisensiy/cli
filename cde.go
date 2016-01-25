@@ -36,6 +36,7 @@ Subcommands, use 'cde help [subcommand]' to learn more::
   routes      	manage routes
   keys      	manage keys
   git           manage git for applications
+  config        manage environment variables that define app config
 
 
 `
@@ -70,6 +71,8 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 		err = parser.Keys(argv)
 	case "git":
 		err = parser.Git(argv)
+	case "config":
+		err = parser.Config(argv)
 	case "help":
 		fmt.Print(usage)
 		return 0
