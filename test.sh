@@ -20,14 +20,31 @@ watchWhoamI(){
   fi
 }
 
-stack="javajersey-test"
-watchStack() {
+watchStacks() {
   found=false
   while read line
   do
-    if [[ $line == *"${stack}"* ]]
+    if [[ $line == *"Stacks: ["[1-9]*"]"* ]]
     then
       found=true
+      break
+    fi
+  done
+
+  if [[ ${found} != true ]]
+  then
+    echo "Fail";
+  fi
+}
+
+watchApps(){
+  found=false
+  while read line
+  do
+    if [[ $line == *"Apps ["[1-9]*"]"* ]]
+    then
+      found=true
+      break
     fi
   done
 
@@ -44,6 +61,7 @@ watchApp(){
     if [[ $line == *"${appName}"* ]]
     then
       found=true
+      break
     fi
   done
 
@@ -53,7 +71,7 @@ watchApp(){
   fi
 }
 
-watchDomain() {
+watchDomains() {
   found=false
   while read line
   do
@@ -70,7 +88,7 @@ watchDomain() {
   fi
 }
 
-routeId="origin"
+routeId=""
 watchNewRoute() {
   while read data
   do
@@ -88,9 +106,9 @@ watchNewRoute() {
   if [[ ${routeId} == "" ]]
   then
     echo "Fail"
-    return
+  else
+   echo ${routeId}
   fi
-  echo ${routeId}
 }
 
 findInLines() {
@@ -149,6 +167,8 @@ watchNewKey() {
   if [[ ${sshKeyId} == "" ]]
   then
     echo "Fail"
+  else
+    echo ${sshKeyId}
   fi
 }
 
@@ -175,8 +195,8 @@ ${cde} login http://192.168.50.4:31088 --email $user_name@tw.com --password admi
 ${cde} whoami 2>&1 | watchWhoamI | report "whoami"
 
 ${cde} stacks:create ${stackName} 2>&1 | watchError | report "stacks:create"
-${cde} stacks:list 2>&1 | watchStack | report "stacks:list"
-${cde} stacks:remove  2>&1 | watchError | report "stacks:remove"
+${cde} stacks:list 2>&1 | watchStacks | report "stacks:list"
+${cde} stacks:remove ${stackName} 2>&1 | watchError | report "stacks:remove"
 
 sshKeyId=`${cde} keys:add ~/.ssh/id_rsa.pub 2>&1 | watchNewKey `; echo $sshKeyId| report "keys:add"
 if [[ ${sshKeyId} == "Fail" ]]; then
@@ -186,15 +206,15 @@ ${cde} keys:list 2>&1 | watchKeys | report "keys:list"
 ${cde} keys:remove ${sshKeyId} 2>&1 | watchError | report "keys:remove"
 
 # prepare stack data
-stackName="stackjava"
+stackName="stack-java"
 ${cde} stacks:create ${stackName} > /dev/null 2>&1
 git remote remove cde
 ${cde} apps:create ${appName} ${stackName} 2>&1 | watchError | report "apps:create"
-${cde} apps:list 2>&1 | watchApp | report "apps:list"
+${cde} apps:list 2>&1 | watchApps | report "apps:list"
 ${cde} apps:info -a ${appName} 2>&1 | watchApp | report "apps:info"
 
 ${cde} domains:add ${domainName} 2>&1 | watchError | report "domains:add"
-${cde} domains:list 2>&1 | watchDomain | report "domains:list"
+${cde} domains:list 2>&1 | watchDomains | report "domains:list"
 ${cde} domains:remove ${domainName} 2>&1 | watchError | report "domains:remove"
 
 # prepare domain data
