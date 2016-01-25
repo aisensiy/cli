@@ -42,11 +42,13 @@ func stackCreate(argv []string) error {
 	usage := `
 Create a stack.
 
-Usage: cde stacks:create <stack>
+Usage: cde stacks:create <stackname> <stackfile>
 
 Arguments:
-  <stack>
+  <stackname>
     the stack name.
+  <stackfile>
+    the stack file.
 `
 
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
@@ -55,7 +57,7 @@ Arguments:
 		return err
 	}
 
-	return cmd.StackCreate(safeGetValue(args, "<stack>"))
+	return cmd.StackCreate(safeGetValue(args, "<stackname>"), safeGetValue(args, "<stackfile>"))
 }
 
 func stackList() error {

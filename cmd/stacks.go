@@ -5,14 +5,26 @@ import (
 	"github.com/cde/apisdk/api"
 	"github.com/cde/apisdk/net"
 	"github.com/cde/client/config"
+	"github.com/ghodss/yaml"
+	"io/ioutil"
 )
 
-func StackCreate(name string) error {
+func StackCreate(name string, filename string) error {
 	configRepository := config.NewConfigRepository(func(err error) {})
 	stackRepository := api.NewStackRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
+	content, err := getStackFileContent(filename)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+	content, err = yaml.YAMLToJSON(content)
+	if err != nil {
+		fmt.Printf("err: %v\n", err)
+	}
 	stackParams := api.StackParams{
 		Name: name,
+		Content: string(content),
 	}
 	stackModel, err := stackRepository.Create(stackParams)
 	if err != nil {
@@ -20,6 +32,14 @@ func StackCreate(name string) error {
 	}
 	fmt.Printf("create stack %s with uuid %s\n", stackModel.Name(), stackModel.Id())
 	return nil
+}
+
+func getStackFileContent(filename string) (content []byte, err error) {
+	contents, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return []byte{}, err
+	}
+	return contents, err
 }
 
 
