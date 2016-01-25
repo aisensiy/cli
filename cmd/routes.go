@@ -53,7 +53,7 @@ func RouteBindWithApp(route, appName string) error {
 	routeParams := api.AppRouteParams{
 		Route: route,
 	}
-	err = app.AssociateRoute(routeParams)
+	err = app.BindWithRoute(routeParams)
 	if err != nil {
 		return err
 	}
