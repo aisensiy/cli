@@ -20,11 +20,11 @@ watchWhoamI(){
   fi
 }
 
-watchStacks() {
+watchList(){
   found=false
   while read line
   do
-    if [[ $line == *"Stacks: ["[1-9]*"]"* ]]
+    if [[ $line == *"$1 ["[1-9]*"]"* ]]
     then
       found=true
       break
@@ -37,21 +37,12 @@ watchStacks() {
   fi
 }
 
-watchApps(){
-  found=false
-  while read line
-  do
-    if [[ $line == *"Apps ["[1-9]*"]"* ]]
-    then
-      found=true
-      break
-    fi
-  done
+watchStacks() {
+  watchList "Stacks:"
+}
 
-  if [[ ${found} != true ]]
-  then
-    echo "Fail";
-  fi
+watchApps(){
+  watchList "Apps"
 }
 
 watchApp(){
@@ -72,20 +63,7 @@ watchApp(){
 }
 
 watchDomains() {
-  found=false
-  while read line
-  do
-    if [[ $line == *"Domains ["[1-9]*"]"* ]]
-    then
-      found=true
-      break
-    fi
-  done
-
-  if [[ ${found} != true ]]
-  then
-    echo "Fail";
-  fi
+  watchList "Domains"
 }
 
 routeId=""
@@ -129,20 +107,7 @@ findInLines() {
 }
 
 watchRoutes() {
-  found=false
-  while read line
-  do
-    if [[ $line == *"Routes: ["[1-9]*"]"* ]]
-    then
-      found=true
-      break
-    fi
-  done
-
-  if [[ ${found} != true ]]
-  then
-    echo "Fail";
-  fi
+  watchList "Routes:"
 }
 
 watchKeys() {
@@ -182,15 +147,16 @@ report(){
   fi
 }
 
-cde="./cde"
+cde="cde"
+consulURL="http://192.168.50.4:31088"
 appName="app`date +%s`"
 stackName="stack`date +%s`"
 domainName="domain.`date +%s`.com"
 routePath="path/`date +%s`"
 
-${cde} register http://192.168.50.4:31088 --email $user_name@tw.com --password admin 2>&1\
+${cde} register $consulURL --email $user_name@tw.com --password admin 2>&1\
 | watchError | report "register"
-${cde} login http://192.168.50.4:31088 --email $user_name@tw.com --password admin\
+${cde} login $consulURL --email $user_name@tw.com --password admin\
  2>&1 | watchError | report "login"
 ${cde} whoami 2>&1 | watchWhoamI | report "whoami"
 
