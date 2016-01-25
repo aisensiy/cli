@@ -33,10 +33,10 @@ func gitRemote(argv []string) error {
 	usage := `
 Adds git remote of application to repository
 
-Usage: deis git:remote [options]
+Usage: deis git:remote <app> [options]
 
 Options:
-  -a --app=<app>
+  app
     the uniquely identifiable name for the application.
   -r --remote=REMOTE
     name of remote to create. [default: cde]
@@ -48,5 +48,5 @@ Options:
 		return err
 	}
 
-	return cmd.GitRemote(safeGetValue(args, "--app"), args["--remote"].(string))
+	return cmd.GitRemote(safeGetValue(args, "<app>"), args["--remote"].(string))
 }
