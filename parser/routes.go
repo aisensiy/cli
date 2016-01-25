@@ -12,6 +12,7 @@ Valid commands for routes:
 routes:create        create a new routes
 routes:list          list accessible routes
 routes:bind          bind a route with an app
+routes:unbind          unbind a route with an app
 Use 'cde help [command]' to learn more.
 `
 	switch argv[0] {
@@ -21,6 +22,8 @@ Use 'cde help [command]' to learn more.
 		return routesList()
 	case "routes:bind":
 		return bindRouteWithApp(argv)
+	case "routes:unbind":
+		return unbindRouteWithApp(argv)
 	default:
 		if printHelp(argv, usage) {
 			return nil
@@ -87,4 +90,28 @@ Arguments:
 	route := safeGetValue(args, "<route>")
 	app := safeGetValue(args, "<app>")
 	return cmd.RouteBindWithApp(route, app)
+}
+
+func unbindRouteWithApp(argv []string) error {
+	usage := `
+unbind a route with an app.
+
+Usage: cde routes:unbind <route> <app>
+
+Arguments:
+  <route>
+    the route id.
+  <app>
+  	the app name
+`
+
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	route := safeGetValue(args, "<route>")
+	app := safeGetValue(args, "<app>")
+	return cmd.UnbindRouteWithApp(route, app)
 }

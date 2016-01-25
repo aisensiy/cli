@@ -62,3 +62,20 @@ func RouteBindWithApp(route, appName string) error {
 
 	return err
 }
+
+func UnbindRouteWithApp(routeId, appName string) error {
+	configRepository := config.NewConfigRepository(func(error) {})
+	appRepo := api.NewAppRepository(configRepository, net.NewCloudControllerGateway(configRepository))
+	app, err := appRepo.GetApp(appName)
+	if err != nil {
+		return err
+	}
+	err = app.UnbindRoute(routeId)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("=== Unbind successfully\n")
+
+	return err
+}
