@@ -55,11 +55,11 @@ Arguments:
   	a stack name
 
 Options:
-  --mem
+  --mem=<mem>
   	allocated memory for this app. [default: 512]
-  --disk
+  --disk=<disk>
   	max allocated disk size. [default: 20]
-  --instances
+  --instances=<instances>
   	default started instance number. [default: 1]
 `
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
