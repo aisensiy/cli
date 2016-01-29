@@ -3,8 +3,8 @@ package parser
 import (
 	"fmt"
 
-	"github.com/cde/client/cmd"
-	docopt "github.com/docopt/docopt-go"
+	docopt "github.com/sjkyspa/stacks/Godeps/_workspace/src/github.com/docopt/docopt-go"
+	"github.com/sjkyspa/stacks/client/cmd"
 )
 
 // Git routes git commands to their specific function.

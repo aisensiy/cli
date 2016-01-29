@@ -2,7 +2,7 @@ package config
 
 import (
 	"sync"
-	"github.com/cde/apisdk/config"
+	"github.com/sjkyspa/stacks/apisdk/config"
 	"path/filepath"
 	"os"
 )

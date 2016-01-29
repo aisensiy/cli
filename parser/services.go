@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"github.com/cde/client/cmd"
+	"github.com/sjkyspa/stacks/client/cmd"
 )
 
 func Service(argv []string) error {

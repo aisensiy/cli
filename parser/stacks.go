@@ -1,8 +1,8 @@
 package parser
 
 import (
-	"github.com/cde/client/cmd"
-	"github.com/docopt/docopt-go"
+	"github.com/sjkyspa/stacks/Godeps/_workspace/src/github.com/docopt/docopt-go"
+	"github.com/sjkyspa/stacks/client/cmd"
 )
 
 func Stacks(argv []string) error {

@@ -1,9 +1,9 @@
 package parser
-import (
-	"github.com/docopt/docopt-go"
-	"github.com/cde/client/cmd"
-)
 
+import (
+	"github.com/sjkyspa/stacks/Godeps/_workspace/src/github.com/docopt/docopt-go"
+	"github.com/sjkyspa/stacks/client/cmd"
+)
 
 func Routes(argv []string) error {
 	usage := `

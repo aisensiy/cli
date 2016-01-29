@@ -2,10 +2,10 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/cde/apisdk/api"
-	"github.com/cde/apisdk/net"
-	"github.com/cde/client/config"
-	"github.com/ghodss/yaml"
+	"github.com/sjkyspa/stacks/Godeps/_workspace/src/github.com/ghodss/yaml"
+	"github.com/sjkyspa/stacks/apisdk/api"
+	"github.com/sjkyspa/stacks/apisdk/net"
+	"github.com/sjkyspa/stacks/client/config"
 	"io/ioutil"
 )
 
@@ -23,7 +23,7 @@ func StackCreate(name string, filename string) error {
 		fmt.Printf("err: %v\n", err)
 	}
 	stackParams := api.StackParams{
-		Name: name,
+		Name:    name,
 		Content: string(content),
 	}
 	stackModel, err := stackRepository.Create(stackParams)
@@ -41,7 +41,6 @@ func getStackFileContent(filename string) (content []byte, err error) {
 	}
 	return contents, err
 }
-
 
 func StacksList() error {
 	configRepository := config.NewConfigRepository(func(error) {})

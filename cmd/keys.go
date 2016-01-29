@@ -5,9 +5,9 @@ import (
 	"regexp"
 	"strings"
 	"io/ioutil"
-	"github.com/cde/apisdk/api"
-	"github.com/cde/apisdk/net"
-	"github.com/cde/client/config"
+	"github.com/sjkyspa/stacks/apisdk/api"
+	"github.com/sjkyspa/stacks/apisdk/net"
+	"github.com/sjkyspa/stacks/client/config"
 )
 
 // AddKey creates an key.

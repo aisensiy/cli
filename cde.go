@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/cde/client/Godeps/_workspace/src/github.com/cde/version"
-	docopt "github.com/cde/client/Godeps/_workspace/src/github.com/docopt/docopt-go"
-	"github.com/cde/client/parser"
+	docopt "github.com/sjkyspa/stacks/Godeps/_workspace/src/github.com/docopt/docopt-go"
+	"github.com/sjkyspa/stacks/client/parser"
+	"github.com/sjkyspa/stacks/version"
 	"os"
 	"strings"
 )

@@ -2,9 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/gambol99/go-marathon"
+	"github.com/sjkyspa/stacks/Godeps/_workspace/src/github.com/gambol99/go-marathon"
 )
-
 
 func ServiceCreate() error {
 	fmt.Println("create service")

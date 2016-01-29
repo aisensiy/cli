@@ -1,11 +1,12 @@
 package parser
+
 import (
-	"os"
-	"fmt"
-	"strconv"
-	"github.com/cde/client/cmd"
-	docopt "github.com/docopt/docopt-go"
 	"errors"
+	"fmt"
+	docopt "github.com/sjkyspa/stacks/Godeps/_workspace/src/github.com/docopt/docopt-go"
+	"github.com/sjkyspa/stacks/client/cmd"
+	"os"
+	"strconv"
 )
 
 func Apps(argv []string) error {

@@ -3,8 +3,8 @@ package parser
 import (
 	"fmt"
 
-	"github.com/cde/client/cmd"
-	docopt "github.com/docopt/docopt-go"
+	docopt "github.com/sjkyspa/stacks/Godeps/_workspace/src/github.com/docopt/docopt-go"
+	"github.com/sjkyspa/stacks/client/cmd"
 )
 
 // Auth routes auth commands to the specific function.
@@ -27,14 +27,14 @@ Use 'cde help [command]' to learn more.
 		return authLogin(argv)
 	case "auth:logout":
 		return authLogout(argv)
-//	case "auth:passwd":
-//		return authPasswd(argv)
+		//	case "auth:passwd":
+		//		return authPasswd(argv)
 	case "auth:whoami":
 		return authWhoami(argv)
-//	case "auth:cancel":
-//		return authCancel(argv)
-//	case "auth:regenerate":
-//		return authRegenerate(argv)
+		//	case "auth:cancel":
+		//		return authCancel(argv)
+		//	case "auth:regenerate":
+		//		return authRegenerate(argv)
 	case "auth":
 		fmt.Print(usage)
 		return nil

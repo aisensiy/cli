@@ -1,15 +1,16 @@
 package cmd
+
 import (
+	"bytes"
 	"errors"
 	"fmt"
-	"github.com/cde/apisdk/api"
-	"github.com/cde/apisdk/net"
-	"github.com/cde/client/config"
-	"net/url"
+	"github.com/sjkyspa/stacks/Godeps/_workspace/src/golang.org/x/crypto/ssh/terminal"
+	"github.com/sjkyspa/stacks/apisdk/api"
+	"github.com/sjkyspa/stacks/apisdk/net"
+	"github.com/sjkyspa/stacks/client/config"
 	"net/http"
+	"net/url"
 	"syscall"
-	"bytes"
-	"golang.org/x/crypto/ssh/terminal"
 )
 
 func Login(controller string, email string, password string) error {
@@ -98,7 +99,7 @@ func Register(controller string, email string, password string) error {
 	userRepository := api.NewUserRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
 	userParams := api.UserParams{
-		Email: email,
+		Email:    email,
 		Password: password,
 	}
 	_, err = userRepository.Create(userParams)
@@ -161,14 +162,13 @@ func CreateHTTPClient() *http.Client {
 	return &http.Client{Transport: tr}
 }
 
-
 func doLogin(email string, password string) error {
 	configRepository := config.NewConfigRepository(func(err error) {})
 	authRepository := api.NewAuthRepository(
 		configRepository,
 		net.NewCloudControllerGateway(configRepository))
 	userParams := api.UserParams{
-		Email: email,
+		Email:    email,
 		Password: password,
 	}
 	auth, err := authRepository.Create(userParams)
@@ -177,7 +177,7 @@ func doLogin(email string, password string) error {
 		return err
 	}
 
-	userRepo:= api.NewUserRepository(configRepository, net.NewCloudControllerGateway(configRepository))
+	userRepo := api.NewUserRepository(configRepository, net.NewCloudControllerGateway(configRepository))
 	user, err := userRepo.GetUserByEmail(email)
 	if err != nil {
 		return err
