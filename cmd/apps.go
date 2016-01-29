@@ -87,7 +87,16 @@ func GetApp(appId string) error {
 	fmt.Println("memory:    ", app.Mem())
 	fmt.Println("disk:      ", app.Disk())
 
-	fmt.Println()
+	boundRoutes, err := app.GetRoutes()
+
+	fmt.Println("access routes:\n")
+	for boundRoutes != nil {
+		routes := boundRoutes.Items()
+		for _, route := range routes  {
+			fmt.Println(route.DomainField.Name+"/"+route.PathField +" \n")
+		}
+		boundRoutes, _ = boundRoutes.Next()
+	}
 
 	return nil
 }
