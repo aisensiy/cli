@@ -1,0 +1,55 @@
+{
+	"ImportPath": "github.com/cde/client",
+	"GoVersion": "go1.5",
+	"Deps": [
+		{
+			"ImportPath": "github.com/cde/apisdk/api",
+			"Rev": "8128040d938cf564fe3db09e550bdd6d4c33a70d"
+		},
+		{
+			"ImportPath": "github.com/cde/apisdk/config",
+			"Rev": "8128040d938cf564fe3db09e550bdd6d4c33a70d"
+		},
+		{
+			"ImportPath": "github.com/cde/apisdk/net",
+			"Rev": "8128040d938cf564fe3db09e550bdd6d4c33a70d"
+		},
+		{
+			"ImportPath": "github.com/cde/apisdk/util",
+			"Rev": "8128040d938cf564fe3db09e550bdd6d4c33a70d"
+		},
+		{
+			"ImportPath": "github.com/cde/version",
+			"Rev": "8128040d938cf564fe3db09e550bdd6d4c33a70d"
+		},
+		{
+			"ImportPath": "github.com/docopt/docopt-go",
+			"Comment": "0.6.1-5-g854c423",
+			"Rev": "854c423c810880e30b9fecdabb12d54f4a92f9bb"
+		},
+		{
+			"ImportPath": "github.com/donovanhide/eventsource",
+			"Rev": "d8a3071799b98cacd30b6da92f536050ccfe6da4"
+		},
+		{
+			"ImportPath": "github.com/gambol99/go-marathon",
+			"Rev": "acc2629d70da6ad42811a4f72fe53dde1d0a57d7"
+		},
+		{
+			"ImportPath": "github.com/ghodss/yaml",
+			"Rev": "73d445a93680fa1a78ae23a5839bad48f32ba1ee"
+		},
+		{
+			"ImportPath": "github.com/google/go-querystring/query",
+			"Rev": "2a60fc2ba6c19de80291203597d752e9ba58e4c0"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/ssh/terminal",
+			"Rev": "803f01ea27e23d998825ec085f0d153cac01c828"
+		},
+		{
+			"ImportPath": "gopkg.in/yaml.v2",
+			"Rev": "f7716cbe52baa25d2e9b0d0da546fcf909fc16b4"
+		}
+	]
+}

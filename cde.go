@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
+	"github.com/cde/client/Godeps/_workspace/src/github.com/cde/version"
+	docopt "github.com/cde/client/Godeps/_workspace/src/github.com/docopt/docopt-go"
+	"github.com/cde/client/parser"
 	"os"
 	"strings"
-	"github.com/cde/client/parser"
-	"github.com/cde/version"
-	docopt "github.com/docopt/docopt-go"
 )
 
 func main() {
@@ -123,12 +123,12 @@ func parseArgs(argv []string) (string, []string) {
 
 func replaceShortcut(command string) string {
 	shortcuts := map[string]string{
-		"create":         "apps:create",
-		"info":           "apps:info",
-		"login":          "auth:login",
-		"logout":         "auth:logout",
-		"register":       "auth:register",
-		"whoami":         "auth:whoami",
+		"create":   "apps:create",
+		"info":     "apps:info",
+		"login":    "auth:login",
+		"logout":   "auth:logout",
+		"register": "auth:register",
+		"whoami":   "auth:whoami",
 	}
 
 	expandedCommand := shortcuts[command]
