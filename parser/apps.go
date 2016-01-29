@@ -16,6 +16,7 @@ Valid commands for apps:
 apps:create        create a new application
 apps:list          list accessible applications
 apps:info          view info about an application
+apps:destroy       destroy an application and stop application instance in deployment environment
 
 Use 'cde help [command]' to learn more.
 `
@@ -26,6 +27,8 @@ Use 'cde help [command]' to learn more.
 		return appList()
 	case "apps:info":
 		return appInfo(argv)
+	case "apps:destroy":
+		return appDestroy(argv)
 	default:
 		if printHelp(argv, usage) {
 			return nil
@@ -120,5 +123,26 @@ Options:
 	appId := safeGetValue(args, "--app")
 
 	return cmd.GetApp(appId)
+
+}
+
+func appDestroy(argv []string) error {
+	usage := `
+Destroy an application and stop application instance in deployment environment.
+Usage: cde apps:destroy [options]
+
+Options:
+  -a --app=<app>
+    the uniquely identifiable name for the application.
+`
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	appId := safeGetValue(args, "--app")
+
+	return cmd.DestroyApp(appId)
 
 }

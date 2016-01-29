@@ -100,3 +100,20 @@ func GetApp(appId string) error {
 
 	return nil
 }
+
+func DestroyApp(appId string) error {
+	// TODO destroy deployed application service instance firstly
+
+	configRepository := config.NewConfigRepository(func(error) {})
+	appRepository := api.NewAppRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+	err := appRepository.Delete(appId)
+	if err != nil {
+		return err
+	}
+
+
+	fmt.Print("Please execute git cmd in the app directory: `git remote remove cde`")
+	return nil
+}
+
