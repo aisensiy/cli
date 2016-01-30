@@ -7,6 +7,8 @@ import (
 	"github.com/sjkyspa/stacks/client/pkg"
 	"net/url"
 	"strings"
+	"os/exec"
+	"regexp"
 )
 
 // AppCreate creates an app.
@@ -92,8 +94,8 @@ func GetApp(appId string) error {
 	fmt.Println("access routes:\n")
 	for boundRoutes != nil {
 		routes := boundRoutes.Items()
-		for _, route := range routes  {
-			fmt.Println(route.DomainField.Name+"/"+route.PathField +" \n")
+		for _, route := range routes {
+			fmt.Println(route.DomainField.Name + "/" + route.PathField + " \n")
 		}
 		boundRoutes, _ = boundRoutes.Next()
 	}
@@ -112,8 +114,26 @@ func DestroyApp(appId string) error {
 		return err
 	}
 
+	output, err := exec.Command("git", "remote", "-v").Output()
+	if (err != nil || !hasCdeRemoteConfigForApp(appId, output)) {
+		fmt.Print("Please execute git cmd in the app directory: `git remote remove cde`")
+	}else {
+		err = exec.Command("git", "remote", "remove", "cde").Run()
+		if (err != nil) {
+			fmt.Print("Remove 'cde' remote failed. \n Please execute git cmd in the app directory: `git remote remove cde`")
+		}
+	}
 
-	fmt.Print("Please execute git cmd in the app directory: `git remote remove cde`")
 	return nil
+}
+
+func hasCdeRemoteConfigForApp(appId string, gitCmdOutput []byte) bool {
+	output := string(gitCmdOutput[:])
+	reg := regexp.MustCompile(`cde	.*/` + appId + `\.git`)
+	foundResult := reg.FindAllString(output, -1)
+	if (foundResult != nil) {
+		return true
+	}
+	return false
 }
 
