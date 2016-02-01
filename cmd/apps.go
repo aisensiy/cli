@@ -136,12 +136,16 @@ func outputDependentServices(appId string){
 }
 
 func DestroyApp(appId string) error {
-	// TODO destroy deployed application service instance firstly
-
 	configRepository := config.NewConfigRepository(func(error) {})
+	deployRepo := deploymentApi.NewDeploymentRepository(configRepository, net.NewCloudControllerGateway(configRepository))
+	err := deployRepo.Destroy(appId)
+	if err != nil {
+		return err
+	}
+
 	appRepository := api.NewAppRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
-	err := appRepository.Delete(appId)
+	err = appRepository.Delete(appId)
 	if err != nil {
 		return err
 	}
