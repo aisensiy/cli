@@ -137,3 +137,18 @@ func hasCdeRemoteConfigForApp(appId string, gitCmdOutput []byte) bool {
 	return false
 }
 
+func SwitchStack(appName string, stackName string) error {
+
+	configRepository := config.NewConfigRepository(func(error) {})
+	appRepository := api.NewAppRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+	params := api.UpdateStackParams{
+		Stack: stackName,
+	}
+	err := appRepository.SwitchStack(appName, params)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

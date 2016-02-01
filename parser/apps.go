@@ -17,6 +17,7 @@ apps:create        create a new application
 apps:list          list accessible applications
 apps:info          view info about an application
 apps:destroy       destroy an application and stop application instance in deployment environment
+apps:stack-update       change to use another stack
 
 Use 'cde help [command]' to learn more.
 `
@@ -29,6 +30,8 @@ Use 'cde help [command]' to learn more.
 		return appInfo(argv)
 	case "apps:destroy":
 		return appDestroy(argv)
+	case "apps:stack-update":
+		return appStackUpdate(argv)
 	default:
 		if printHelp(argv, usage) {
 			return nil
@@ -144,5 +147,29 @@ Options:
 	appId := safeGetValue(args, "--app")
 
 	return cmd.DestroyApp(appId)
+
+}
+
+func appStackUpdate(argv []string) error {
+	usage := `
+Change to use another stack.
+Usage: cde apps:stack-update [options]
+
+Options:
+  -a --app=<app>
+    the uniquely identifiable name for the application.
+  -s --stack=<stack>
+    another existing stack name.
+`
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	appName := safeGetValue(args, "--app")
+	stackName := safeGetValue(args, "--stack")
+
+	return cmd.SwitchStack(appName, stackName)
 
 }
