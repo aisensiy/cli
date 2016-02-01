@@ -9,6 +9,7 @@ import (
 	"strings"
 	"os/exec"
 	"regexp"
+	deploymentApi "github.com/sjkyspa/stacks/deploymentsdk/api"
 )
 
 // AppCreate creates an app.
@@ -82,16 +83,29 @@ func GetApp(appId string) error {
 	if err != nil {
 		return err
 	}
+	outputDescription(app)
+	outputRoutes(app)
+	outputDependentServices(appId)
+	
+	return nil
+}
 
+func outputDescription(app api.App){
 	fmt.Printf("=== %s Application\n", app.Id())
 	fmt.Println("id:        ", app.Id())
 	fmt.Println("instances: ", app.Instances())
 	fmt.Println("memory:    ", app.Mem())
 	fmt.Println("disk:      ", app.Disk())
+}
 
+func outputRoutes(app api.App) {
 	boundRoutes, err := app.GetRoutes()
+	fmt.Println("--- Access routes:\n")
 
-	fmt.Println("access routes:\n")
+	if(err != nil) {
+		fmt.Print(err)
+		return
+	}
 	for boundRoutes != nil {
 		routes := boundRoutes.Items()
 		for _, route := range routes {
@@ -100,7 +114,25 @@ func GetApp(appId string) error {
 		boundRoutes, _ = boundRoutes.Next()
 	}
 
-	return nil
+}
+
+func outputDependentServices(appId string){
+	configRepository := config.NewConfigRepository(func(error) {})
+	repo := deploymentApi.NewDeploymentRepository(configRepository, net.NewCloudControllerGateway(configRepository))
+	servicesModel, err := repo.GetDependentServicesForApp(appId)
+	fmt.Print("--- Dependent services:\n")
+	if(err != nil) {
+		fmt.Print(err)
+		return
+	}
+	servicesArray := servicesModel.Apps()
+	for _, service := range servicesArray  {
+		fmt.Println("Id:      ", service.Id())
+		fmt.Println("Instance(s):      ", service.Instance())
+		fmt.Println("Memory:      ", service.Memory())
+		fmt.Println("Env:      ", service.Env())
+	}
+	
 }
 
 func DestroyApp(appId string) error {
