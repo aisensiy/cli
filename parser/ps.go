@@ -4,6 +4,8 @@ import (
 	"fmt"
 	docopt "github.com/sjkyspa/stacks/Godeps/_workspace/src/github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
+	"github.com/sjkyspa/stacks/deploymentsdk/api"
+	"strconv"
 )
 
 func Ps(argv []string) error {
@@ -55,7 +57,44 @@ Arguments:
 }
 
 func processScale(argv []string) error {
-	return nil
+	usage := `
+Scale a service for an application.
+Usage: cde ps:scale <app-name> <service-name> [options]
+
+Arguments:
+  <app-name>
+  	the application name
+  <service-name>
+  	the service name
+
+Options:
+  --mem=<mem>
+  	allocated memory for this app. [default: 512]
+  --disk=<disk>
+  	max allocated disk size. [default: 20]
+  --instances=<instances>
+  	default started instance number. [default: 1]
+`
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+	appName := safeGetValue(args, "<app-name>")
+	serviceName := safeGetValue(args, "<service-name>")
+	instances := safeGetValue(args, "--instances")
+
+	var instanceNum int = 0
+	if instanceNum, err = strconv.Atoi(instances); err != nil {
+		fmt.Sprintf("Error: %v\n", err)
+		return err
+	}
+
+	params := api.ServiceConfigParams{
+		Instance: instanceNum,
+	}
+
+	return cmd.Scale(appName, serviceName, params)
 }
 
 func listDependentServices(argv []string) error {

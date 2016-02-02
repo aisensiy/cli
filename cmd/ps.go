@@ -23,3 +23,18 @@ func RestartApp(appName string) error {
 	return nil
 }
 
+func Scale(appName, serviceName string, params deployApi.ServiceConfigParams) (apiErr error) {
+	configRepository := config.NewConfigRepository(func(error) {})
+	deployRepo := deployApi.NewDeploymentRepository(configRepository, net.NewCloudControllerGateway(configRepository))
+	deployment, apiErr := deployRepo.GetDeploymentByAppName(appName)
+	if apiErr != nil {
+		return apiErr
+	}
+	service, apiErr := deployment.GetService(serviceName)
+	if apiErr != nil {
+		return apiErr
+	}
+	apiErr = service.Scale(params)
+	return
+}
+
