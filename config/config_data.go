@@ -4,6 +4,7 @@ import "encoding/json"
 type Data struct {
 	Email    string `json:"email"`
 	Endpoint string `json:"endpoint"`
+	DeploymentEndpoint string `json:"deployment_endpoint"`
 	Auth     string `json:"auth"`
 	Id       string `json:"id"`
 }

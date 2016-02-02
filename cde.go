@@ -37,7 +37,7 @@ Subcommands, use 'cde help [subcommand]' to learn more::
   keys      	manage keys
   git           manage git for applications
   config        manage environment variables that define app config
-
+  ps			manage process status
 
 `
 	command, argv := parseArgs(argv)
@@ -69,6 +69,8 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 		err = parser.Routes(argv)
 	case "keys":
 		err = parser.Keys(argv)
+	case "ps":
+		err = parser.Ps(argv)
 	case "git":
 		err = parser.Git(argv)
 	case "config":

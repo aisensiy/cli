@@ -2,10 +2,31 @@ package config
 
 import (
 	"sync"
-	"github.com/sjkyspa/stacks/apisdk/config"
 	"path/filepath"
 	"os"
 )
+
+type ConfigRepository interface {
+	Reader
+	Writer
+	Close()
+}
+
+type Reader interface {
+	ApiEndpoint() string
+	DeploymentEndpoint() string
+	Email() string
+	Auth() string
+	Id() string
+}
+
+type Writer interface {
+	SetApiEndpoint(string)
+	SetDeploymentEndpoint(string)
+	SetEmail(string)
+	SetAuth(string)
+	SetId(string)
+}
 
 type DefaultConfigRepository struct {
 	data      *Data
@@ -15,7 +36,7 @@ type DefaultConfigRepository struct {
 	onError   func(error)
 }
 
-func NewConfigRepository(errorHandler func(error)) config.ConfigRepository {
+func NewConfigRepository(errorHandler func(error)) ConfigRepository {
 	if errorHandler == nil {
 		return nil
 	}
@@ -23,14 +44,14 @@ func NewConfigRepository(errorHandler func(error)) config.ConfigRepository {
 	return NewRepositoryFromPersistor(NewDiskPersistor(path), errorHandler)
 }
 
-func NewRepositoryFromFilepath(filepath string, errorHandler func(error)) config.ConfigRepository {
+func NewRepositoryFromFilepath(filepath string, errorHandler func(error)) ConfigRepository {
 	if errorHandler == nil {
 		return nil
 	}
 	return NewRepositoryFromPersistor(NewDiskPersistor(filepath), errorHandler)
 }
 
-func NewRepositoryFromPersistor(persistor Persistor, errorHandler func(error)) config.ConfigRepository {
+func NewRepositoryFromPersistor(persistor Persistor, errorHandler func(error)) ConfigRepository {
 	data := NewData()
 
 	return &DefaultConfigRepository{
@@ -83,6 +104,19 @@ func (c DefaultConfigRepository) ApiEndpoint() (endpoint string) {
 func (c DefaultConfigRepository) SetApiEndpoint(endpoint string) {
 	c.write(func() {
 		c.data.Endpoint = endpoint
+	})
+}
+
+func (c DefaultConfigRepository) DeploymentEndpoint() (endpoint string) {
+	c.read(func() {
+		endpoint = c.data.DeploymentEndpoint
+	})
+	return
+}
+
+func (c DefaultConfigRepository) SetDeploymentEndpoint(endpoint string) {
+	c.write(func() {
+		c.data.DeploymentEndpoint = endpoint
 	})
 }
 

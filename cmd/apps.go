@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"regexp"
 	deploymentApi "github.com/sjkyspa/stacks/deploymentsdk/api"
+	deploymentNet "github.com/sjkyspa/stacks/deploymentsdk/net"
 )
 
 // AppCreate creates an app.
@@ -118,7 +119,7 @@ func outputRoutes(app api.App) {
 
 func outputDependentServices(appId string){
 	configRepository := config.NewConfigRepository(func(error) {})
-	repo := deploymentApi.NewDeploymentRepository(configRepository, net.NewCloudControllerGateway(configRepository))
+	repo := deploymentApi.NewDeploymentRepository(configRepository, deploymentNet.NewCloudControllerGateway(configRepository))
 	servicesModel, err := repo.GetDependentServicesForApp(appId)
 	fmt.Print("--- Dependent services:\n")
 	if(err != nil) {
@@ -137,7 +138,7 @@ func outputDependentServices(appId string){
 
 func DestroyApp(appId string) error {
 	configRepository := config.NewConfigRepository(func(error) {})
-	deployRepo := deploymentApi.NewDeploymentRepository(configRepository, net.NewCloudControllerGateway(configRepository))
+	deployRepo := deploymentApi.NewDeploymentRepository(configRepository, deploymentNet.NewCloudControllerGateway(configRepository))
 	err := deployRepo.Destroy(appId)
 	if err != nil {
 		return err
