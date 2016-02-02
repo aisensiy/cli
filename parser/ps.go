@@ -98,5 +98,20 @@ Options:
 }
 
 func listDependentServices(argv []string) error {
-	return nil
+	usage := `
+List dependent services for an application.
+Usage: cde ps:list <app>
+
+Arguments:
+  <app>
+  	the application name
+`
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+	appName := safeGetValue(args, "<app>")
+
+	return cmd.ListDependentServices(appName)
 }

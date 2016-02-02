@@ -117,14 +117,14 @@ func outputRoutes(app api.App) {
 
 }
 
-func outputDependentServices(appId string){
+func outputDependentServices(appId string) error {
 	configRepository := config.NewConfigRepository(func(error) {})
 	repo := deploymentApi.NewDeploymentRepository(configRepository, deploymentNet.NewCloudControllerGateway(configRepository))
 	servicesModel, err := repo.GetDependentServicesForApp(appId)
 	fmt.Print("--- Dependent services:\n")
 	if(err != nil) {
 		fmt.Print(err)
-		return
+		return err
 	}
 	servicesArray := servicesModel.Apps()
 	for _, service := range servicesArray  {
@@ -133,7 +133,7 @@ func outputDependentServices(appId string){
 		fmt.Println("Memory:      ", service.Memory())
 		fmt.Println("Env:      ", service.Env())
 	}
-	
+	return nil
 }
 
 func DestroyApp(appId string) error {

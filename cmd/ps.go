@@ -38,3 +38,6 @@ func Scale(appName, serviceName string, params deployApi.ServiceConfigParams) (a
 	return
 }
 
+func ListDependentServices(appName string) error {
+	return outputDependentServices(appName)
+}
