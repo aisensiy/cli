@@ -25,7 +25,7 @@ Use 'cde help [command]' to learn more.
 		return processScale(argv)
 	case "ps:list":
 		return listDependentServices(argv)
-	case "keys":
+	case "ps":
 		fmt.Print(usage)
 	default:
 		if printHelp(argv, usage) {

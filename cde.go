@@ -31,7 +31,7 @@ Subcommands, use 'cde help [subcommand]' to learn more::
   apps          manage applications used to provide services
   stacks        manage stacks
   domains       manage domains
-  services      manage services
+  services      manage services instances in marathon
   stacks      	manage stacks
   routes      	manage routes
   keys      	manage keys
@@ -61,7 +61,7 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 		err = parser.Auth(argv)
 	case "domains":
 		err = parser.Domains(argv)
-	case "service":
+	case "services":
 		err = parser.Service(argv)
 	case "stacks":
 		err = parser.Stacks(argv)

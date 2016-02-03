@@ -3,6 +3,10 @@ package cmd
 import (
 	"fmt"
 	"github.com/sjkyspa/stacks/Godeps/_workspace/src/github.com/gambol99/go-marathon"
+	"github.com/sjkyspa/stacks/client/config"
+	deployApi "github.com/sjkyspa/stacks/deploymentsdk/api"
+	deployNet "github.com/sjkyspa/stacks/deploymentsdk/net"
+
 )
 
 func ServiceCreate() error {
@@ -28,4 +32,24 @@ func ServiceCreate() error {
 	}
 	fmt.Println(applicationCreated.ID)
 	return nil
+}
+
+func ServiceInfo(appName, serviceName string) (apiErr error) {
+	configRepository := config.NewConfigRepository(func(error) {})
+	deployRepo := deployApi.NewDeploymentRepository(configRepository, deployNet.NewCloudControllerGateway(configRepository))
+	deployment, apiErr := deployRepo.GetDeploymentByAppName(appName)
+	if apiErr != nil {
+		return apiErr
+	}
+	service, apiErr := deployment.GetService(serviceName)
+	if apiErr != nil {
+		return apiErr
+	}
+
+	fmt.Printf("=== %s Service\n", service.Name())
+	fmt.Println("id:        ", service.Id())
+	fmt.Println("instances: ", service.Instance())
+	fmt.Println("memory:    ", service.Memory())
+	fmt.Println("disk:      ", service.Disk())
+	return
 }
