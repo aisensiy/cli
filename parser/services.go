@@ -102,11 +102,28 @@ Options:
 		return fmt.Errorf("Application name and service name are both required!")
 	}
 
-	memory := safeGetOrDefault(args, "--mem", "")
-	cpu := safeGetOrDefault(args, "--cpu", "")
-	instances := safeGetOrDefault(args, "--instance", "")
+	updateParams := make(map[string]string, 0)
+	updateParams["mem"] = safeGetOrDefault(args, "--mem", "")
+	updateParams["cpu"] = safeGetOrDefault(args, "--cpu", "")
+	updateParams["instance"] = safeGetOrDefault(args, "--instance", "")
 
-	originService, err := cmd.GetService(appName, serviceName)
+	newServiceParams, err := mergeWithOriginService(appName, serviceName, updateParams)
+	if err != nil {
+		return err
+	}
+
+	return cmd.ServiceUpdate(appName, serviceName, newServiceParams)
+}
+
+func mergeWithOriginService(appName, serviceName string, params map[string]string) (deployApi.ServiceConfigParams, apiErr error){
+	memory := params["mem"]
+	cpu := params["cpu"]
+	instances := params["instance"]
+
+	originService, apiErr := cmd.GetService(appName, serviceName)
+	if(apiErr != nil){
+		return
+	}
 
 	newServiceParams := deployApi.ServiceConfigParams{}
 	if mem, err := strconv.Atoi(memory); err == nil {
@@ -126,6 +143,5 @@ Options:
 	}else{
 		newServiceParams.CPUS = originService.CPU()
 	}
-
-	return cmd.ServiceUpdate(appName, serviceName, newServiceParams)
+	return newServiceParams, nil
 }
