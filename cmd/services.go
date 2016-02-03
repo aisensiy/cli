@@ -35,13 +35,7 @@ func ServiceCreate() error {
 }
 
 func ServiceInfo(appName, serviceName string) (apiErr error) {
-	configRepository := config.NewConfigRepository(func(error) {})
-	deployRepo := deployApi.NewDeploymentRepository(configRepository, deployNet.NewCloudControllerGateway(configRepository))
-	deployment, apiErr := deployRepo.GetDeploymentByAppName(appName)
-	if apiErr != nil {
-		return apiErr
-	}
-	service, apiErr := deployment.GetService(serviceName)
+	service, apiErr := GetService(appName,serviceName)
 	if apiErr != nil {
 		return apiErr
 	}
@@ -50,6 +44,27 @@ func ServiceInfo(appName, serviceName string) (apiErr error) {
 	fmt.Println("id:        ", service.Id())
 	fmt.Println("instances: ", service.Instance())
 	fmt.Println("memory:    ", service.Memory())
+	fmt.Println("cpus:    ", service.CPU())
 	fmt.Println("disk:      ", service.Disk())
+	return
+}
+
+func ServiceUpdate(appName, serviceName string, params deployApi.ServiceConfigParams) ( apiErr error) {
+	service, apiErr := GetService(appName, serviceName)
+	if apiErr != nil {
+		return apiErr
+	}
+	apiErr = service.Scale(params)
+	return
+}
+
+func GetService(appName, serviceName string) (service deployApi.Service, apiErr error) {
+	configRepository := config.NewConfigRepository(func(error) {})
+	deployRepo := deployApi.NewDeploymentRepository(configRepository, deployNet.NewCloudControllerGateway(configRepository))
+	deployment, apiErr := deployRepo.GetDeploymentByAppName(appName)
+	if apiErr != nil {
+		return
+	}
+	service, apiErr = deployment.GetService(serviceName)
 	return
 }

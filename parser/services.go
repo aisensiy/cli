@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/sjkyspa/stacks/Godeps/_workspace/src/github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
+	"strconv"
+	deployApi "github.com/sjkyspa/stacks/deploymentsdk/api"
 )
 
 func Service(argv []string) error {
@@ -21,6 +23,8 @@ Use 'cde help [command]' to learn more.
 		return serviceCreate(argv)
 	case "services:info":
 		return serviceInfo(argv)
+	case "services:update":
+		return serviceUpdate(argv)
 	case "services":
 		fmt.Print(usage)
 	default:
@@ -62,4 +66,66 @@ Arguments:
 		return fmt.Errorf("Application name and service name are both required!")
 	}
 	return cmd.ServiceInfo(appName, serviceName)
+}
+
+func serviceUpdate(argv []string) error {
+	usage := `
+Update service basic information.
+
+Usage: cde services:update <app-name> <service-name> [options]
+
+Arguments:
+  <app-name>
+    the (hosted) application name.
+  <service-name>
+    the service name defined in stack file.
+
+
+Options:
+  --mem=<mem>
+  	allocated memory for this service.
+  --cpu=<cpu>
+  	max allocated disk size.
+  --instance=<instance>
+  	instance number.
+`
+
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	appName := safeGetOrDefault(args, "<app-name>", "")
+	serviceName := safeGetOrDefault(args, "<service-name>", "")
+	if(appName == "" || serviceName == ""){
+		return fmt.Errorf("Application name and service name are both required!")
+	}
+
+	memory := safeGetOrDefault(args, "--mem", "")
+	cpu := safeGetOrDefault(args, "--cpu", "")
+	instances := safeGetOrDefault(args, "--instance", "")
+
+	originService, err := cmd.GetService(appName, serviceName)
+
+	newServiceParams := deployApi.ServiceConfigParams{}
+	if mem, err := strconv.Atoi(memory); err == nil {
+		newServiceParams.Memory = mem
+	}else{
+		newServiceParams.Memory = originService.Memory()
+	}
+
+	if ins, err := strconv.Atoi(instances); err == nil {
+		newServiceParams.Instance = ins
+	}else{
+		newServiceParams.Instance = originService.Instance()
+	}
+
+	if cpu, err := strconv.ParseFloat(cpu, 32); err == nil {
+		newServiceParams.CPUS = float32(cpu)
+	}else{
+		newServiceParams.CPUS = originService.CPU()
+	}
+
+	return cmd.ServiceUpdate(appName, serviceName, newServiceParams)
 }
