@@ -54,7 +54,7 @@ func ServiceUpdate(appName, serviceName string, params deployApi.ServiceConfigPa
 	if apiErr != nil {
 		return apiErr
 	}
-	apiErr = service.Scale(params)
+	apiErr = service.Update(params)
 	return
 }
 

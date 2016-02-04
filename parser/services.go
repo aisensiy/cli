@@ -115,7 +115,7 @@ Options:
 	return cmd.ServiceUpdate(appName, serviceName, newServiceParams)
 }
 
-func mergeWithOriginService(appName, serviceName string, params map[string]string) (deployApi.ServiceConfigParams, apiErr error){
+func mergeWithOriginService(appName, serviceName string, params map[string]string) (newServiceParams deployApi.ServiceConfigParams, apiErr error){
 	memory := params["mem"]
 	cpu := params["cpu"]
 	instances := params["instance"]
@@ -125,7 +125,7 @@ func mergeWithOriginService(appName, serviceName string, params map[string]strin
 		return
 	}
 
-	newServiceParams := deployApi.ServiceConfigParams{}
+	newServiceParams = deployApi.ServiceConfigParams{}
 	if mem, err := strconv.Atoi(memory); err == nil {
 		newServiceParams.Memory = mem
 	}else{

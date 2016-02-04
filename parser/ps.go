@@ -90,8 +90,15 @@ Options:
 		return err
 	}
 
+	originService, err := cmd.GetService(appName, serviceName)
+	if(err != nil){
+		return err
+	}
+
 	params := api.ServiceConfigParams{
 		Instance: instanceNum,
+		CPUS: originService.CPU(),
+		Memory: originService.Memory(),
 	}
 
 	return cmd.Scale(appName, serviceName, params)
