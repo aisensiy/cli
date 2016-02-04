@@ -47,6 +47,7 @@ func AppCreate(name string, stackName string, memory int, disk int, instances in
 		splits := strings.Split(host, ":")
 		host = splits[0]
 	}
+	git.DeleteCdeRemote()
 	host = "192.168.50.6"
 	if err = git.CreateRemote(host, "cde", createdApp.Id()); err != nil {
 		if err.Error() == "exit status 128" {

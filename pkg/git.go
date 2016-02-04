@@ -108,3 +108,10 @@ func findRemote(host string) (string, error) {
 func RemoteURL(host, appID string) string {
 	return fmt.Sprintf("ssh://git@%s:2222/%s.git", host, appID)
 }
+
+func DeleteCdeRemote() error {
+	if _, err := exec.Command("git", "remote", "remove", "cde").Output(); err != nil {
+		return err
+	}
+	return nil
+}
