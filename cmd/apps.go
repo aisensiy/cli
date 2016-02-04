@@ -7,8 +7,6 @@ import (
 	"github.com/sjkyspa/stacks/client/pkg"
 	"net/url"
 	"strings"
-	"os/exec"
-	"regexp"
 	deploymentApi "github.com/sjkyspa/stacks/deploymentsdk/api"
 	deploymentNet "github.com/sjkyspa/stacks/deploymentsdk/net"
 )
@@ -152,27 +150,16 @@ func DestroyApp(appId string) error {
 		return err
 	}
 
-	output, err := exec.Command("git", "remote", "-v").Output()
-	if (err != nil || !hasCdeRemoteConfigForApp(appId, output)) {
-		fmt.Print("Please execute git cmd in the app directory: `git remote remove cde`")
-	}else {
-		err = exec.Command("git", "remote", "remove", "cde").Run()
+	if (git.HasRemoteNameForApp("cde", appId)) {
+		err = git.DeleteRemote("cde")
 		if (err != nil) {
 			fmt.Print("Remove 'cde' remote failed. \n Please execute git cmd in the app directory: `git remote remove cde`")
 		}
+	}else {
+		fmt.Print("Please execute git cmd in the app directory: `git remote remove cde`")
 	}
 
 	return nil
-}
-
-func hasCdeRemoteConfigForApp(appId string, gitCmdOutput []byte) bool {
-	output := string(gitCmdOutput[:])
-	reg := regexp.MustCompile(`cde	.*/` + appId + `\.git`)
-	foundResult := reg.FindAllString(output, -1)
-	if (foundResult != nil) {
-		return true
-	}
-	return false
 }
 
 func SwitchStack(appName string, stackName string) error {

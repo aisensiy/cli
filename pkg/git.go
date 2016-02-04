@@ -52,6 +52,14 @@ func DeleteRemote(appID string) error {
 	return nil
 }
 
+func HasRemoteNameForApp(remoteName, appId string) (bool){
+	name, err := remoteNameFromAppID(appId)
+	if(err != nil) {
+		return false
+	}
+	return name == remoteName
+}
+
 func remoteNameFromAppID(appID string) (string, error) {
 	out, err := exec.Command("git", "remote", "-v").Output()
 
