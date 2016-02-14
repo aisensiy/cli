@@ -126,8 +126,8 @@ func mergeWithOriginService(appName, serviceName string, params map[string]strin
 	}
 
 	newServiceParams = deployApi.ServiceConfigParams{}
-	if mem, err := strconv.Atoi(memory); err == nil {
-		newServiceParams.Memory = mem
+	if mem, err := strconv.ParseFloat(memory, 32); err == nil {
+		newServiceParams.Memory = float32(mem)
 	}else{
 		newServiceParams.Memory = originService.Memory()
 	}
