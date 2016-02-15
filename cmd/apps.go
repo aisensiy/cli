@@ -1,15 +1,17 @@
 package cmd
 import (
+	"os"
 	"fmt"
+	"errors"
+	"strings"
+	"net/url"
+	"github.com/olekukonko/tablewriter"
 	"github.com/sjkyspa/stacks/apisdk/api"
 	"github.com/sjkyspa/stacks/apisdk/net"
 	"github.com/sjkyspa/stacks/client/config"
 	"github.com/sjkyspa/stacks/client/pkg"
-	"net/url"
-	"strings"
 	deploymentApi "github.com/sjkyspa/stacks/deploymentsdk/api"
 	deploymentNet "github.com/sjkyspa/stacks/deploymentsdk/net"
-	"errors"
 )
 
 // AppCreate creates an app.
@@ -96,10 +98,18 @@ func GetApp(appId string) error {
 
 func outputDescription(app api.App) {
 	fmt.Printf("--- %s Application\n", app.Id())
-	fmt.Println("id:        ", app.Id())
-	fmt.Println("instances: ", app.Instances())
-	fmt.Println("memory:    ", app.Mem())
-	fmt.Println("disk:      ", app.Disk())
+	data := make([][]string, 4)
+	data[0] = []string{"ID", app.Id()}
+	data[1] = []string{"instances", fmt.Sprintf("%d", app.Instances())}
+	data[2] = []string{"memory", fmt.Sprintf("%d", app.Mem())}
+	data[3] = []string{"disk", fmt.Sprintf("%d", app.Disk())}
+
+	table := tablewriter.NewWriter(os.Stdout)
+
+	for _, v := range data {
+		table.Append(v)
+	}
+	table.Render() // Send output
 }
 
 func outputRoutes(app api.App) {
@@ -133,11 +143,14 @@ func outputDependentServices(appId string) error {
 		return err
 	}
 	servicesArray := servicesModel.Apps()
-	for _, service := range servicesArray {
-		fmt.Println("Id:      ", service.Id())
-		fmt.Println("Instance(s):      ", service.Instance())
-		fmt.Println("Memory:      ", service.Memory())
-		fmt.Println("Env:      ", service.Env())
+	for index, service := range servicesArray {
+		fmt.Printf("----- Service %d:\n", index)
+		table := tablewriter.NewWriter(os.Stdout)
+		table.Append([]string{"ID", service.Id()})
+		table.Append([]string{"Instances", fmt.Sprintf("%d", service.Instance())})
+		table.Append([]string{"Memory", fmt.Sprintf("%v", service.Memory())})
+		table.Append([]string{"Env", service.Env()})
+		table.Render() // Send output
 	}
 	return nil
 }

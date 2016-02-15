@@ -155,7 +155,7 @@ func serviceLogs(argv []string) error {
 	usage := `
 Prints info about the current service.
 
-Usage: cde services:log [options]
+Usage: cde services:logs [options]
 
 Options:
   -a --app=<app>
