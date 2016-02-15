@@ -15,6 +15,7 @@ type ConfigRepository interface {
 type Reader interface {
 	ApiEndpoint() string
 	DeploymentEndpoint() string
+	GitHost() string
 	Email() string
 	Auth() string
 	Id() string
@@ -23,6 +24,7 @@ type Reader interface {
 type Writer interface {
 	SetApiEndpoint(string)
 	SetDeploymentEndpoint(string)
+	SetGitHost(string)
 	SetEmail(string)
 	SetAuth(string)
 	SetId(string)
@@ -117,6 +119,19 @@ func (c DefaultConfigRepository) DeploymentEndpoint() (endpoint string) {
 func (c DefaultConfigRepository) SetDeploymentEndpoint(endpoint string) {
 	c.write(func() {
 		c.data.DeploymentEndpoint = endpoint
+	})
+}
+
+func (c DefaultConfigRepository) GitHost() (gitHost string) {
+	c.read(func() {
+		gitHost = c.data.GitHost
+	})
+	return
+}
+
+func (c DefaultConfigRepository) SetGitHost(gitHost string) {
+	c.write(func() {
+		c.data.GitHost = gitHost
 	})
 }
 

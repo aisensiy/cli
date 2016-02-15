@@ -5,6 +5,7 @@ type Data struct {
 	Email    string `json:"email"`
 	Endpoint string `json:"endpoint"`
 	DeploymentEndpoint string `json:"deployment_endpoint"`
+	GitHost  string `json:"host"`
 	Auth     string `json:"auth"`
 	Id       string `json:"id"`
 }

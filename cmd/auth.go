@@ -38,6 +38,7 @@ func Login(controller string, email string, password string) error {
 	configRepository := config.NewConfigRepository(func(err error) {})
 	configRepository.SetApiEndpoint(controllerURL)
 	configRepository.SetDeploymentEndpoint("http://192.168.50.4:31089")
+	configRepository.SetGitHost("192.168.50.6")
 
 	return doLogin(email, password)
 }
