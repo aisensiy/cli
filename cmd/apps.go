@@ -9,10 +9,11 @@ import (
 	"strings"
 	deploymentApi "github.com/sjkyspa/stacks/deploymentsdk/api"
 	deploymentNet "github.com/sjkyspa/stacks/deploymentsdk/net"
+	"errors"
 )
 
 // AppCreate creates an app.
-func AppCreate(name string, stackName string, memory int, disk int, instances int) error {
+func AppCreate(appId string, stackName string, memory int, disk int, instances int) error {
 	configRepository := config.NewConfigRepository(func(error) {})
 	appRepository := api.NewAppRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
@@ -27,7 +28,7 @@ func AppCreate(name string, stackName string, memory int, disk int, instances in
 	stackId := stacks.Items()[0].Id()
 
 	appParams := api.AppParams{
-		Name: name,
+		Name: appId,
 		Stack: stackId,
 		Mem: memory,
 		Disk:disk,
@@ -76,7 +77,10 @@ func AppsList() error {
 }
 
 func GetApp(appId string) error {
-	configRepository := config.NewConfigRepository(func(error) {})
+	configRepository, appId, err := load(appId)
+	if err != nil {
+		return err
+	}
 	appRepository := api.NewAppRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
 	app, err := appRepository.GetApp(appId)
