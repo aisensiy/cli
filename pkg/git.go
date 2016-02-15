@@ -80,10 +80,8 @@ func remoteNameFromAppID(appID string) (string, error) {
 func DetectAppName(host string) (string, error) {
 	remote, err := findRemote(host)
 
-	// Don't return an error if remote can't be found, return directory name instead.
 	if err != nil {
-		dir, err := os.Getwd()
-		return strings.ToLower(path.Base(dir)), err
+		return "", err
 	}
 
 	ss := strings.Split(remote, "/")
