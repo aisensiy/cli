@@ -18,6 +18,7 @@ apps:list          	list accessible applications
 apps:info          	view info about an application
 apps:destroy       	destroy an application and stop application instance in deployment environment
 apps:stack-update	change to use another stack
+apps:logs       	view logs
 
 Use 'cde help [command]' to learn more.
 `

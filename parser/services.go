@@ -13,7 +13,7 @@ func Service(argv []string) error {
 	usage := `
 Valid commands for services:
 
-services:log        view serice logs
+services:logs        view serice logs
 services:info       view service basic information
 services:update     update service basic information
 
@@ -26,7 +26,7 @@ Use 'cde help [command]' to learn more.
 		return serviceInfo(argv)
 	case "services:update":
 		return serviceUpdate(argv)
-	case "services:log":
+	case "services:logs":
 		return serviceLogs(argv)
 	case "services":
 		fmt.Print(usage)
