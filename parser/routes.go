@@ -12,7 +12,7 @@ Valid commands for routes:
 routes:create        create a new routes
 routes:list          list accessible routes
 routes:bind          bind a route with an app
-routes:unbind          unbind a route with an app
+routes:unbind        unbind a route with an app
 Use 'cde help [command]' to learn more.
 `
 	switch argv[0] {

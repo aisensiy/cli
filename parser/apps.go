@@ -13,11 +13,11 @@ func Apps(argv []string) error {
 	usage := `
 Valid commands for apps:
 
-apps:create        create a new application
-apps:list          list accessible applications
-apps:info          view info about an application
-apps:destroy       destroy an application and stop application instance in deployment environment
-apps:stack-update       change to use another stack
+apps:create        	create a new application
+apps:list          	list accessible applications
+apps:info          	view info about an application
+apps:destroy       	destroy an application and stop application instance in deployment environment
+apps:stack-update	change to use another stack
 
 Use 'cde help [command]' to learn more.
 `

@@ -13,8 +13,8 @@ func Ps(argv []string) error {
 Valid commands for keys:
 
 ps:restart	restart a service process (without restarting dependent services)
-ps:scale    scale a service process
-ps:list     list all dependent services for an application(service)
+ps:scale	scale a service process
+ps:list		list all dependent services for an application(service)
 
 Use 'cde help [command]' to learn more.
 `

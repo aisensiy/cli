@@ -37,7 +37,7 @@ Subcommands, use 'cde help [subcommand]' to learn more::
   keys      	manage keys
   git           manage git for applications
   config        manage environment variables that define app config
-  ps			manage process status
+  ps            manage process status
 
 `
 	command, argv := parseArgs(argv)
