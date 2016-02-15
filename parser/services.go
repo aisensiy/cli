@@ -67,8 +67,8 @@ Options:
 
 	appName := safeGetOrDefault(args, "--app", "")
 	serviceName := safeGetOrDefault(args, "<service-name>", "")
-	if (appName == "" || serviceName == "") {
-		return fmt.Errorf("Application name and service name are both required!")
+	if (serviceName == "") {
+		return fmt.Errorf("Service name is required!")
 	}
 	return cmd.ServiceInfo(appName, serviceName)
 }
@@ -77,7 +77,7 @@ func serviceUpdate(argv []string) error {
 	usage := `
 Update service basic information.
 
-Usage: cde services:update <app-name> <service-name> [options]
+Usage: cde services:update <service-name> [options]
 
 Arguments:
   <service-name>
@@ -103,8 +103,8 @@ Options:
 
 	appId := safeGetOrDefault(args, "--app", "")
 	serviceName := safeGetOrDefault(args, "<service-name>", "")
-	if (appId == "" || serviceName == "") {
-		return fmt.Errorf("Application name and service name are both required!")
+	if (serviceName == "") {
+		return fmt.Errorf("Service name is required!")
 	}
 
 	updateParams := make(map[string]string, 0)
@@ -155,7 +155,7 @@ func serviceLogs(argv []string) error {
 	usage := `
 Prints info about the current service.
 
-Usage: cde services:logs [options]
+Usage: cde services:log [options]
 
 Options:
   -a --app=<app>
@@ -172,10 +172,7 @@ Options:
 	}
 
 	appId := safeGetValue(args, "--app")
-	service := safeGetValue(args, "--service")
-	if appId == "" || service == "" {
-		return fmt.Errorf("Application or Service is missing")
-	}
+	service := safeGetOrDefault(args, "--service", "main")
 
 	lines := safeGetOrDefault(args, "--lines", "100")
 	var lineNum int
