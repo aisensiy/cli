@@ -46,7 +46,7 @@ func AppCreate(name string, stackName string, memory int, disk int, instances in
 		host = splits[0]
 	}
 	git.DeleteCdeRemote()
-	host = "192.168.50.6"
+	host = configRepository.GitHost()
 	if err = git.CreateRemote(host, "cde", createdApp.Id()); err != nil {
 		if err.Error() == "exit status 128" {
 			fmt.Println("To replace the existing git remote entry, run:")
