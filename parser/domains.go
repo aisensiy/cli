@@ -10,14 +10,14 @@ func Domains(argv []string) error {
 	usage := `
 Valid commands for domains:
 
-domains:add           create a domain
+domains:create        create a domain
 domains:list          list domains
 domains:remove        remove a domain
 
 Use 'cde help [command]' to learn more.
 `
 	switch argv[0] {
-	case "domains:add":
+	case "domains:create":
 		return domainsAdd(argv)
 	case "domains:list":
 		return domainsList(argv)
@@ -42,7 +42,7 @@ func domainsAdd(argv []string) error {
 	usage := `
 Binds a domain to an application.
 
-Usage: cde domains:add <domain>
+Usage: cde domains:create <domain>
 
 Arguments:
   <domain>
