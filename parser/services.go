@@ -12,8 +12,8 @@ func Service(argv []string) error {
 	usage := `
 Valid commands for services:
 
-services:log		view serice logs
-services:info    	view service basic information
+services:log        view serice logs
+services:info       view service basic information
 services:update     update service basic information
 
 Use 'cde help [command]' to learn more.
@@ -62,7 +62,7 @@ Arguments:
 
 	appName := safeGetOrDefault(args, "<app-name>", "")
 	serviceName := safeGetOrDefault(args, "<service-name>", "")
-	if(appName == "" || serviceName == ""){
+	if (appName == "" || serviceName == "") {
 		return fmt.Errorf("Application name and service name are both required!")
 	}
 	return cmd.ServiceInfo(appName, serviceName)
@@ -85,8 +85,8 @@ Options:
   --mem=<mem>
   	allocated memory for this service.
   --cpu=<cpu>
-  	max allocated disk size.
-  --instance=<instance>
+  	max allocated cpu size.
+  --instances=<instances>
   	instance number.
 `
 
@@ -98,14 +98,14 @@ Options:
 
 	appName := safeGetOrDefault(args, "<app-name>", "")
 	serviceName := safeGetOrDefault(args, "<service-name>", "")
-	if(appName == "" || serviceName == ""){
+	if (appName == "" || serviceName == "") {
 		return fmt.Errorf("Application name and service name are both required!")
 	}
 
 	updateParams := make(map[string]string, 0)
 	updateParams["mem"] = safeGetOrDefault(args, "--mem", "")
 	updateParams["cpu"] = safeGetOrDefault(args, "--cpu", "")
-	updateParams["instance"] = safeGetOrDefault(args, "--instance", "")
+	updateParams["instances"] = safeGetOrDefault(args, "--instances", "")
 
 	newServiceParams, err := mergeWithOriginService(appName, serviceName, updateParams)
 	if err != nil {
@@ -115,32 +115,32 @@ Options:
 	return cmd.ServiceUpdate(appName, serviceName, newServiceParams)
 }
 
-func mergeWithOriginService(appName, serviceName string, params map[string]string) (newServiceParams deployApi.ServiceConfigParams, apiErr error){
+func mergeWithOriginService(appName, serviceName string, params map[string]string) (newServiceParams deployApi.ServiceConfigParams, apiErr error) {
 	memory := params["mem"]
 	cpu := params["cpu"]
-	instances := params["instance"]
+	instances := params["instances"]
 
 	originService, apiErr := cmd.GetService(appName, serviceName)
-	if(apiErr != nil){
+	if (apiErr != nil) {
 		return
 	}
 
 	newServiceParams = deployApi.ServiceConfigParams{}
 	if mem, err := strconv.ParseFloat(memory, 32); err == nil {
 		newServiceParams.Memory = float32(mem)
-	}else{
+	}else {
 		newServiceParams.Memory = originService.Memory()
 	}
 
 	if ins, err := strconv.Atoi(instances); err == nil {
 		newServiceParams.Instance = ins
-	}else{
+	}else {
 		newServiceParams.Instance = originService.Instance()
 	}
 
 	if cpu, err := strconv.ParseFloat(cpu, 32); err == nil {
 		newServiceParams.CPUS = float32(cpu)
-	}else{
+	}else {
 		newServiceParams.CPUS = originService.CPU()
 	}
 	return newServiceParams, nil

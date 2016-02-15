@@ -195,10 +195,12 @@ Options:
 	}
 
 	appId := safeGetValue(args, "--app")
-	lines := safeGetValue(args, "--lines")
-	if lines == "" {
-		lines = 100
+	lines := safeGetOrDefault(args, "--lines", "100")
+	var lineNum int
+	if lineNum, err = strconv.Atoi(lines); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		return err
 	}
 
-	return cmd.AppLog(appId, lines)
+	return cmd.AppLog(appId, lineNum)
 }
