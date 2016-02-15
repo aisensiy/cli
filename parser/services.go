@@ -1,10 +1,11 @@
 package parser
 
 import (
+	"os"
 	"fmt"
+	"strconv"
 	"github.com/sjkyspa/stacks/Godeps/_workspace/src/github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
-	"strconv"
 	deployApi "github.com/sjkyspa/stacks/deploymentsdk/api"
 )
 
@@ -25,6 +26,8 @@ Use 'cde help [command]' to learn more.
 		return serviceInfo(argv)
 	case "services:update":
 		return serviceUpdate(argv)
+	case "services:log":
+		return serviceLogs(argv)
 	case "services":
 		fmt.Print(usage)
 	default:
@@ -144,4 +147,40 @@ func mergeWithOriginService(appName, serviceName string, params map[string]strin
 		newServiceParams.CPUS = originService.CPU()
 	}
 	return newServiceParams, nil
+}
+
+func serviceLogs(argv []string) error {
+	usage := `
+Prints info about the current service.
+
+Usage: cde services:logs [options]
+
+Options:
+  -a --app=<app>
+    the uniquely identifiable id for the application.
+  -s --service=<service>
+    the service name.
+  -n --lines=<lines>
+    the number of lines to display
+`
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	appId := safeGetValue(args, "--app")
+	service := safeGetValue(args, "--service")
+	if appId == "" || service == "" {
+		return fmt.Errorf("Application or Service is missing")
+	}
+
+	lines := safeGetOrDefault(args, "--lines", "100")
+	var lineNum int
+	if lineNum, err = strconv.Atoi(lines); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		return err
+	}
+
+	return cmd.ServiceLog(appId, service, lineNum)
 }

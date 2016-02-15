@@ -179,6 +179,10 @@ func SwitchStack(appName string, stackName string) error {
 }
 
 func AppLog(appId string, lines int) error {
+	return ServiceLog(appId, "main", lines)
+}
+
+func ServiceLog(appId, serviceName string, lines int) error {
 	configRepository := config.NewConfigRepository(func(error) {})
 	deploymentRepository := deploymentApi.NewDeploymentRepository(configRepository,
 		deploymentNet.NewCloudControllerGateway(configRepository))
@@ -187,7 +191,7 @@ func AppLog(appId string, lines int) error {
 		return err
 	}
 
-	service, err := deployment.GetService("main")
+	service, err := deployment.GetService(serviceName)
 	if err != nil {
 		return err
 	}
