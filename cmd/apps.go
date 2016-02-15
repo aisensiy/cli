@@ -145,22 +145,24 @@ func DestroyApp(appId string) error {
 		return err
 	}
 	if appId != "" && appId != currentApp {
-		return errors.New(fmt.Sprint("current dir's app %s != %s", currentApp, appId))
+		return errors.New(fmt.Sprintf("current dir's app %s != %s\n", currentApp, appId))
 	}
 	deployRepo := deploymentApi.NewDeploymentRepository(configRepository, deploymentNet.NewCloudControllerGateway(configRepository))
-	err = deployRepo.Destroy(appId)
+	err = deployRepo.Destroy(currentApp)
 	if err != nil {
 		return err
 	}
 
 	appRepository := api.NewAppRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
-	err = appRepository.Delete(appId)
+	err = appRepository.Delete(currentApp)
 	if err != nil {
 		return err
 	}
 
-	if (git.HasRemoteNameForApp("cde", appId)) {
+	fmt.Printf("destroy %s successfully!\n", currentApp)
+
+	if (git.HasRemoteNameForApp("cde", currentApp)) {
 		err = git.DeleteRemote("cde")
 		if (err != nil) {
 			fmt.Print("Remove 'cde' remote failed. \n Please execute git cmd in the app directory: `git remote remove cde`")
