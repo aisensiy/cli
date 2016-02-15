@@ -32,13 +32,11 @@ Subcommands, use 'cde help [subcommand]' to learn more::
   stacks        manage stacks
   domains       manage domains
   services      manage services instances in marathon
-  stacks      	manage stacks
   routes      	manage routes
   keys      	manage keys
   git           manage git for applications
   config        manage environment variables that define app config
-  ps            manage process status
-
+  ps			manage process status
 `
 	command, argv := parseArgs(argv)
 

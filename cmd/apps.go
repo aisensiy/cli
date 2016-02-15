@@ -86,11 +86,11 @@ func GetApp(appId string) error {
 	outputDescription(app)
 	outputRoutes(app)
 	outputDependentServices(appId)
-	
+
 	return nil
 }
 
-func outputDescription(app api.App){
+func outputDescription(app api.App) {
 	fmt.Printf("--- %s Application\n", app.Id())
 	fmt.Println("id:        ", app.Id())
 	fmt.Println("instances: ", app.Instances())
@@ -102,7 +102,7 @@ func outputRoutes(app api.App) {
 	boundRoutes, err := app.GetRoutes()
 	fmt.Println("--- Access routes:\n")
 
-	if(err != nil) {
+	if (err != nil) {
 		fmt.Print(err)
 		return
 	}
@@ -121,12 +121,12 @@ func outputDependentServices(appId string) error {
 	repo := deploymentApi.NewDeploymentRepository(configRepository, deploymentNet.NewCloudControllerGateway(configRepository))
 	servicesModel, err := repo.GetDependentServicesForApp(appId)
 	fmt.Print("--- Dependent services:\n")
-	if(err != nil) {
+	if (err != nil) {
 		fmt.Print(err)
 		return err
 	}
 	servicesArray := servicesModel.Apps()
-	for _, service := range servicesArray  {
+	for _, service := range servicesArray {
 		fmt.Println("Id:      ", service.Id())
 		fmt.Println("Instance(s):      ", service.Instance())
 		fmt.Println("Memory:      ", service.Memory())
@@ -175,5 +175,26 @@ func SwitchStack(appName string, stackName string) error {
 		return err
 	}
 
+	return nil
+}
+
+func AppLog(appId string, lines int) error {
+	configRepository := config.NewConfigRepository(func(error) {})
+	deploymentRepository := deploymentApi.NewDeploymentRepository(configRepository,
+		deploymentNet.NewCloudControllerGateway(configRepository))
+	deployment, err := deploymentRepository.GetDeploymentByAppName(appId)
+	if err != nil {
+		return err
+	}
+
+	service, err := deployment.GetService("main")
+	if err != nil {
+		return err
+	}
+	output, err := service.Log(lines)
+	if err != nil {
+		return err
+	}
+	fmt.Println(output)
 	return nil
 }

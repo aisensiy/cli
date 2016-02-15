@@ -32,6 +32,8 @@ Use 'cde help [command]' to learn more.
 		return appDestroy(argv)
 	case "apps:stack-update":
 		return appStackUpdate(argv)
+	case "apps:logs":
+		return appLogs(argv)
 	default:
 		if printHelp(argv, usage) {
 			return nil
@@ -172,4 +174,31 @@ Options:
 
 	return cmd.SwitchStack(appName, stackName)
 
+}
+
+func appLogs(argv []string) error {
+	usage := `
+Prints info about the current application.
+
+Usage: cde apps:logs [options]
+
+Options:
+  -a --app=<app>
+    the uniquely identifiable id for the application.
+  -n --lines=<lines>
+    the number of lines to display
+`
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	appId := safeGetValue(args, "--app")
+	lines := safeGetValue(args, "--lines")
+	if lines == "" {
+		lines = 100
+	}
+
+	return cmd.AppLog(appId, lines)
 }
