@@ -121,7 +121,10 @@ func outputRoutes(app api.App) {
 }
 
 func outputDependentServices(appId string) error {
-	configRepository := config.NewConfigRepository(func(error) {})
+	configRepository, appId, err := load(appId)
+	if err != nil {
+		return err
+	}
 	repo := deploymentApi.NewDeploymentRepository(configRepository, deploymentNet.NewCloudControllerGateway(configRepository))
 	servicesModel, err := repo.GetDependentServicesForApp(appId)
 	fmt.Print("--- Dependent services:\n")
@@ -175,14 +178,16 @@ func DestroyApp(appId string) error {
 }
 
 func SwitchStack(appName string, stackName string) error {
-
-	configRepository := config.NewConfigRepository(func(error) {})
+	configRepository, appName, err := load(appName)
+	if err != nil {
+		return err
+	}
 	appRepository := api.NewAppRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
 	params := api.UpdateStackParams{
 		Stack: stackName,
 	}
-	err := appRepository.SwitchStack(appName, params)
+	err = appRepository.SwitchStack(appName, params)
 	if err != nil {
 		return err
 	}
@@ -195,7 +200,10 @@ func AppLog(appId string, lines int) error {
 }
 
 func ServiceLog(appId, serviceName string, lines int) error {
-	configRepository := config.NewConfigRepository(func(error) {})
+	configRepository, appId, err := load(appId)
+	if err != nil {
+		return err
+	}
 	deploymentRepository := deploymentApi.NewDeploymentRepository(configRepository,
 		deploymentNet.NewCloudControllerGateway(configRepository))
 	deployment, err := deploymentRepository.GetDeploymentByAppName(appId)

@@ -3,14 +3,16 @@ import (
 	"fmt"
 	deployApi "github.com/sjkyspa/stacks/deploymentsdk/api"
 	"github.com/sjkyspa/stacks/deploymentsdk/net"
-	"github.com/sjkyspa/stacks/client/config"
 )
 
 
-func RestartApp(appName string) error {
-	configRepository := config.NewConfigRepository(func(error) {})
+func RestartApp(appId string) error {
+	configRepository, appId, err := load(appId)
+	if err != nil {
+		return err
+	}
 	deployRepo := deployApi.NewDeploymentRepository(configRepository, net.NewCloudControllerGateway(configRepository))
-	deployment, err := deployRepo.GetDeploymentByAppName(appName)
+	deployment, err := deployRepo.GetDeploymentByAppName(appId)
 	if err != nil {
 		return err
 	}
@@ -23,14 +25,14 @@ func RestartApp(appName string) error {
 	return nil
 }
 
-func Scale(appName, serviceName string, params deployApi.ServiceConfigParams) (apiErr error) {
+func Scale(appId, serviceName string, params deployApi.ServiceConfigParams) (apiErr error) {
 //	configRepository := config.NewConfigRepository(func(error) {})
 //	deployRepo := deployApi.NewDeploymentRepository(configRepository, net.NewCloudControllerGateway(configRepository))
 //	deployment, apiErr := deployRepo.GetDeploymentByAppName(appName)
 //	if apiErr != nil {
 //		return apiErr
 //	}
-	service, apiErr := GetService(appName, serviceName)
+	service, apiErr := GetService(appId, serviceName)
 	if apiErr != nil {
 		return apiErr
 	}

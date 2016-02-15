@@ -48,13 +48,15 @@ func serviceInfo(argv []string) error {
 	usage := `
 View service basic information.
 
-Usage: cde services:info <app-name> <service-name>
+Usage: cde services:info <service-name> [options]
 
 Arguments:
-  <app-name>
-    the (hosted) application name.
   <service-name>
     the service name defined in stack file.
+
+Options:
+  -a --app=<app>
+    the uniquely identifiable id for the application.
 `
 
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
@@ -63,7 +65,7 @@ Arguments:
 		return err
 	}
 
-	appName := safeGetOrDefault(args, "<app-name>", "")
+	appName := safeGetOrDefault(args, "--app", "")
 	serviceName := safeGetOrDefault(args, "<service-name>", "")
 	if (appName == "" || serviceName == "") {
 		return fmt.Errorf("Application name and service name are both required!")
@@ -78,13 +80,13 @@ Update service basic information.
 Usage: cde services:update <app-name> <service-name> [options]
 
 Arguments:
-  <app-name>
-    the (hosted) application name.
   <service-name>
     the service name defined in stack file.
 
 
 Options:
+  -a --app=<app>
+    the uniquely identifiable id for the application.
   --mem=<mem>
   	allocated memory for this service.
   --cpu=<cpu>
@@ -99,9 +101,9 @@ Options:
 		return err
 	}
 
-	appName := safeGetOrDefault(args, "<app-name>", "")
+	appId := safeGetOrDefault(args, "--app", "")
 	serviceName := safeGetOrDefault(args, "<service-name>", "")
-	if (appName == "" || serviceName == "") {
+	if (appId == "" || serviceName == "") {
 		return fmt.Errorf("Application name and service name are both required!")
 	}
 
@@ -110,12 +112,12 @@ Options:
 	updateParams["cpu"] = safeGetOrDefault(args, "--cpu", "")
 	updateParams["instances"] = safeGetOrDefault(args, "--instances", "")
 
-	newServiceParams, err := mergeWithOriginService(appName, serviceName, updateParams)
+	newServiceParams, err := mergeWithOriginService(appId, serviceName, updateParams)
 	if err != nil {
 		return err
 	}
 
-	return cmd.ServiceUpdate(appName, serviceName, newServiceParams)
+	return cmd.ServiceUpdate(appId, serviceName, newServiceParams)
 }
 
 func mergeWithOriginService(appName, serviceName string, params map[string]string) (newServiceParams deployApi.ServiceConfigParams, apiErr error) {

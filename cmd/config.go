@@ -6,17 +6,19 @@ import (
 
 	"github.com/sjkyspa/stacks/client/pkg/prettyprint"
 	"github.com/sjkyspa/stacks/apisdk/api"
-	"github.com/sjkyspa/stacks/client/config"
 	"github.com/sjkyspa/stacks/apisdk/net"
 )
 
 // ConfigList lists an app's config.
-func ConfigList(appID string, oneLine bool) error {
-	configRepository := config.NewConfigRepository(func(error) {})
+func ConfigList(appId string, oneLine bool) error {
+	configRepository, appId, err := load(appId)
+	if err != nil {
+		return err
+	}
 	appRepository := api.NewAppRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
 
-	app, err := appRepository.GetApp(appID)
+	app, err := appRepository.GetApp(appId)
 
 	if err != nil {
 		return err
@@ -30,7 +32,7 @@ func ConfigList(appID string, oneLine bool) error {
 		}
 		fmt.Println()
 	} else {
-		fmt.Printf("=== %s Config\n", appID)
+		fmt.Printf("=== %s Config\n", appId)
 
 		configMap := make(map[string]string)
 
@@ -46,12 +48,15 @@ func ConfigList(appID string, oneLine bool) error {
 }
 
 // ConfigSet sets an app's config variables.
-func ConfigSet(appID string, key string, value string) error {
-	configRepository := config.NewConfigRepository(func(error) {})
+func ConfigSet(appId string, key string, value string) error {
+	configRepository, appId, err := load(appId)
+	if err != nil {
+		return err
+	}
 	appRepository := api.NewAppRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
 
-	app, err := appRepository.GetApp(appID)
+	app, err := appRepository.GetApp(appId)
 
 	if err != nil {
 		return err
@@ -65,16 +70,19 @@ func ConfigSet(appID string, key string, value string) error {
 		return err
 	}
 
-	return ConfigList(appID, false)
+	return ConfigList(appId, false)
 }
 
 // ConfigUnset removes a config variable from an app.
-func ConfigUnset(appID string, key string) error {
-	configRepository := config.NewConfigRepository(func(error) {})
+func ConfigUnset(appId string, key string) error {
+	configRepository, appId, err := load(appId)
+	if err != nil {
+		return err
+	}
 	appRepository := api.NewAppRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
 
-	app, err := appRepository.GetApp(appID)
+	app, err := appRepository.GetApp(appId)
 
 	if err != nil {
 		return err
@@ -90,7 +98,7 @@ func ConfigUnset(appID string, key string) error {
 
 	fmt.Print("done\n\n")
 
-	return ConfigList(appID, false)
+	return ConfigList(appId, false)
 }
 
 

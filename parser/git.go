@@ -33,7 +33,7 @@ func gitRemote(argv []string) error {
 	usage := `
 Adds git remote of application to repository
 
-Usage: deis git:remote <app> [options]
+Usage: cde git:remote <app> [options]
 
 Options:
   app

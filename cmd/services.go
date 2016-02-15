@@ -3,10 +3,8 @@ package cmd
 import (
 	"fmt"
 	"github.com/sjkyspa/stacks/Godeps/_workspace/src/github.com/gambol99/go-marathon"
-	"github.com/sjkyspa/stacks/client/config"
 	deployApi "github.com/sjkyspa/stacks/deploymentsdk/api"
 	deployNet "github.com/sjkyspa/stacks/deploymentsdk/net"
-
 )
 
 func ServiceCreate() error {
@@ -49,8 +47,8 @@ func ServiceInfo(appName, serviceName string) (apiErr error) {
 	return
 }
 
-func ServiceUpdate(appName, serviceName string, params deployApi.ServiceConfigParams) ( apiErr error) {
-	service, apiErr := GetService(appName, serviceName)
+func ServiceUpdate(appId, serviceName string, params deployApi.ServiceConfigParams) ( apiErr error) {
+	service, apiErr := GetService(appId, serviceName)
 	if apiErr != nil {
 		return apiErr
 	}
@@ -58,10 +56,13 @@ func ServiceUpdate(appName, serviceName string, params deployApi.ServiceConfigPa
 	return
 }
 
-func GetService(appName, serviceName string) (service deployApi.Service, apiErr error) {
-	configRepository := config.NewConfigRepository(func(error) {})
+func GetService(appId, serviceName string) (service deployApi.Service, apiErr error) {
+	configRepository, appId, err := load(appId)
+	if err != nil {
+		return nil, err
+	}
 	deployRepo := deployApi.NewDeploymentRepository(configRepository, deployNet.NewCloudControllerGateway(configRepository))
-	deployment, apiErr := deployRepo.GetDeploymentByAppName(appName)
+	deployment, apiErr := deployRepo.GetDeploymentByAppName(appId)
 	if apiErr != nil {
 		return
 	}

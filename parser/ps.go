@@ -40,45 +40,45 @@ Use 'cde help [command]' to learn more.
 func processRestart(argv []string) error {
 	usage := `
 Restart a service process (without restarting dependent services).
-Usage: cde ps:restart <app>
+Usage: cde ps:restart [options]
 
-Arguments:
-  <app>
-  	the application name
+Options:
+  -a --app=<app>
+    the uniquely identifiable id for the application.
 `
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
 
 	if err != nil {
 		return err
 	}
-	appName := safeGetValue(args, "<app>")
+	appId := safeGetValue(args, "--app")
 
-	return cmd.RestartApp(appName)
+	return cmd.RestartApp(appId)
 }
 
 func processScale(argv []string) error {
 	usage := `
 Scale a service for an application.
-Usage: cde ps:scale <app-name> <service-name> [options]
+Usage: cde ps:scale <service-name> <num> [options]
 
 Arguments:
-  <app-name>
-  	the application name
   <service-name>
   	the service name
+  <num>
+    instance count
 
 Options:
-  --instances=<instances>
-  	default started instance number.
+  -a --app=<app>
+    the uniquely identifiable id for the application.
 `
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
 
 	if err != nil {
 		return err
 	}
-	appName := safeGetValue(args, "<app-name>")
+	appId := safeGetValue(args, "--app")
 	serviceName := safeGetValue(args, "<service-name>")
-	instances := safeGetValue(args, "--instances")
+	instances := safeGetValue(args, "<num>")
 
 	var instanceNum int = 0
 	if instanceNum, err = strconv.Atoi(instances); err != nil {
@@ -86,7 +86,7 @@ Options:
 		return err
 	}
 
-	originService, err := cmd.GetService(appName, serviceName)
+	originService, err := cmd.GetService(appId, serviceName)
 	if(err != nil){
 		return err
 	}
@@ -97,24 +97,24 @@ Options:
 		Memory: originService.Memory(),
 	}
 
-	return cmd.Scale(appName, serviceName, params)
+	return cmd.Scale(appId, serviceName, params)
 }
 
 func listDependentServices(argv []string) error {
 	usage := `
 List dependent services for an application.
-Usage: cde ps:list <app>
+Usage: cde ps:list [options]
 
-Arguments:
-  <app>
-  	the application name
+Options:
+  -a --app=<app>
+    the uniquely identifiable id for the application.
 `
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
 
 	if err != nil {
 		return err
 	}
-	appName := safeGetValue(args, "<app>")
+	appName := safeGetValue(args, "--app")
 
 	return cmd.ListDependentServices(appName)
 }
