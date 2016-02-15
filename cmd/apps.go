@@ -91,7 +91,7 @@ func GetApp(appId string) error {
 }
 
 func outputDescription(app api.App){
-	fmt.Printf("=== %s Application\n", app.Id())
+	fmt.Printf("--- %s Application\n", app.Id())
 	fmt.Println("id:        ", app.Id())
 	fmt.Println("instances: ", app.Instances())
 	fmt.Println("memory:    ", app.Mem())

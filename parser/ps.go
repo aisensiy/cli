@@ -68,12 +68,8 @@ Arguments:
   	the service name
 
 Options:
-  --mem=<mem>
-  	allocated memory for this app. [default: 512]
-  --disk=<disk>
-  	max allocated disk size. [default: 20]
   --instances=<instances>
-  	default started instance number. [default: 1]
+  	default started instance number.
 `
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
 
