@@ -3,8 +3,10 @@ package cmd
 import (
 	"fmt"
 	"github.com/sjkyspa/stacks/Godeps/_workspace/src/github.com/gambol99/go-marathon"
+	"github.com/olekukonko/tablewriter"
 	deployApi "github.com/sjkyspa/stacks/deploymentsdk/api"
 	deployNet "github.com/sjkyspa/stacks/deploymentsdk/net"
+	"os"
 )
 
 func ServiceCreate() error {
@@ -38,12 +40,16 @@ func ServiceInfo(appName, serviceName string) (apiErr error) {
 		return apiErr
 	}
 
-	fmt.Printf("=== %s Service\n", service.Name())
-	fmt.Println("id:        ", service.Id())
-	fmt.Println("instances: ", service.Instance())
-	fmt.Println("memory:    ", service.Memory())
-	fmt.Println("cpus:    ", service.CPU())
-	fmt.Println("disk:      ", service.Disk())
+	table := tablewriter.NewWriter(os.Stdout)
+	fmt.Printf("--- %s Service\n", service.Name())
+	table.Append([]string{"ID", service.Id()})
+	table.Append([]string{"instances", fmt.Sprintf("%d", service.Instance())})
+	table.Append([]string{"memory", fmt.Sprintf("%v", service.Memory())})
+	table.Append([]string{"cpus", fmt.Sprintf("%v", service.CPU())})
+	table.Append([]string{"disk", fmt.Sprintf("%d", service.Disk())})
+
+	table.Render() // Send output
+
 	return
 }
 
