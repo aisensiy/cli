@@ -140,9 +140,15 @@ func outputDependentServices(appId string) error {
 }
 
 func DestroyApp(appId string) error {
-	configRepository := config.NewConfigRepository(func(error) {})
+	configRepository, currentApp, err := load("")
+	if err != nil {
+		return err
+	}
+	if appId != "" && appId != currentApp {
+		return errors.New(fmt.Sprint("current dir's app %s != %s", currentApp, appId))
+	}
 	deployRepo := deploymentApi.NewDeploymentRepository(configRepository, deploymentNet.NewCloudControllerGateway(configRepository))
-	err := deployRepo.Destroy(appId)
+	err = deployRepo.Destroy(appId)
 	if err != nil {
 		return err
 	}
