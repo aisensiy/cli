@@ -13,7 +13,7 @@ func Service(argv []string) error {
 	usage := `
 Valid commands for services:
 
-services:logs        view serice logs
+services:logs       view serice logs
 services:info       view service basic information
 services:update     update service basic information
 

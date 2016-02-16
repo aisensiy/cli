@@ -41,6 +41,7 @@ func ServiceInfo(appName, serviceName string) (apiErr error) {
 	}
 
 	table := tablewriter.NewWriter(os.Stdout)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
 	fmt.Printf("--- %s Service\n", service.Name())
 	table.Append([]string{"ID", service.Id()})
 	table.Append([]string{"instances", fmt.Sprintf("%d", service.Instance())})

@@ -105,6 +105,7 @@ func outputDescription(app api.App) {
 	data[3] = []string{"disk", fmt.Sprintf("%d", app.Disk())}
 
 	table := tablewriter.NewWriter(os.Stdout)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
 
 	for _, v := range data {
 		table.Append(v)
@@ -144,9 +145,11 @@ func outputDependentServices(appId string) error {
 	}
 	servicesArray := servicesModel.Apps()
 	for index, service := range servicesArray {
-		fmt.Printf("----- Service %d:\n", index)
+		fmt.Printf("-----> Service %d:\n", index+1)
 		table := tablewriter.NewWriter(os.Stdout)
+		table.SetAlignment(tablewriter.ALIGN_LEFT)
 		table.Append([]string{"ID", service.Id()})
+		table.Append([]string{"Name", service.Name()})
 		table.Append([]string{"Instances", fmt.Sprintf("%d", service.Instance())})
 		table.Append([]string{"Memory", fmt.Sprintf("%v", service.Memory())})
 		table.Append([]string{"Env", service.Env()})

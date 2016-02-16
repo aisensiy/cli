@@ -19,7 +19,7 @@ The CDE command-line
 Usage: cde <command> [<args>...]
 Use 'git push cde master' to deploy to an application.
 
-Auth commands::
+Auth commands:
 
   register      register a new user with a controller
   login         login to a controller
@@ -36,7 +36,7 @@ Subcommands, use 'cde help [subcommand]' to learn more::
   keys      	manage keys
   git           manage git for applications
   config        manage environment variables that define app config
-  ps			manage process status
+  ps            manage process status
 `
 	command, argv := parseArgs(argv)
 
