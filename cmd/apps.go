@@ -209,7 +209,22 @@ func SwitchStack(appName string, stackName string) error {
 }
 
 func AppLog(appId string, lines int) error {
-	return ServiceLog(appId, "main", lines)
+	configRepository, appId, err := load(appId)
+	if err != nil {
+		return err
+	}
+	deploymentRepository := deploymentApi.NewDeploymentRepository(configRepository,
+		deploymentNet.NewCloudControllerGateway(configRepository))
+	deployment, err := deploymentRepository.GetDeploymentByAppName(appId)
+	if err != nil {
+		return err
+	}
+	output, err := deployment.Log(lines)
+	if err != nil {
+		return err
+	}
+	fmt.Println(output)
+	return nil
 }
 
 func ServiceLog(appId, serviceName string, lines int) error {
