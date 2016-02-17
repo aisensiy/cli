@@ -96,8 +96,10 @@ func GetApp(appId string) error {
 
 func outputDescription(app api.App) {
 	fmt.Printf("--- %s Application\n", app.Id())
-	data := make([][]string, 1)
+	data := make([][]string, 2)
 	data[0] = []string{"ID", app.Id()}
+	stack, _ := app.GetStack()
+	data[1] = []string{"Stack Name", stack.Name()}
 
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetAlignment(tablewriter.ALIGN_LEFT)
