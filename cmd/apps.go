@@ -15,7 +15,7 @@ import (
 )
 
 // AppCreate creates an app.
-func AppCreate(appId string, stackName string, memory int, disk int, instances int) error {
+func AppCreate(appId string, stackName string) error {
 	configRepository := config.NewConfigRepository(func(error) {})
 	appRepository := api.NewAppRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
@@ -32,9 +32,7 @@ func AppCreate(appId string, stackName string, memory int, disk int, instances i
 	appParams := api.AppParams{
 		Name: appId,
 		Stack: stackId,
-		Mem: memory,
-		Disk:disk,
-		Instances:instances}
+	}
 	createdApp, err := appRepository.Create(appParams)
 	if err != nil {
 		return err
@@ -98,11 +96,8 @@ func GetApp(appId string) error {
 
 func outputDescription(app api.App) {
 	fmt.Printf("--- %s Application\n", app.Id())
-	data := make([][]string, 4)
+	data := make([][]string, 1)
 	data[0] = []string{"ID", app.Id()}
-	data[1] = []string{"instances", fmt.Sprintf("%d", app.Instances())}
-	data[2] = []string{"memory", fmt.Sprintf("%d", app.Mem())}
-	data[3] = []string{"disk", fmt.Sprintf("%d", app.Disk())}
 
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetAlignment(tablewriter.ALIGN_LEFT)

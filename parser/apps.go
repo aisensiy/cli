@@ -63,14 +63,6 @@ Arguments:
     exist with this name.
   <stack>
   	a stack name
-
-Options:
-  --mem=<mem>
-  	allocated memory for this app. [default: 512]
-  --disk=<disk>
-  	max allocated disk size. [default: 20]
-  --instances=<instances>
-  	default started instance number. [default: 1]
 `
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
 
@@ -83,27 +75,8 @@ Options:
 	if stack == "" || name == "" {
 		return errors.New("<name> <stack> are essential parameters")
 	}
-	memory := safeGetOrDefault(args, "--mem", "512")
-	disk := safeGetOrDefault(args, "--disk", "20")
-	instances := safeGetOrDefault(args, "--instances", "1")
 
-	var mem, ins, diskSize int
-
-	if mem, err = strconv.Atoi(memory); err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-		return err
-	}
-
-	if ins, err = strconv.Atoi(instances); err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-		return err
-	}
-
-	if diskSize, err = strconv.Atoi(disk); err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-		return err
-	}
-	return cmd.AppCreate(name, stack, mem, diskSize, ins)
+	return cmd.AppCreate(name, stack)
 }
 
 func appList() error {
