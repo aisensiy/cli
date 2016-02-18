@@ -38,7 +38,6 @@ func Login(controller string, email string, password string) error {
 	configRepository := config.NewConfigRepository(func(err error) {})
 	configRepository.SetApiEndpoint(controllerURL)
 	configRepository.SetDeploymentEndpoint("http://192.168.50.4:31089/deployment")
-	configRepository.SetGitHost("192.168.50.6")
 
 	return doLogin(email, password)
 }
@@ -168,6 +167,7 @@ func CreateHTTPClient() *http.Client {
 
 func doLogin(email string, password string) error {
 	configRepository := config.NewConfigRepository(func(err error) {})
+	configRepository.SetGitHost("192.168.50.6")
 	authRepository := api.NewAuthRepository(
 		configRepository,
 		net.NewCloudControllerGateway(configRepository))
