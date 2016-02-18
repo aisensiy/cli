@@ -37,14 +37,14 @@ func Login(controller string, email string, password string) error {
 
 	configRepository := config.NewConfigRepository(func(err error) {})
 	configRepository.SetApiEndpoint(controllerURL)
-	configRepository.SetDeploymentEndpoint("http://192.168.50.4:31089")
+	configRepository.SetDeploymentEndpoint("http://192.168.50.4:31089/deployment")
 	configRepository.SetGitHost("192.168.50.6")
 
 	return doLogin(email, password)
 }
 
 func checkController(controller string) (string, error) {
-	u, err := url.Parse(controller)
+	u, err := url.Parse(controller + "/build")
 
 	if err != nil {
 		return "", err
@@ -55,7 +55,7 @@ func checkController(controller string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
+	fmt.Println(controllerURL.String())
 	if err = CheckConnection(CreateHTTPClient(), controllerURL); err != nil {
 		return "", err
 	}
@@ -136,7 +136,7 @@ Make sure that the Controller URI is correct and the server is running.`
 
 	baseURL := apiURL.String()
 
-	apiURL.Path = "/apps"
+	apiURL.Path = apiURL.Path + "/apps"
 
 	req, err := http.NewRequest("GET", apiURL.String(), bytes.NewBuffer(nil))
 
