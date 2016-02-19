@@ -135,7 +135,7 @@ Make sure that the Controller URI is correct and the server is running.`
 
 	baseURL := apiURL.String()
 
-	apiURL.Path = apiURL.Path + "/apps"
+	apiURL.Path += "/apps"
 
 	req, err := http.NewRequest("GET", apiURL.String(), bytes.NewBuffer(nil))
 
@@ -167,7 +167,6 @@ func CreateHTTPClient() *http.Client {
 
 func doLogin(email string, password string) error {
 	configRepository := config.NewConfigRepository(func(err error) {})
-	configRepository.SetGitHost("192.168.50.6")
 	authRepository := api.NewAuthRepository(
 		configRepository,
 		net.NewCloudControllerGateway(configRepository))
@@ -186,6 +185,7 @@ func doLogin(email string, password string) error {
 	if err != nil {
 		return err
 	}
+	configRepository.SetGitHost("192.168.50.6")
 	userId := user.Items()[0].Id()
 	configRepository.SetEmail(auth.UserEmail())
 	configRepository.SetId(userId)
