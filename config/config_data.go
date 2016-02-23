@@ -2,12 +2,13 @@ package config
 import "encoding/json"
 
 type Data struct {
-	Email    string `json:"email"`
-	Endpoint string `json:"endpoint"`
+	Email              string `json:"email"`
+	Endpoint           string `json:"endpoint"`
+	ApiEndpoint        string `json:"api_endpoint"`
 	DeploymentEndpoint string `json:"deployment_endpoint"`
-	GitHost  string `json:"host"`
-	Auth     string `json:"auth"`
-	Id       string `json:"id"`
+	GitHost            string `json:"host"`
+	Auth               string `json:"auth"`
+	Id                 string `json:"id"`
 }
 
 func NewData() (data *Data) {

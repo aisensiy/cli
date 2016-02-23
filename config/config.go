@@ -4,6 +4,7 @@ import (
 	"sync"
 	"path/filepath"
 	"os"
+	"strings"
 )
 
 type ConfigRepository interface {
@@ -13,6 +14,7 @@ type ConfigRepository interface {
 }
 
 type Reader interface {
+	Endpoint() string
 	ApiEndpoint() string
 	DeploymentEndpoint() string
 	GitHost() string
@@ -22,6 +24,7 @@ type Reader interface {
 }
 
 type Writer interface {
+	SetEndpoint(string)
 	SetApiEndpoint(string)
 	SetDeploymentEndpoint(string)
 	SetGitHost(string)
@@ -95,23 +98,35 @@ func (c *DefaultConfigRepository) write(cb func()) {
 	}
 }
 
-
-func (c DefaultConfigRepository) ApiEndpoint() (endpoint string) {
+func (c DefaultConfigRepository) Endpoint() (endpoint string) {
 	c.read(func() {
 		endpoint = c.data.Endpoint
 	})
 	return
 }
 
-func (c DefaultConfigRepository) SetApiEndpoint(endpoint string) {
+func (c DefaultConfigRepository) SetEndpoint(endpoint string) {
 	c.write(func() {
 		c.data.Endpoint = endpoint
 	})
 }
 
+func (c DefaultConfigRepository) ApiEndpoint() (endpoint string) {
+	c.read(func() {
+		endpoint = c.data.Endpoint + "/build"
+	})
+	return
+}
+
+func (c DefaultConfigRepository) SetApiEndpoint(endpoint string) {
+	c.write(func() {
+		c.data.ApiEndpoint = endpoint
+	})
+}
+
 func (c DefaultConfigRepository) DeploymentEndpoint() (endpoint string) {
 	c.read(func() {
-		endpoint = c.data.DeploymentEndpoint
+		endpoint = c.data.Endpoint + "/deployment"
 	})
 	return
 }
@@ -124,7 +139,9 @@ func (c DefaultConfigRepository) SetDeploymentEndpoint(endpoint string) {
 
 func (c DefaultConfigRepository) GitHost() (gitHost string) {
 	c.read(func() {
-		gitHost = c.data.GitHost
+		splits := strings.Split(c.Endpoint(), "//")
+		println(splits[1])
+		gitHost = splits[len(splits) - 1]
 	})
 	return
 }

@@ -14,7 +14,7 @@ import (
 )
 
 func Login(controller string, email string, password string) error {
-	controllerURL, err := checkController(controller)
+	_, err := checkController(controller)
 
 	if email == "" {
 		fmt.Print("email: ")
@@ -36,8 +36,8 @@ func Login(controller string, email string, password string) error {
 	}
 
 	configRepository := config.NewConfigRepository(func(err error) {})
-	configRepository.SetApiEndpoint(controllerURL)
-	configRepository.SetDeploymentEndpoint("http://192.168.50.4:31089/deployment")
+	configRepository.SetEndpoint(controller)
+//	configRepository.SetDeploymentEndpoint("http://192.168.50.4:31089/deployment")
 
 	return doLogin(email, password)
 }
@@ -63,7 +63,7 @@ func checkController(controller string) (string, error) {
 }
 
 func Register(controller string, email string, password string) error {
-	controllerURL, err := checkController(controller)
+	_, err := checkController(controller)
 
 	if err != nil {
 		return err
@@ -96,8 +96,7 @@ func Register(controller string, email string, password string) error {
 	}
 
 	configRepository := config.NewConfigRepository(func(err error) {})
-	configRepository.SetApiEndpoint(controllerURL)
-	configRepository.SetDeploymentEndpoint("http://192.168.50.4:31089")
+	configRepository.SetEndpoint(controller)
 
 	userRepository := api.NewUserRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
@@ -185,7 +184,6 @@ func doLogin(email string, password string) error {
 	if err != nil {
 		return err
 	}
-	configRepository.SetGitHost("192.168.50.6")
 	userId := user.Items()[0].Id()
 	configRepository.SetEmail(auth.UserEmail())
 	configRepository.SetId(userId)
@@ -226,7 +224,7 @@ func Regenerate() error {
 func Whoami() error {
 	configRepository := config.NewConfigRepository(func(err error) {})
 
-	fmt.Printf("You are %s at %s\n", configRepository.Email(), configRepository.ApiEndpoint())
+	fmt.Printf("You are %s at %s\n", configRepository.Email(), configRepository.Endpoint())
 
 	return nil
 }
