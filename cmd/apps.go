@@ -16,6 +16,9 @@ import (
 
 // AppCreate creates an app.
 func AppCreate(appId string, stackName string) error {
+	if(!git.IsGitDirectory()){
+		return fmt.Errorf("Not in a git repository")
+	}
 	configRepository := config.NewConfigRepository(func(error) {})
 	appRepository := api.NewAppRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))

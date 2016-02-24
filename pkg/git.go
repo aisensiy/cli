@@ -119,3 +119,8 @@ func DeleteCdeRemote() error {
 	}
 	return nil
 }
+
+func IsGitDirectory() bool {
+	_, err := exec.Command("git", "rev-parse", "--is-inside-work-tree").Output()
+	return err==nil
+}
