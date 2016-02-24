@@ -40,12 +40,7 @@ func DomainsList() error {
 func DomainsRemove(domainName string) error {
 	configRepository := config.NewConfigRepository(func(err error) {})
 	domainRepository := api.NewDomainRepository(configRepository, net.NewCloudControllerGateway(configRepository))
-	domains, err := domainRepository.GetDomainByName(domainName)
-	if err != nil {
-		return err
-	}
-	domainId := domains.Items()[0].Id()
-	err = domainRepository.Delete(domainId)
+	err := domainRepository.Delete(domainName)
 	if err != nil {
 		return err
 	}

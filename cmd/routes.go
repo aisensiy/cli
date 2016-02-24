@@ -11,11 +11,11 @@ func RoutesCreate(domainName string, path string) error {
 	configRepository := config.NewConfigRepository(func(error) {})
 	routeRepository := api.NewRouteRepository(configRepository, net.NewCloudControllerGateway(configRepository))
 	domainRepository := api.NewDomainRepository(configRepository, net.NewCloudControllerGateway(configRepository))
-	domains, err := domainRepository.GetDomainByName(domainName)
+	domain, err := domainRepository.GetDomain(domainName)
 	if err != nil {
 		return err
 	}
-	domainId := domains.Items()[0].Id()
+	domainId := domain.Id()
 	routeParams := api.RouteParams{
 		Domain: domainId,
 		Path: path,
