@@ -10,17 +10,11 @@ import (
 func RoutesCreate(domainName string, path string) error {
 	configRepository := config.NewConfigRepository(func(error) {})
 	routeRepository := api.NewRouteRepository(configRepository, net.NewCloudControllerGateway(configRepository))
-	domainRepository := api.NewDomainRepository(configRepository, net.NewCloudControllerGateway(configRepository))
-	domain, err := domainRepository.GetDomain(domainName)
-	if err != nil {
-		return err
-	}
-	domainId := domain.Id()
 	routeParams := api.RouteParams{
-		Domain: domainId,
+		Domain: domainName,
 		Path: path,
 	}
-	err = routeRepository.Create(routeParams)
+	err := routeRepository.Create(routeParams)
 	if err != nil {
 		fmt.Println(err)
 	}
