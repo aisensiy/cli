@@ -76,7 +76,7 @@ Usage: cde routes:bind <route> <app>
 
 Arguments:
   <route>
-    the route id.
+    the domain/path
   <app>
   	the app name
 `
@@ -100,7 +100,7 @@ Usage: cde routes:unbind <route> <app>
 
 Arguments:
   <route>
-    the route id.
+    the domain/path
   <app>
   	the app name
 `
