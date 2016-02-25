@@ -75,7 +75,7 @@ func ConfigSet(appId string, configVars []string) error {
 }
 
 // ConfigUnset removes a config variable from an app.
-func ConfigUnset(appId string, key string) error {
+func ConfigUnset(appId string, keys []string) error {
 	configRepository, appId, err := load(appId)
 	if err != nil {
 		return err
@@ -91,7 +91,7 @@ func ConfigUnset(appId string, key string) error {
 
 	fmt.Print("Removing config... ")
 
-	err = app.UnsetEnv(key)
+	err = app.UnsetEnv(keys)
 
 	if err != nil {
 		return err

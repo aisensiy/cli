@@ -91,7 +91,7 @@ func configUnset(argv []string) error {
 	usage := `
 Unsets an environment variable for an application.
 
-Usage: cde config:unset <key>
+Usage: cde config:unset <key> [<key>...] [options]
 
 Arguments:
   <key>
@@ -108,5 +108,5 @@ Options:
 		return err
 	}
 
-	return cmd.ConfigUnset(safeGetValue(args, "--app"), safeGetValue(args, "<key>"))
+	return cmd.ConfigUnset(safeGetValue(args, "--app"), args["<key>"].([]string))
 }
