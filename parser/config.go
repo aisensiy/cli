@@ -65,7 +65,7 @@ func configSet(argv []string) error {
 	usage := `
 Sets environment variables for an application.
 
-Usage: cde config:set <key> <value>
+Usage: cde config:set <key>=<value> [<key>=<value>...] [options]
 
 Arguments:
   <key>
@@ -84,7 +84,7 @@ Options:
 		return err
 	}
 
-	return cmd.ConfigSet(safeGetValue(args, "--app"), safeGetValue(args, "<key>"), safeGetValue(args, "<value>"))
+	return cmd.ConfigSet(safeGetValue(args, "--app"), args["<key>=<value>"].([]string))
 }
 
 func configUnset(argv []string) error {

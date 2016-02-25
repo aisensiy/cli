@@ -48,7 +48,7 @@ func ConfigList(appId string, oneLine bool) error {
 }
 
 // ConfigSet sets an app's config variables.
-func ConfigSet(appId string, key string, value string) error {
+func ConfigSet(appId string, configVars []string) error {
 	configRepository, appId, err := load(appId)
 	if err != nil {
 		return err
@@ -64,7 +64,8 @@ func ConfigSet(appId string, key string, value string) error {
 
 	fmt.Print("Creating config... ")
 
-	err = app.SetEnv(key, value)
+	configMap := parseConfig(configVars)
+	err = app.SetEnv(configMap)
 
 	if err != nil {
 		return err
