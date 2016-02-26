@@ -7,6 +7,7 @@ import (
 	"github.com/sjkyspa/stacks/client/cmd"
 	"os"
 	"strconv"
+	"regexp"
 )
 
 func Apps(argv []string) error {
@@ -74,6 +75,11 @@ Arguments:
 	stack := safeGetValue(args, "<stack>")
 	if stack == "" || name == "" {
 		return errors.New("<name> <stack> are essential parameters")
+	}
+
+	regex := regexp.MustCompile(`^[a-z0-9\-]+$`)
+	if !regex.MatchString(name) {
+		return fmt.Errorf("'%s' does not match the pattern '[a-z0-9-]+'\n", name)
 	}
 
 	return cmd.AppCreate(name, stack)
