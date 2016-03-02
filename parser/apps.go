@@ -64,6 +64,10 @@ Arguments:
     exist with this name.
   <stack>
   	a stack name
+
+Options:
+  -d --deploy=<deploy>
+    tell system to deploy this app or not, 1 means need, 0 mean no, default 1
 `
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
 
@@ -73,6 +77,8 @@ Arguments:
 
 	name := safeGetValue(args, "<name>")
 	stack := safeGetValue(args, "<stack>")
+	needDeploy := safeGetOrDefault(args, "--deploy", "1")
+
 	if stack == "" || name == "" {
 		return errors.New("<name> <stack> are essential parameters")
 	}
@@ -82,7 +88,7 @@ Arguments:
 		return fmt.Errorf("'%s' does not match the pattern '[a-z0-9-]+'\n", name)
 	}
 
-	return cmd.AppCreate(name, stack)
+	return cmd.AppCreate(name, stack, needDeploy)
 }
 
 func appList() error {

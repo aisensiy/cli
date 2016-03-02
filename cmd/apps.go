@@ -15,7 +15,9 @@ import (
 )
 
 // AppCreate creates an app.
-func AppCreate(appId string, stackName string) error {
+func AppCreate(appId string, stackName string, needDeploy string) error {
+	var needDeployBool bool
+
 	if(!git.IsGitDirectory()){
 		return fmt.Errorf("Not in a git repository")
 	}
@@ -32,9 +34,16 @@ func AppCreate(appId string, stackName string) error {
 	}
 	stackId := stacks.Items()[0].Id()
 
+	if needDeploy == "1" {
+		needDeployBool = true
+	} else {
+		needDeployBool = false
+	}
+
 	appParams := api.AppParams{
 		Name: appId,
 		Stack: stackId,
+		NeedDeploy: needDeployBool,
 	}
 	createdApp, err := appRepository.Create(appParams)
 	if err != nil {
