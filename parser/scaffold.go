@@ -13,12 +13,12 @@ import (
 
 func Scaffold(argv []string) error {
 	usage := `
-Creates a new application.
+Creates a new scaffold in current directory.
 
-Usage: cde scaffold <stack> [options]
+Usage: cde scaffold <stackName> [options]
 
 Arguments:
-  <stack>
+  <stackName>
   	a stack name
 
 Options:
@@ -30,25 +30,44 @@ Options:
 		return err
 	}
 
-	stack := safeGetValue(args, "<stack>")
+	stackName := safeGetValue(args, "<stackName>")
+
 	dir := safeGetOrDefault(args, "--dir", "")
-	configRepository := config.NewConfigRepository(func(err error) {})
-	stackRepository := api.NewStackRepository(configRepository,
-		net.NewCloudControllerGateway(configRepository))
-	stacks, err := stackRepository.GetStackByName(stack)
-	if (err != nil || stacks.Count() == 0) {
-		return fmt.Errorf("stack not found")
+	stack, err := getStack(stackName)
+	if err != nil {
+		return err
 	}
-	stackId := stacks.Items()[0].Id();
-	stackObj, err := stackRepository.GetStack(stackId)
-	gitRepo := stackObj.GetTemplateCode()
-	if(dir == ""){
-		dir = retrieveGitName(gitRepo)
-		if(dir == "") {
-			return fmt.Errorf("directory name invalid")
+
+	gitRepo := stack.GetTemplateCode()
+	if (dir == "") {
+		dir, err = retrieveGitName(gitRepo)
+		if err != nil {
+			return err
 		}
 	}
 	cmdString := fmt.Sprintf("git clone %s %s; cd %s; git remote remove origin", gitRepo, dir, dir)
+
+	return executeCmd(cmdString)
+}
+
+func getStack(stackName string) (stackObj api.Stack, err error) {
+	configRepository := config.NewConfigRepository(func(err error) {})
+	stackRepository := api.NewStackRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+	stacks, err := stackRepository.GetStackByName(stackName)
+	fmt.Print(stackName)
+
+	if (err != nil || stacks.Count() == 0) {
+		err = fmt.Errorf("stack not found")
+		return
+	}
+
+	stackId := stacks.Items()[0].Id();
+	stackObj, err = stackRepository.GetStack(stackId)
+	return
+}
+
+func executeCmd(cmdString string) error {
 	cmd := exec.Command("/bin/sh", "-c", cmdString)
 	stderr, err := cmd.StderrPipe()
 
@@ -69,11 +88,11 @@ Options:
 	return nil
 }
 
-func retrieveGitName(gitName string) string {
+func retrieveGitName(gitUrl string) (string, error) {
 	regex := regexp.MustCompile(`^.*/(.+).git$`)
-	if regex.MatchString(gitName) {
-		captures := regex.FindStringSubmatch(gitName)
-		return captures[1];
+	if regex.MatchString(gitUrl) {
+		captures := regex.FindStringSubmatch(gitUrl)
+		return captures[1], nil;
 	}
-	return "";
+	return "", fmt.Errorf("Invalid Git URL");
 }
