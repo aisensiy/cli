@@ -29,6 +29,7 @@ Auth commands:
 Subcommands, use 'cde help [subcommand]' to learn more::
 
   apps          manage applications used to provide services
+  scaffold      create scaffold project quickly
   stacks        manage stacks
   domains       manage domains
   services      manage services instances in marathon
@@ -55,6 +56,8 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 	switch command {
 	case "apps":
 		err = parser.Apps(argv)
+	case "scaffold":
+		err = parser.Scaffold(argv)
 	case "auth":
 		err = parser.Auth(argv)
 	case "domains":
