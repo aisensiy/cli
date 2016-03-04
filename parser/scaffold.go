@@ -40,10 +40,7 @@ Options:
 
 	gitRepo := stack.GetTemplateCode()
 	if (dir == "") {
-		dir, err = retrieveGitName(gitRepo)
-		if err != nil {
-			return err
-		}
+		dir = stackName
 	}
 	cmdString := fmt.Sprintf("git clone %s %s; cd %s; git remote remove origin", gitRepo, dir, dir)
 
@@ -55,7 +52,6 @@ func getStack(stackName string) (stackObj api.Stack, err error) {
 	stackRepository := api.NewStackRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
 	stacks, err := stackRepository.GetStackByName(stackName)
-	fmt.Print(stackName)
 
 	if (err != nil || stacks.Count() == 0) {
 		err = fmt.Errorf("stack not found")
