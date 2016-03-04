@@ -140,7 +140,6 @@ func (c DefaultConfigRepository) SetDeploymentEndpoint(endpoint string) {
 func (c DefaultConfigRepository) GitHost() (gitHost string) {
 	c.read(func() {
 		splits := strings.Split(c.Endpoint(), "//")
-		println(splits[1])
 		gitHost = splits[len(splits) - 1]
 	})
 	return
