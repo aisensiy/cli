@@ -1,8 +1,8 @@
 package cmd
 import (
 	"fmt"
-	deployApi "github.com/sjkyspa/stacks/deploymentsdk/api"
-	"github.com/sjkyspa/stacks/deploymentsdk/net"
+	deployApi "github.com/sjkyspa/stacks/launcher/api/api"
+	"github.com/sjkyspa/stacks/launcher/api/net"
 )
 
 

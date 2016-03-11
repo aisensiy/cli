@@ -10,8 +10,8 @@ import (
 	"github.com/sjkyspa/stacks/apisdk/net"
 	"github.com/sjkyspa/stacks/client/config"
 	"github.com/sjkyspa/stacks/client/pkg"
-	deploymentApi "github.com/sjkyspa/stacks/deploymentsdk/api"
-	deploymentNet "github.com/sjkyspa/stacks/deploymentsdk/net"
+	launcherApi "github.com/sjkyspa/stacks/launcher/api/api"
+	deploymentNet "github.com/sjkyspa/stacks/launcher/api/net"
 )
 
 // AppCreate creates an app.
@@ -145,7 +145,7 @@ func outputDependentServices(appId string) error {
 	if err != nil {
 		return err
 	}
-	repo := deploymentApi.NewDeploymentRepository(configRepository, deploymentNet.NewCloudControllerGateway(configRepository))
+	repo := launcherApi.NewDeploymentRepository(configRepository, deploymentNet.NewCloudControllerGateway(configRepository))
 	servicesModel, err := repo.GetDependentServicesForApp(appId)
 	fmt.Print("--- Dependent services:\n")
 	if (err != nil) {
@@ -175,7 +175,7 @@ func DestroyApp(appId string) error {
 	if appId != "" && appId != currentApp {
 		return errors.New(fmt.Sprintf("current dir's app %s != %s\n", currentApp, appId))
 	}
-	deployRepo := deploymentApi.NewDeploymentRepository(configRepository, deploymentNet.NewCloudControllerGateway(configRepository))
+	deployRepo := launcherApi.NewDeploymentRepository(configRepository, deploymentNet.NewCloudControllerGateway(configRepository))
 	err = deployRepo.Destroy(currentApp)
 	if err != nil {
 		return err
@@ -225,7 +225,7 @@ func AppLog(appId string, lines int) error {
 	if err != nil {
 		return err
 	}
-	deploymentRepository := deploymentApi.NewDeploymentRepository(configRepository,
+	deploymentRepository := launcherApi.NewDeploymentRepository(configRepository,
 		deploymentNet.NewCloudControllerGateway(configRepository))
 	deployment, err := deploymentRepository.GetDeploymentByAppName(appId)
 	if err != nil {
@@ -244,7 +244,7 @@ func ServiceLog(appId, serviceName string, lines int) error {
 	if err != nil {
 		return err
 	}
-	deploymentRepository := deploymentApi.NewDeploymentRepository(configRepository,
+	deploymentRepository := launcherApi.NewDeploymentRepository(configRepository,
 		deploymentNet.NewCloudControllerGateway(configRepository))
 	deployment, err := deploymentRepository.GetDeploymentByAppName(appId)
 	if err != nil {

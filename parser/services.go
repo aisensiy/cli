@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"github.com/sjkyspa/stacks/Godeps/_workspace/src/github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
-	deployApi "github.com/sjkyspa/stacks/deploymentsdk/api"
+	deployApi "github.com/sjkyspa/stacks/launcher/api/api"
 )
 
 func Service(argv []string) error {
