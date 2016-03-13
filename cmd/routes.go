@@ -2,8 +2,8 @@ package cmd
 import (
 	"fmt"
 	"github.com/sjkyspa/stacks/client/config"
-	"github.com/sjkyspa/stacks/apisdk/net"
-	"github.com/sjkyspa/stacks/apisdk/api"
+	"github.com/sjkyspa/stacks/controller/api/net"
+	"github.com/sjkyspa/stacks/controller/api/api"
 )
 
 // RouteCreate creates an route.

@@ -5,8 +5,8 @@ import (
 	"regexp"
 
 	"github.com/sjkyspa/stacks/client/pkg/prettyprint"
-	"github.com/sjkyspa/stacks/apisdk/api"
-	"github.com/sjkyspa/stacks/apisdk/net"
+	"github.com/sjkyspa/stacks/controller/api/api"
+	"github.com/sjkyspa/stacks/controller/api/net"
 )
 
 // ConfigList lists an app's config.

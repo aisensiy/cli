@@ -5,8 +5,8 @@ import (
 	"regexp"
 	"strings"
 	"io/ioutil"
-	"github.com/sjkyspa/stacks/apisdk/api"
-	"github.com/sjkyspa/stacks/apisdk/net"
+	"github.com/sjkyspa/stacks/controller/api/api"
+	"github.com/sjkyspa/stacks/controller/api/net"
 	"github.com/sjkyspa/stacks/client/config"
 )
 
