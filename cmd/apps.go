@@ -152,7 +152,7 @@ func outputDependentServices(appId string) error {
 		fmt.Print(err)
 		return err
 	}
-	servicesArray := servicesModel.Apps()
+	servicesArray := servicesModel
 	for index, service := range servicesArray {
 		fmt.Printf("-----> Service %d:\n", index+1)
 		table := tablewriter.NewWriter(os.Stdout)

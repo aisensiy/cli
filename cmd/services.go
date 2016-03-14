@@ -47,7 +47,6 @@ func ServiceInfo(appName, serviceName string) (apiErr error) {
 	table.Append([]string{"instances", fmt.Sprintf("%d", service.Instance())})
 	table.Append([]string{"memory", fmt.Sprintf("%v", service.Memory())})
 	table.Append([]string{"cpus", fmt.Sprintf("%v", service.CPU())})
-	table.Append([]string{"disk", fmt.Sprintf("%d", service.Disk())})
 
 	table.Render() // Send output
 
