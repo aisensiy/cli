@@ -43,7 +43,7 @@ func Login(controller string, email string, password string) error {
 }
 
 func checkController(controller string) (string, error) {
-	u, err := url.Parse(controller + "/build")
+	u, err := url.Parse(controller + "/controller")
 
 	if err != nil {
 		return "", err

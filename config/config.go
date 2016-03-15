@@ -113,7 +113,7 @@ func (c DefaultConfigRepository) SetEndpoint(endpoint string) {
 
 func (c DefaultConfigRepository) ApiEndpoint() (endpoint string) {
 	c.read(func() {
-		endpoint = c.data.Endpoint + "/build"
+		endpoint = c.data.Endpoint + "/controller"
 	})
 	return
 }
@@ -126,7 +126,7 @@ func (c DefaultConfigRepository) SetApiEndpoint(endpoint string) {
 
 func (c DefaultConfigRepository) DeploymentEndpoint() (endpoint string) {
 	c.read(func() {
-		endpoint = c.data.Endpoint + "/deployment"
+		endpoint = c.data.Endpoint + "/launcher"
 	})
 	return
 }
