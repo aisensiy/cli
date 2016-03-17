@@ -124,3 +124,12 @@ func IsGitDirectory() bool {
 	_, err := exec.Command("git", "rev-parse", "--is-inside-work-tree").Output()
 	return err==nil
 }
+
+func GetGitSha() string {
+	gitsha, err := exec.Command("git", "rev-parse", "--verify", "HEAD").Output()
+	if (err != nil){
+		fmt.Print(err)
+		return ""
+	}
+	return string(gitsha)
+}
