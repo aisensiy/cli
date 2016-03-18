@@ -14,7 +14,11 @@ import (
 )
 
 func Login(controller string, email string, password string) error {
-	_, err := checkController(controller)
+	formalizedURL, err := formalizeURL(controller)
+
+	if err = IsValidController(formalizedURL); err != nil {
+		return err
+	}
 
 	if email == "" {
 		fmt.Print("email: ")
@@ -36,36 +40,36 @@ func Login(controller string, email string, password string) error {
 	}
 
 	configRepository := config.NewConfigRepository(func(err error) {})
-	configRepository.SetEndpoint(controller)
-//	configRepository.SetDeploymentEndpoint("http://192.168.50.4:31089/deployment")
+	configRepository.SetEndpoint(formalizedURL.String())
 
 	return doLogin(email, password)
 }
 
-func checkController(controller string) (string, error) {
-	u, err := url.Parse("controller." + controller)
+func formalizeURL(controller string) (url.URL, error) {
+	u, err := url.Parse(controller)
+	if err != nil {
+		return url.URL{}, err
+	}
+
+	scheme, err := chooseScheme(*u)
 
 	if err != nil {
-		return "", err
+		return url.URL{}, err
 	}
 
-	controllerURL, err := chooseScheme(*u)
+	u.Scheme = scheme
 
-	if err != nil {
-		return "", err
-	}
-	fmt.Println(controllerURL.String())
-	if err = CheckConnection(CreateHTTPClient(), controllerURL); err != nil {
-		return "", err
-	}
-
-	return controllerURL.String(), nil
+	return *u, nil
 }
 
 func Register(controller string, email string, password string) error {
-	_, err := checkController(controller)
+	formalizedURL, err := formalizeURL(controller)
 
 	if err != nil {
+		return err
+	}
+
+	if err = IsValidController(formalizedURL); err != nil {
 		return err
 	}
 
@@ -96,7 +100,7 @@ func Register(controller string, email string, password string) error {
 	}
 
 	configRepository := config.NewConfigRepository(func(err error) {})
-	configRepository.SetEndpoint(controller)
+	configRepository.SetEndpoint(formalizedURL.String())
 
 	userRepository := api.NewUserRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
@@ -113,24 +117,31 @@ func Register(controller string, email string, password string) error {
 	return doLogin(email, password)
 }
 
-func chooseScheme(u url.URL) (url.URL, error) {
+func chooseScheme(u url.URL) (string, error) {
 	if u.Scheme == "" {
 		u.Scheme = "http"
-		u, err := url.Parse(u.String())
+		_, err := url.Parse(u.String())
 
 		if err != nil {
-			return url.URL{}, err
+			return "", err
 		}
 
-		return *u, nil
+		return "http", nil
 	}
 
-	return u, nil
+	return u.Scheme, nil
 }
 
-func CheckConnection(client *http.Client, apiURL url.URL) error {
+func IsValidController(apiURL url.URL) error {
 	errorMessage := `%s does not appear to be a valid Cde controller.
 Make sure that the Controller URI is correct and the server is running.`
+
+	var createHttpClient = func() *http.Client {
+		tr := &http.Transport{
+			DisableKeepAlives: true,
+		}
+		return &http.Client{Transport: tr}
+	}
 
 	baseURL := apiURL.String()
 
@@ -142,26 +153,18 @@ Make sure that the Controller URI is correct and the server is running.`
 		return err
 	}
 
-	res, err := client.Do(req)
+	res, err := createHttpClient().Do(req)
+	defer res.Body.Close()
 
 	if err != nil {
-		fmt.Printf(errorMessage+"\n", baseURL)
 		return err
 	}
-	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
 		return fmt.Errorf(errorMessage, baseURL)
 	}
 
 	return nil
-}
-
-func CreateHTTPClient() *http.Client {
-	tr := &http.Transport{
-		DisableKeepAlives: true,
-	}
-	return &http.Client{Transport: tr}
 }
 
 func doLogin(email string, password string) error {

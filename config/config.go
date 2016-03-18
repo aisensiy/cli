@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"os"
 	"strings"
+	"net/url"
 )
 
 type ConfigRepository interface {
@@ -113,7 +114,7 @@ func (c DefaultConfigRepository) SetEndpoint(endpoint string) {
 
 func (c DefaultConfigRepository) ApiEndpoint() (endpoint string) {
 	c.read(func() {
-		endpoint = "controller." + c.data.Endpoint
+		endpoint = c.data.Endpoint
 	})
 	return
 }
@@ -126,7 +127,12 @@ func (c DefaultConfigRepository) SetApiEndpoint(endpoint string) {
 
 func (c DefaultConfigRepository) DeploymentEndpoint() (endpoint string) {
 	c.read(func() {
-		endpoint = "launcher." + c.data.Endpoint
+		u, _ := url.Parse(c.data.Endpoint)
+		parts := strings.Split(u.Host, ".")
+		parts[0] = "launcher"
+		host := strings.Join(parts, ".")
+		u.Host = host
+		endpoint = u.String()
 	})
 	return
 }
