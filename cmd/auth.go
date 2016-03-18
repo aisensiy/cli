@@ -43,7 +43,7 @@ func Login(controller string, email string, password string) error {
 }
 
 func checkController(controller string) (string, error) {
-	u, err := url.Parse(controller + "/controller")
+	u, err := url.Parse("controller." + controller)
 
 	if err != nil {
 		return "", err
@@ -134,7 +134,7 @@ Make sure that the Controller URI is correct and the server is running.`
 
 	baseURL := apiURL.String()
 
-	apiURL.Path += "/apps"
+	apiURL.Path += "/"
 
 	req, err := http.NewRequest("GET", apiURL.String(), bytes.NewBuffer(nil))
 
