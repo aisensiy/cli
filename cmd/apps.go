@@ -253,7 +253,7 @@ func AppBuildOrVerifyLog(appId string, lines int, logType string) error {
 
 	gitSha := git.GetGitSha()
 
-	output, err := app.GetLog(gitSha, logType, lines)
+	output, err := app.GetLog(gitSha, logType, lines, "")
 	if err != nil {
 		return err
 	}
