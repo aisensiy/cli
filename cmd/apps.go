@@ -239,28 +239,6 @@ func AppLog(appId string, lines int) error {
 	return nil
 }
 
-func AppBuildOrVerifyLog(appId string, lines int, logType string) error {
-	configRepository, appId, err := load(appId)
-	if err != nil {
-		return err
-	}
-	appRepository := api.NewAppRepository(configRepository,
-		net.NewCloudControllerGateway(configRepository))
-	app, err := appRepository.GetApp(appId)
-	if err != nil {
-		return err
-	}
-
-	gitSha := git.GetGitSha()
-
-	output, err := app.GetLog(gitSha, logType, lines, "")
-	if err != nil {
-		return err
-	}
-	fmt.Println(output)
-	return nil
-}
-
 func ServiceLog(appId, serviceName string, lines int) error {
 	configRepository, appId, err := load(appId)
 	if err != nil {

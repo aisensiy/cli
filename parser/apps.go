@@ -173,10 +173,6 @@ Options:
     the uniquely identifiable id for the application.
   -n --lines=<lines>
     the number of lines to display
-  --build
-  	view logs for build
-  --verify
-  	view logs for verify, invalid when --build is set
 `
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
 
@@ -190,16 +186,6 @@ Options:
 	if lineNum, err = strconv.Atoi(lines); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		return err
-	}
-	build := args["--build"].(bool)
-	if(build) {
-		return cmd.AppBuildOrVerifyLog(appId, lineNum, "build")
-	}
-
-	verify := args["--verify"].(bool)
-
-	if(verify) {
-		return cmd.AppBuildOrVerifyLog(appId, lineNum, "verify")
 	}
 
 	return cmd.AppLog(appId, lineNum)
