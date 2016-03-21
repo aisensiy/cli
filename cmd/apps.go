@@ -12,7 +12,22 @@ import (
 	"github.com/sjkyspa/stacks/client/pkg"
 	launcherApi "github.com/sjkyspa/stacks/launcher/api/api"
 	deploymentNet "github.com/sjkyspa/stacks/launcher/api/net"
+	"bufio"
 )
+func askForOverrideExistingApp() bool{
+	reader := bufio.NewReader(os.Stdin)
+	for(true) {
+		fmt.Printf("Another app is using this repository, are you sure to continue (y/N)?")
+		text, _ := reader.ReadString('\n')
+		if(strings.TrimSpace(text) == "y") {
+			return true
+		}else if (strings.TrimSpace(text) == "N"){
+			return false
+		}
+	}
+
+	return false
+}
 
 // AppCreate creates an app.
 func AppCreate(appId string, stackName string, needDeploy string) error {
@@ -21,12 +36,20 @@ func AppCreate(appId string, stackName string, needDeploy string) error {
 	if(!git.IsGitDirectory()){
 		return fmt.Errorf("Not in a git repository")
 	}
+
 	configRepository := config.NewConfigRepository(func(error) {})
 	appRepository := api.NewAppRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
 
 	stackRepo := api.NewStackRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
+
+	appName, _ := git.DetectAppName(configRepository.GitHost())
+	if(appName != ""){
+		if(!askForOverrideExistingApp()){
+			return fmt.Errorf("Give up to override existing app")
+		}
+	}
 
 	stacks, err := stackRepo.GetStackByName(stackName)
 	if err != nil {

@@ -125,11 +125,3 @@ func IsGitDirectory() bool {
 	return err==nil
 }
 
-func GetGitSha() string {
-	gitsha, err := exec.Command("git", "rev-parse", "--verify", "HEAD").Output()
-	if (err != nil){
-		fmt.Print(err)
-		return ""
-	}
-	return string(gitsha)
-}
