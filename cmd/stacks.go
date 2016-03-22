@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/sjkyspa/stacks/Godeps/_workspace/src/github.com/ghodss/yaml"
+	"github.com/ghodss/yaml"
 	"github.com/sjkyspa/stacks/controller/api/api"
 	"github.com/sjkyspa/stacks/controller/api/net"
 	"github.com/sjkyspa/stacks/client/config"

@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/sjkyspa/stacks/Godeps/_workspace/src/github.com/gambol99/go-marathon"
+	"github.com/gambol99/go-marathon"
 	"github.com/olekukonko/tablewriter"
 	deployApi "github.com/sjkyspa/stacks/launcher/api/api"
 	deployNet "github.com/sjkyspa/stacks/launcher/api/net"
