@@ -5,7 +5,7 @@ INSTALL_DIR=$$GOPATH/bin
 build: install
 
 install:
-	go install -v || exit 1
+	go install || exit 1
 	@$(call check-static-binary,$(INSTALL_DIR)/cde)
 
 test: test-unit
