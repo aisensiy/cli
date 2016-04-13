@@ -43,9 +43,11 @@ Options:
 	}
 
 	gitRepo := stack.GetTemplateCode()
+
 	if (gitRepo == "") {
-		return fmt.Errorf("git repositry is no valid, please check the definition of stack '%s' to make sure it contains valid template code.")
+		return fmt.Errorf("git repositry is no valid, please check the definition of stack '%s' to make sure it contains valid template code.", stackName)
 	}
+
 	cmdString := fmt.Sprintf("git clone %s %s; cd %s; git remote remove origin", gitRepo, dir, dir)
 
 	return executeCmd(cmdString)
