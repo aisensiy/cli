@@ -16,9 +16,6 @@ func RoutesCreate(domainName string, path string) error {
 		Path: path,
 	}
 	err := routeRepository.Create(routeParams)
-	if err != nil {
-		fmt.Println(err)
-	}
 
 	return err
 }
