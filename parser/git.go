@@ -48,5 +48,11 @@ Options:
 		return err
 	}
 
-	return cmd.GitRemote(safeGetValue(args, "<app>"), args["--remote"].(string))
+	err = cmd.GitRemote(safeGetValue(args, "<app>"), args["--remote"].(string))
+	//if(err != nil ){
+	//	if strings.Contains(err.Error(), "exit status 128") {
+	//		fmt.Println("Please use another remote name with `cde git:remote <app> -r <remote name>`")
+	//	}
+	//}
+	return err
 }
