@@ -33,14 +33,18 @@ Options:
 	stackName := safeGetValue(args, "<stackName>")
 
 	dir := safeGetOrDefault(args, "--dir", "")
+	if (dir == "") {
+		dir = stackName
+	}
+
 	stack, err := getStack(stackName)
 	if err != nil {
 		return err
 	}
 
 	gitRepo := stack.GetTemplateCode()
-	if (dir == "") {
-		dir = stackName
+	if (gitRepo == "") {
+		return fmt.Errorf("git repositry is no valid, please check the definition of stack '%s' to make sure it contains valid template code.")
 	}
 	cmdString := fmt.Sprintf("git clone %s %s; cd %s; git remote remove origin", gitRepo, dir, dir)
 

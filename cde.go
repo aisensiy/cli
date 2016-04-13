@@ -7,6 +7,7 @@ import (
 	"github.com/sjkyspa/stacks/version"
 	"os"
 	"strings"
+	"github.com/fatih/color"
 )
 
 func main() {
@@ -86,7 +87,9 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 	}
 
 	if err != nil {
+		color.Set(color.FgRed)
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		color.Unset()
 		return 1
 	}
 	return 0
