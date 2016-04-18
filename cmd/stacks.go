@@ -7,6 +7,7 @@ import (
 	"github.com/sjkyspa/stacks/controller/api/net"
 	"github.com/sjkyspa/stacks/client/config"
 	"io/ioutil"
+	"encoding/json"
 )
 
 func StackCreate(name string, filename string) error {
@@ -22,11 +23,12 @@ func StackCreate(name string, filename string) error {
 	if err != nil {
 		fmt.Printf("err: %v\n", err)
 	}
-	stackParams := api.StackParams{
-		Name:    name,
-		Content: string(content),
+	stackDefinition := make(map[string]interface{})
+	if err := json.Unmarshal(content, &stackDefinition); err != nil {
+		return err
 	}
-	stackModel, err := stackRepository.Create(stackParams)
+
+	stackModel, err := stackRepository.Create(stackDefinition)
 	if err != nil {
 		return err
 	}
