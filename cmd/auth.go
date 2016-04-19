@@ -176,11 +176,12 @@ func doLogin(email string, password string) error {
 		Password: password,
 	}
 	auth, err := authRepository.Create(userParams)
+	configRepository.SetAuth(auth.Id())
 
 	if err != nil {
 		return err
 	}
-
+	configRepository = config.NewConfigRepository(func(err error) {})
 	userRepo := api.NewUserRepository(configRepository, net.NewCloudControllerGateway(configRepository))
 	user, err := userRepo.GetUserByEmail(email)
 	if err != nil {
@@ -189,7 +190,7 @@ func doLogin(email string, password string) error {
 	userId := user.Items()[0].Id()
 	configRepository.SetEmail(auth.UserEmail())
 	configRepository.SetId(userId)
-	configRepository.SetAuth(auth.Id())
+
 	fmt.Printf("Welcome %s\n", auth.UserEmail())
 	return nil
 }
