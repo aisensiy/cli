@@ -108,7 +108,7 @@ func Register(controller string, email string, password string) error {
 		Email:    email,
 		Password: password,
 	}
-	_, err = userRepository.Create(userParams)
+	err = userRepository.Create(userParams)
 	if err != nil {
 		return err
 	}
