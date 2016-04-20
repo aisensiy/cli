@@ -182,14 +182,15 @@ func doLogin(email string, password string) error {
 		return err
 	}
 	configRepository = config.NewConfigRepository(func(err error) {})
-	userRepo := api.NewUserRepository(configRepository, net.NewCloudControllerGateway(configRepository))
-	user, err := userRepo.GetUserByEmail(email)
+	authRepository = api.NewAuthRepository(
+		configRepository,
+		net.NewCloudControllerGateway(configRepository))
+	user, err := authRepository.Get()
 	if err != nil {
 		return err
 	}
-	userId := user.Items()[0].Id()
 	configRepository.SetEmail(auth.UserEmail())
-	configRepository.SetId(userId)
+	configRepository.SetId(user.Id())
 
 	fmt.Printf("Welcome %s\n", auth.UserEmail())
 	return nil
