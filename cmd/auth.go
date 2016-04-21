@@ -176,11 +176,12 @@ func doLogin(email string, password string) error {
 		Password: password,
 	}
 	auth, err := authRepository.Create(userParams)
-	configRepository.SetAuth(auth.Id())
-
 	if err != nil {
 		return err
 	}
+
+	configRepository.SetAuth(auth.Id())
+
 	configRepository = config.NewConfigRepository(func(err error) {})
 	authRepository = api.NewAuthRepository(
 		configRepository,
