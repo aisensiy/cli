@@ -239,7 +239,7 @@ func SwitchStack(appName string, stackName string) error {
 	if err != nil {
 		return err
 	}
-
+	fmt.Printf("Switch to stack '%s' successfully.\n", stackName)
 	return nil
 }
 
