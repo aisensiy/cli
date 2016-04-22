@@ -27,8 +27,8 @@ func ConfigList(appId string, oneLine bool) error {
 	envs := app.GetEnvs()
 
 	if oneLine {
-		for _, key := range envs {
-			fmt.Printf("%s=%s ", key, envs[key])
+		for key, value := range envs {
+			fmt.Printf("%s=%s ", key, value)
 		}
 		fmt.Println()
 	} else {
@@ -37,8 +37,8 @@ func ConfigList(appId string, oneLine bool) error {
 		configMap := make(map[string]string)
 
 		// config.Values is type interface, so it needs to be converted to a string
-		for _, key := range envs {
-			configMap[key] = fmt.Sprintf("%v", envs[key])
+		for key, value := range envs {
+			configMap[key] = fmt.Sprintf("%v", value)
 		}
 
 		fmt.Print(prettyprint.PrettyTabs(configMap, 6))
