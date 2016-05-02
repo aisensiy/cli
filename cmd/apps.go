@@ -258,7 +258,12 @@ func AppLog(appId string, lines int) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(output)
+
+	if output.ErrorField != "" {
+		return fmt.Errorf(output.ErrorField)
+	}
+
+	handleOutput(output)
 	return nil
 }
 
@@ -279,9 +284,21 @@ func ServiceLog(appId, serviceName string, lines int) error {
 		return err
 	}
 	output, err := service.Log(lines)
+
 	if err != nil {
 		return err
 	}
-	fmt.Println(output)
+
+	if output.ErrorField != "" {
+		return fmt.Errorf(output.ErrorField)
+	}
+
+	handleOutput(output)
 	return nil
+}
+
+func handleOutput(output api.LogsModel) {
+	for _, log := range output.ItemsField {
+		fmt.Printf("%s\n", log.MessageField)
+	}
 }
