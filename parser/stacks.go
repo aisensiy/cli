@@ -29,6 +29,8 @@ Use 'cde help [command]' to learn more.
 		return stackUpdate(argv)
 	case "stacks:publish":
 		return stackPublish(argv)
+	case "stacks:unpublish":
+		return stackUnPublish(argv)
 	default:
 		if printHelp(argv, usage) {
 			return nil
@@ -130,4 +132,24 @@ Arguments:
 	}
 
 	return cmd.StackPublish(safeGetValue(args, "<stack-id>"))
+}
+
+func stackUnPublish(argv []string) error {
+	usage := `
+Update a stack
+
+Usage: cde stacks:unpublish <stack-id>
+
+Arguments:
+  <stack-id>
+    the stack id.
+`
+
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	return cmd.StackUnPublish(safeGetValue(args, "<stack-id>"))
 }

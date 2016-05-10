@@ -127,3 +127,22 @@ func StackPublish(id string) (error) {
 	}
 	return nil
 }
+
+func StackUnPublish(id string) (error) {
+	configRepository := config.NewConfigRepository(func(err error) {})
+	stackRepository := api.NewStackRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+
+	stackModel, err := stackRepository.GetStack(id)
+	if err != nil {
+		return err
+	}
+
+	err = stackModel.UnPublish()
+	if err != nil {
+		return err
+	} else {
+		fmt.Printf("unpublish stack %s with uuid %s\n", stackModel.Name(), stackModel.Id())
+	}
+	return nil
+}
