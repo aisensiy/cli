@@ -100,7 +100,30 @@ func StackUpdate(id string, filename string) (error) {
 		return err
 	}
 
-	stackModel.Update(stackDefinition)
-	fmt.Printf("create stack %s with uuid %s\n", stackModel.Name(), stackModel.Id())
+	err = stackModel.Update(stackDefinition)
+	if err != nil {
+		return err
+	} else {
+		fmt.Printf("updated stack %s with uuid %s\n", stackModel.Name(), stackModel.Id())
+	}
+	return nil
+}
+
+func StackPublish(id string) (error) {
+	configRepository := config.NewConfigRepository(func(err error) {})
+	stackRepository := api.NewStackRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+
+	stackModel, err := stackRepository.GetStack(id)
+	if err != nil {
+		return err
+	}
+
+	err = stackModel.Publish()
+	if err != nil {
+		return err
+	} else {
+		fmt.Printf("publish stack %s with uuid %s\n", stackModel.Name(), stackModel.Id())
+	}
 	return nil
 }

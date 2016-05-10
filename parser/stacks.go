@@ -13,6 +13,8 @@ stacks:create        create a new stack
 stacks:list          list accessible stacks
 stacks:remove        remove an existing stack
 stacks:update        update stack
+stacks:publish       publish stack
+stacks:unpublish     unpublish stack
 
 Use 'cde help [command]' to learn more.
 `
@@ -25,6 +27,8 @@ Use 'cde help [command]' to learn more.
 		return stackRemove(argv)
 	case "stacks:update":
 		return stackUpdate(argv)
+	case "stacks:publish":
+		return stackPublish(argv)
 	default:
 		if printHelp(argv, usage) {
 			return nil
@@ -106,4 +110,24 @@ Arguments:
 	}
 
 	return cmd.StackUpdate(safeGetValue(args, "<stack-id>"), safeGetValue(args, "<stackfile>"))
+}
+
+func stackPublish(argv []string) error {
+	usage := `
+Update a stack
+
+Usage: cde stacks:publish <stack-id>
+
+Arguments:
+  <stack-id>
+    the stack id.
+`
+
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	return cmd.StackPublish(safeGetValue(args, "<stack-id>"))
 }
