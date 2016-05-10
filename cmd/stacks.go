@@ -76,3 +76,31 @@ func StackRemove(name string) error {
 	fmt.Printf("delete stack successfully\n")
 	return nil
 }
+
+func StackUpdate(id string, filename string) (error) {
+	configRepository := config.NewConfigRepository(func(err error) {})
+	stackRepository := api.NewStackRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+	content, err := getStackFileContent(filename)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+	content, err = yaml.YAMLToJSON(content)
+	if err != nil {
+		fmt.Printf("err: %v\n", err)
+	}
+	stackDefinition := make(map[string]interface{})
+	if err := json.Unmarshal(content, &stackDefinition); err != nil {
+		return err
+	}
+
+	stackModel, err := stackRepository.GetStack(id)
+	if err != nil {
+		return err
+	}
+
+	stackModel.Update(stackDefinition)
+	fmt.Printf("create stack %s with uuid %s\n", stackModel.Name(), stackModel.Id())
+	return nil
+}
