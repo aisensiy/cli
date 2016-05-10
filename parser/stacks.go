@@ -42,11 +42,9 @@ func stackCreate(argv []string) error {
 	usage := `
 Create a stack.
 
-Usage: cde stacks:create <stackname> <stackfile>
+Usage: cde stacks:create <stackfile>
 
 Arguments:
-  <stackname>
-    the stack name.
   <stackfile>
     the stack file.
 `
@@ -57,7 +55,7 @@ Arguments:
 		return err
 	}
 
-	return cmd.StackCreate(safeGetValue(args, "<stackname>"), safeGetValue(args, "<stackfile>"))
+	return cmd.StackCreate(safeGetValue(args, "<stackfile>"))
 }
 
 func stackList() error {

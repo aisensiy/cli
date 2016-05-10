@@ -10,7 +10,7 @@ import (
 	"encoding/json"
 )
 
-func StackCreate(name string, filename string) error {
+func StackCreate(filename string) error {
 	configRepository := config.NewConfigRepository(func(err error) {})
 	stackRepository := api.NewStackRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
