@@ -331,3 +331,29 @@ func AppCollaborators(appId string) error {
 	}
 	return nil
 }
+
+func AppAddCollaborator(appId string, email string) error {
+	configRepository, currentApp, err := load(appId)
+	if err != nil {
+		return err
+	}
+	if appId != "" && appId != currentApp {
+		return errors.New(fmt.Sprintf("current dir's app %s != %s\n", currentApp, appId))
+	}
+
+	appRepository := api.NewAppRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+	app, err := appRepository.GetApp(appId)
+	if err != nil {
+		return err
+	}
+
+	err = app.AddCollaborator(api.CreateCollaboratorParams{
+		Email: email,
+	})
+	if err != nil {
+		return err
+	}
+	fmt.Print("Add collaborator success.\n");
+	return nil
+}

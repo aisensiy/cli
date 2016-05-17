@@ -14,13 +14,14 @@ func Apps(argv []string) error {
 	usage := `
 Valid commands for apps:
 
-apps:create        	create a new application
-apps:list          	list accessible applications
-apps:info          	view info about an application
-apps:destroy       	destroy an application and stop application instance in deployment environment
-apps:stack-update	change to use another stack
-apps:logs       	view logs
-apps:collaborators  view collaborators
+apps:create             create a new application
+apps:list               list accessible applications
+apps:info               view info about an application
+apps:destroy            destroy an application and stop application instance in deployment environment
+apps:stack-update       change to use another stack
+apps:logs               view logs
+apps:collaborators     	view collaborators
+apps:add-collaborator	add collaborator
 
 Use 'cde help [command]' to learn more.
 `
@@ -39,6 +40,8 @@ Use 'cde help [command]' to learn more.
 		return appLogs(argv)
 	case "apps:collaborators":
 		return appCollaborators(argv)
+	case "apps:add-collaborator":
+		return appAddCollaborator(argv)
 	default:
 		if printHelp(argv, usage) {
 			return nil
@@ -214,3 +217,30 @@ Options:
 	appId := safeGetValue(args, "--app")
 	return cmd.AppCollaborators(appId)
 }
+
+func appAddCollaborator(argv []string) error {
+	usage := `
+Add collaborator for app
+
+Usage: cde apps:add-collaborator [options]
+
+Options:
+  -a --app=<app>
+    the uniquely identifiable id for the application.
+  -e --email=<email>
+    email of collaborator
+`
+
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	appId := safeGetValue(args, "--app")
+	email := safeGetValue(args, "--email")
+	return cmd.AppAddCollaborator(appId, email)
+}
+
+
+
