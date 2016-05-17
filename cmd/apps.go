@@ -302,3 +302,32 @@ func handleOutput(output api.LogsModel) {
 		fmt.Printf("%s\n", log.MessageField)
 	}
 }
+
+func AppCollaborators(appId string) error {
+	configRepository, currentApp, err := load(appId)
+	if err != nil {
+		return err
+	}
+	if appId != "" && appId != currentApp {
+		return errors.New(fmt.Sprintf("current dir's app %s != %s\n", currentApp, appId))
+	}
+
+	appRepository := api.NewAppRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+	app, err := appRepository.GetApp(appId)
+	if err != nil {
+		return err
+	}
+
+	users, err := app.GetCollaborators()
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("=== Collaborators: [%d]\n", len(users))
+
+	for _, user := range users {
+		fmt.Printf("email: %s\n", user.Email())
+	}
+	return nil
+}

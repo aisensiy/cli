@@ -107,7 +107,7 @@ func Register(controller string, email string, password string) error {
 	userParams := api.UserParams{
 		Email:    email,
 		Password: password,
-		Role:     nil,
+		Role:     "REGULAR",
 	}
 	err = userRepository.Create(userParams)
 	if err != nil {

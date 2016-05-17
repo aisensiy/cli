@@ -20,6 +20,7 @@ apps:info          	view info about an application
 apps:destroy       	destroy an application and stop application instance in deployment environment
 apps:stack-update	change to use another stack
 apps:logs       	view logs
+apps:collaborators  view collaborators
 
 Use 'cde help [command]' to learn more.
 `
@@ -36,6 +37,8 @@ Use 'cde help [command]' to learn more.
 		return appStackUpdate(argv)
 	case "apps:logs":
 		return appLogs(argv)
+	case "apps:collaborators":
+		return appCollaborators(argv)
 	default:
 		if printHelp(argv, usage) {
 			return nil
@@ -189,4 +192,25 @@ Options:
 	}
 
 	return cmd.AppLog(appId, lineNum)
+}
+
+func appCollaborators(argv []string) error {
+	usage := `
+Prints collaborators in app
+
+Usage: cde apps:collaborators [options]
+
+Options:
+  -a --app=<app>
+    the uniquely identifiable id for the application.
+`
+
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	appId := safeGetValue(args, "--app")
+	return cmd.AppCollaborators(appId)
 }
