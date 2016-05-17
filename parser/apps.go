@@ -22,6 +22,7 @@ apps:stack-update       change to use another stack
 apps:logs               view logs
 apps:collaborators     	view collaborators
 apps:add-collaborator	add collaborator
+apps:rm-collaborator    remove collaborator
 
 Use 'cde help [command]' to learn more.
 `
@@ -42,6 +43,8 @@ Use 'cde help [command]' to learn more.
 		return appCollaborators(argv)
 	case "apps:add-collaborator":
 		return appAddCollaborator(argv)
+	case "apps:rm-collaborator":
+		return appRmCollaborator(argv)
 	default:
 		if printHelp(argv, usage) {
 			return nil
@@ -240,6 +243,30 @@ Options:
 	appId := safeGetValue(args, "--app")
 	email := safeGetValue(args, "--email")
 	return cmd.AppAddCollaborator(appId, email)
+}
+
+func appRmCollaborator(argv []string) error {
+	usage := `
+Remove collaborator for app
+
+Usage: cde apps:rm-collaborator [options]
+
+Options:
+  -a --app=<app>
+    the uniquely identifiable id for the application.
+  -e --email=<email>
+    email of collaborator
+`
+
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	appId := safeGetValue(args, "--app")
+	email := safeGetValue(args, "--email")
+	return cmd.AppRmCollaborator(appId, email)
 }
 
 

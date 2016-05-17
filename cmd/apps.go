@@ -357,3 +357,40 @@ func AppAddCollaborator(appId string, email string) error {
 	fmt.Print("Add collaborator success.\n");
 	return nil
 }
+
+func AppRmCollaborator(appId string, email string) error {
+	configRepository, currentApp, err := load(appId)
+	if err != nil {
+		return err
+	}
+	if appId != "" && appId != currentApp {
+		return errors.New(fmt.Sprintf("current dir's app %s != %s\n", currentApp, appId))
+	}
+
+	appRepository := api.NewAppRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+	app, err := appRepository.GetApp(appId)
+	if err != nil {
+		return err
+	}
+
+	userRepository := api.NewUserRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+	Users, err := userRepository.GetUserByEmail(email)
+	if err != nil {
+		return err
+	}
+
+	if len(Users.Items()) <= 0 {
+		return errors.New(fmt.Sprintf("no such user %s", email));
+	}
+
+	user := Users.Items()[0]
+
+	err = app.RemoveCollaborator(user.Id())
+	if err != nil {
+		return err
+	}
+	fmt.Print("Remove collaborator success.\n");
+	return nil
+}
