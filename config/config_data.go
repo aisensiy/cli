@@ -9,6 +9,7 @@ type Data struct {
 	GitHost            string `json:"host"`
 	Auth               string `json:"auth"`
 	Id                 string `json:"id"`
+	Org                string `json:"org"`
 }
 
 func NewData() (data *Data) {

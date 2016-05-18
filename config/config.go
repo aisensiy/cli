@@ -22,6 +22,7 @@ type Reader interface {
 	Email() string
 	Auth() string
 	Id() string
+	Org() string
 }
 
 type Writer interface {
@@ -32,6 +33,7 @@ type Writer interface {
 	SetEmail(string)
 	SetAuth(string)
 	SetId(string)
+	SetCurrentOrg(string)
 }
 
 type DefaultConfigRepository struct {
@@ -163,6 +165,12 @@ func (c DefaultConfigRepository) SetEmail(email string) {
 	})
 }
 
+func (c DefaultConfigRepository) SetCurrentOrg(org string) {
+	c.write(func() {
+		c.data.Org = org
+	})
+}
+
 func (c DefaultConfigRepository) SetAuth(auth string) {
 	c.write(func() {
 		c.data.Auth = auth
@@ -178,6 +186,13 @@ func (c DefaultConfigRepository) SetId(id string) {
 func (c DefaultConfigRepository) Email() (email string) {
 	c.read(func() {
 		email = c.data.Email
+	})
+	return
+}
+
+func (c DefaultConfigRepository) Org() (org string) {
+	c.read(func() {
+		org = c.data.Org
 	})
 	return
 }

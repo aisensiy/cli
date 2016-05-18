@@ -30,6 +30,7 @@ Auth commands:
 Subcommands, use 'cde help [subcommand]' to learn more::
 
   apps          manage applications used to provide services
+  orgs          manage organizations
   scaffold      create scaffold project quickly
   stacks        manage stacks
   domains       manage domains
@@ -57,6 +58,8 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 	switch command {
 	case "apps":
 		err = parser.Apps(argv)
+	case "orgs":
+		err = parser.Orgs(argv)
 	case "scaffold":
 		err = parser.Scaffold(argv)
 	case "auth":
