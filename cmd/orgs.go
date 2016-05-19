@@ -162,3 +162,25 @@ func AddOrgApp(orgName string, appName string) error {
 	fmt.Printf("Add %s to org %s\n", appName, orgName)
 	return nil
 }
+
+func DestroyOrg(orgName string) error {
+	configRepository, orgName := loadOrg(orgName)
+
+	if (orgName == "") {
+		return errors.New("can not find default org")
+	}
+
+	orgRepo := api.NewOrgRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+
+	err := orgRepo.Delete(orgName)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Destroy org %s\n", orgName)
+	if (orgName == configRepository.Org()) {
+		configRepository.SetCurrentOrg("")
+	}
+	return nil
+}
