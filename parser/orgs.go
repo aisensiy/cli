@@ -14,6 +14,7 @@ Valid commands for apps:
 orgs:create             create a new organization
 orgs:info               view info about an organization
 orgs:current            set org as a default org
+orgs:members            list members of the organization
 
 Use 'cde help [command]' to learn more.
 `
@@ -24,6 +25,8 @@ Use 'cde help [command]' to learn more.
 		return orgInfo(argv)
 	case "orgs:current":
 		return orgCurrent(argv)
+	case "orgs:members":
+		return orgMembers(argv)
 	default:
 		if printHelp(argv, usage) {
 			return nil
@@ -101,6 +104,27 @@ Options:
 	orgName := safeGetValue(args, "--org")
 
 	return cmd.SetCurrentOrg(orgName)
+}
+
+func orgMembers(argv []string) error {
+	usage := `
+List members of the organization
+
+Usage: cde orgs:members [options]
+
+Options:
+  -o --org=<org>
+    the uniquely identifiable id for the organization.
+`
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	orgName := safeGetValue(args, "--org")
+
+	return cmd.ListMembers(orgName)
 }
 
 

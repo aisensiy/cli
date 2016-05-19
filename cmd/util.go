@@ -17,3 +17,12 @@ func load(appID string) (config.ConfigRepository, string, error) {
 
 	return configRepository, appID, nil
 }
+
+func loadOrg(orgName string) (config.ConfigRepository, string) {
+	configRepository := config.NewConfigRepository(func(error) {})
+	if orgName == "" {
+		orgName = configRepository.Org()
+	}
+
+	return configRepository, orgName
+}

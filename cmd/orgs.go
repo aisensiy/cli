@@ -4,6 +4,7 @@ import (
 "github.com/sjkyspa/stacks/controller/api/net"
 	"github.com/sjkyspa/stacks/controller/api/api"
 	"fmt"
+	"errors"
 )
 
 func OrgCreate(orgName string) error {
@@ -47,4 +48,27 @@ func SetCurrentOrg(orgName string) error {
 	configRepository.SetCurrentOrg(orgName)
 	fmt.Println("set current org as", orgName)
 	return err
+}
+
+func ListMembers(orgName string) error {
+	configRepository, orgName := loadOrg(orgName)
+
+	if (orgName == "") {
+		return errors.New("can not find default org")
+	}
+
+	orgRepo := api.NewOrgRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+
+	users, err := orgRepo.GetOrgMembers(orgName)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("=== Members: [%d]\n", len(users))
+
+	for _, user := range users {
+		fmt.Printf("email: %s\n", user.Email())
+	}
+	return nil
 }
