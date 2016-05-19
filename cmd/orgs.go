@@ -120,3 +120,26 @@ func RemoveMember(orgName string, email string) error {
 	fmt.Printf("Remove user %s from org %s", email, orgName)
 	return nil
 }
+
+func ListApps(orgName string) error {
+	configRepository, orgName := loadOrg(orgName)
+
+	if (orgName == "") {
+		return errors.New("can not find default org")
+	}
+
+	orgRepo := api.NewOrgRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+
+	apps, err := orgRepo.GetApps(orgName)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("=== Apps: [%d]\n", len(apps))
+
+	for _, app := range apps {
+		fmt.Printf("email: %s\n", app.Id())
+	}
+	return nil
+}

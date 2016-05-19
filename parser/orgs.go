@@ -17,6 +17,7 @@ orgs:current            set org as a default org
 orgs:members            list members of the organization
 orgs:add-member         add member to organization
 orgs:rm-member          remove member from organization
+orgs:apps               list apps of the organization
 
 Use 'cde help [command]' to learn more.
 `
@@ -33,6 +34,8 @@ Use 'cde help [command]' to learn more.
 		return orgAddMember(argv)
 	case "orgs:rm-member":
 		return orgRmMember(argv)
+	case "orgs:apps":
+		return orgApps(argv)
 	default:
 		if printHelp(argv, usage) {
 			return nil
@@ -180,4 +183,25 @@ Options:
 	email := safeGetValue(args, "--email")
 
 	return cmd.RemoveMember(orgName, email)
+}
+
+func orgApps(argv []string) error {
+	usage := `
+List apps of the organization
+
+Usage: cde orgs:apps [options]
+
+Options:
+  -o --org=<org>
+    the uniquely identifiable id for the organization.
+`
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	orgName := safeGetValue(args, "--org")
+
+	return cmd.ListApps(orgName)
 }
