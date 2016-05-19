@@ -1,7 +1,7 @@
 package cmd
 import (
 	"github.com/sjkyspa/stacks/client/config"
-"github.com/sjkyspa/stacks/controller/api/net"
+	"github.com/sjkyspa/stacks/controller/api/net"
 	"github.com/sjkyspa/stacks/controller/api/api"
 	"fmt"
 	"errors"
@@ -89,5 +89,34 @@ func AddMember(orgName string, email string) error {
 	}
 
 	fmt.Printf("Add %s to org %s", email, orgName)
+	return nil
+}
+
+func RemoveMember(orgName string, email string) error {
+	configRepository, orgName := loadOrg(orgName)
+
+	if (orgName == "") {
+		return errors.New("can not find default org")
+	}
+
+	userRepo := api.NewUserRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+
+	users, err := userRepo.GetUserByEmail(email)
+	if err != nil {
+		return err
+	}
+
+	user := users.Items()[0]
+
+	orgRepo := api.NewOrgRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+
+	err = orgRepo.RmMember(orgName, user.Id())
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Remove user %s from org %s", email, orgName)
 	return nil
 }

@@ -15,6 +15,8 @@ orgs:create             create a new organization
 orgs:info               view info about an organization
 orgs:current            set org as a default org
 orgs:members            list members of the organization
+orgs:add-member         add member to organization
+orgs:rm-member          remove member from organization
 
 Use 'cde help [command]' to learn more.
 `
@@ -29,6 +31,8 @@ Use 'cde help [command]' to learn more.
 		return orgMembers(argv)
 	case "orgs:add-member":
 		return orgAddMember(argv)
+	case "orgs:rm-member":
+		return orgRmMember(argv)
 	default:
 		if printHelp(argv, usage) {
 			return nil
@@ -153,3 +157,27 @@ Options:
 	return cmd.AddMember(orgName, email)
 }
 
+
+func orgRmMember(argv []string) error {
+	usage := `
+Remove member from organization
+
+Usage: cde orgs:rm-member [options]
+
+Options:
+  -o --org=<org>
+    the uniquely identifiable id for the organization.
+  -e --email=<email>
+    the user email need to add to org
+`
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	orgName := safeGetValue(args, "--org")
+	email := safeGetValue(args, "--email")
+
+	return cmd.RemoveMember(orgName, email)
+}
