@@ -27,6 +27,8 @@ Use 'cde help [command]' to learn more.
 		return orgCurrent(argv)
 	case "orgs:members":
 		return orgMembers(argv)
+	case "orgs:add-member":
+		return orgAddMember(argv)
 	default:
 		if printHelp(argv, usage) {
 			return nil
@@ -127,5 +129,27 @@ Options:
 	return cmd.ListMembers(orgName)
 }
 
+func orgAddMember(argv []string) error {
+	usage := `
+Add member to organization
 
+Usage: cde orgs:add-member [options]
+
+Options:
+  -o --org=<org>
+    the uniquely identifiable id for the organization.
+  -e --email=<email>
+    the user email need to add to org
+`
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	orgName := safeGetValue(args, "--org")
+	email := safeGetValue(args, "--email")
+
+	return cmd.AddMember(orgName, email)
+}
 

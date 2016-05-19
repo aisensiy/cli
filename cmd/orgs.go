@@ -72,3 +72,22 @@ func ListMembers(orgName string) error {
 	}
 	return nil
 }
+
+func AddMember(orgName string, email string) error {
+	configRepository, orgName := loadOrg(orgName)
+
+	if (orgName == "") {
+		return errors.New("can not find default org")
+	}
+
+	orgRepo := api.NewOrgRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+
+	err := orgRepo.AddMember(orgName, email)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Add %s to org %s", email, orgName)
+	return nil
+}
