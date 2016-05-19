@@ -23,6 +23,7 @@ apps:logs               view logs
 apps:collaborators     	view collaborators
 apps:add-collaborator	add collaborator
 apps:rm-collaborator    remove collaborator
+apps:transfer           transfer app to others, user or organization
 
 Use 'cde help [command]' to learn more.
 `
@@ -45,6 +46,8 @@ Use 'cde help [command]' to learn more.
 		return appAddCollaborator(argv)
 	case "apps:rm-collaborator":
 		return appRmCollaborator(argv)
+	case "apps:transfer":
+		return appTransfer(argv)
 	default:
 		if printHelp(argv, usage) {
 			return nil
@@ -267,6 +270,33 @@ Options:
 	appId := safeGetValue(args, "--app")
 	email := safeGetValue(args, "--email")
 	return cmd.AppRmCollaborator(appId, email)
+}
+
+func appTransfer(argv []string) error {
+	usage := `
+Transfer app to others, user or organization
+
+Usage: cde apps:transfer [options]
+
+Options:
+  -a --app=<app>
+    the uniquely identifiable id for the application.
+  -o --org=<org>
+    name of the organization transfer to
+  -e --email=<email>
+    email of the user transfer to
+`
+
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	appId := safeGetValue(args, "--app")
+	email := safeGetValue(args, "--email")
+	org := safeGetValue(args, "--org")
+	return cmd.AppTransfer(appId, email, org)
 }
 
 

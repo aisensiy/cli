@@ -394,3 +394,43 @@ func AppRmCollaborator(appId string, email string) error {
 	fmt.Print("Remove collaborator success.\n");
 	return nil
 }
+
+func AppTransfer(appId string, email string, org string) error {
+	if (email == "" && org == "") {
+		return errors.New(fmt.Sprint("Email or Org Name should given."))
+	}
+	if (email != "" && org != "") {
+		return errors.New(fmt.Sprint("Only one of Email and Org Name should given."))
+	}
+
+	configRepository, currentApp, err := load(appId)
+	if err != nil {
+		return err
+	}
+	if appId != "" && appId != currentApp {
+		return errors.New(fmt.Sprintf("current dir's app %s != %s\n", currentApp, appId))
+	}
+
+	appRepository := api.NewAppRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+	app, err := appRepository.GetApp(appId)
+	if err != nil {
+		return err
+	}
+
+	if (email != "") {
+		err = app.TransferToUser(email)
+		if err != nil {
+			return err
+		}
+		fmt.Println("Finish transfer %s to %s", app.Id(), email)
+	} else {
+		err = app.TransferToOrg(org)
+		if err != nil {
+			return err
+		}
+		fmt.Println("Finish transfer %s to %s", app.Id(), org)
+	}
+
+	return nil
+}
