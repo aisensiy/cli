@@ -143,3 +143,22 @@ func ListApps(orgName string) error {
 	}
 	return nil
 }
+
+func AddOrgApp(orgName string, appName string) error {
+	configRepository, orgName := loadOrg(orgName)
+
+	if (orgName == "") {
+		return errors.New("can not find default org")
+	}
+
+	orgRepo := api.NewOrgRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+
+	err := orgRepo.AddApp(orgName, appName)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Add %s to org %s\n", appName, orgName)
+	return nil
+}

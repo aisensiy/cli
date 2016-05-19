@@ -18,6 +18,7 @@ orgs:members            list members of the organization
 orgs:add-member         add member to organization
 orgs:rm-member          remove member from organization
 orgs:apps               list apps of the organization
+orgs:add-app            add app to organization
 
 Use 'cde help [command]' to learn more.
 `
@@ -36,6 +37,8 @@ Use 'cde help [command]' to learn more.
 		return orgRmMember(argv)
 	case "orgs:apps":
 		return orgApps(argv)
+	case "orgs:add-app":
+		return orgAddApp(argv)
 	default:
 		if printHelp(argv, usage) {
 			return nil
@@ -204,4 +207,28 @@ Options:
 	orgName := safeGetValue(args, "--org")
 
 	return cmd.ListApps(orgName)
+}
+
+func orgAddApp(argv []string) error {
+	usage := `
+Add app to organization
+
+Usage: cde orgs:add-app [options]
+
+Options:
+  -o --org=<org>
+    the uniquely identifiable id for the organization.
+  -a --app=<app>
+    the app name.
+`
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	orgName := safeGetValue(args, "--org")
+	appName := safeGetValue(args, "--app")
+
+	return cmd.AddOrgApp(orgName, appName)
 }
