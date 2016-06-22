@@ -24,6 +24,7 @@ apps:collaborators     	view collaborators
 apps:add-collaborator	add collaborator
 apps:rm-collaborator    remove collaborator
 apps:transfer           transfer app to others, user or organization
+apps:launch             launch non build app
 
 Use 'cde help [command]' to learn more.
 `
@@ -48,6 +49,8 @@ Use 'cde help [command]' to learn more.
 		return appRmCollaborator(argv)
 	case "apps:transfer":
 		return appTransfer(argv)
+	case "apps:launch":
+		return appLaunch(argv)
 	default:
 		if printHelp(argv, usage) {
 			return nil
@@ -299,5 +302,25 @@ Options:
 	return cmd.AppTransfer(appId, email, org)
 }
 
+func appLaunch(argv []string) error {
+	usage := `
+Launch non build app
+
+Usage: cde apps:launch [options]
+
+Options:
+  -a --app=<app>
+    the uniquely identifiable id for the application.
+`
+
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	appId := safeGetValue(args, "--app")
+	return cmd.AppLaunch(appId)
+}
 
 

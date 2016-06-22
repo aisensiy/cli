@@ -29,6 +29,33 @@ func askForOverrideExistingApp() bool {
 	return false
 }
 
+func AppLaunch(appId string) error {
+	configRepository := config.NewConfigRepository(func(error) {})
+	appRepository := api.NewAppRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+
+	app, err := appRepository.GetApp(appId)
+	if err != nil {
+		return err
+	}
+	stack, err := app.GetStack()
+	if err != nil {
+		return err
+	}
+
+	if stack.Type() != "NON_BUILD_STACK" {
+		return errors.New("only non build stack app can be launched")
+	}
+
+	releaseMapper := api.NewReleaseMapper(configRepository, net.NewCloudControllerGateway(configRepository))
+	_, err = releaseMapper.Create(app)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("create %s release successfully\n", app.Id())
+	return nil
+}
+
 // AppCreate creates an app.
 func AppCreate(appId string, stackName string, needDeploy string) error {
 	var needDeployBool bool
