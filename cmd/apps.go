@@ -55,7 +55,10 @@ func AppCreate(appId string, stackName string, needDeploy string) error {
 	if err != nil {
 		return err
 	}
-	stackId := stacks.Items()[0].Id()
+
+	stack := stacks.Items()[0]
+
+	stackId := stack.Id()
 
 	if needDeploy == "1" {
 		needDeployBool = true
@@ -92,6 +95,17 @@ func AppCreate(appId string, stackName string, needDeploy string) error {
 	}
 
 	fmt.Println("remote available at", git.RemoteURL(host, createdApp.Id()))
+
+	if stack.Type() == "NON_BUILD_STACK" {
+		releaseMapper := api.NewReleaseMapper(configRepository, net.NewCloudControllerGateway(configRepository))
+		_, err = releaseMapper.Create(createdApp)
+		if err != nil {
+			fmt.Println("error in create release for non build stack")
+		} else {
+			fmt.Println("create new release for non build stack")
+		}
+	}
+
 	return err
 }
 
