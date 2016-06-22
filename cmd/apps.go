@@ -14,14 +14,14 @@ import (
 	deploymentNet "github.com/sjkyspa/stacks/launcher/api/net"
 	"bufio"
 )
-func askForOverrideExistingApp() bool{
+func askForOverrideExistingApp() bool {
 	reader := bufio.NewReader(os.Stdin)
-	for(true) {
+	for (true) {
 		fmt.Printf("Another app is using this repository, are you sure to continue (y/N)?")
 		text, _ := reader.ReadString('\n')
-		if(strings.TrimSpace(text) == "y") {
+		if (strings.TrimSpace(text) == "y") {
 			return true
-		}else if (strings.TrimSpace(text) == "N"){
+		}else if (strings.TrimSpace(text) == "N") {
 			return false
 		}
 	}
@@ -33,7 +33,7 @@ func askForOverrideExistingApp() bool{
 func AppCreate(appId string, stackName string, needDeploy string) error {
 	var needDeployBool bool
 
-	if(!git.IsGitDirectory()){
+	if (!git.IsGitDirectory()) {
 		return fmt.Errorf("Not in a git repository")
 	}
 
@@ -45,8 +45,8 @@ func AppCreate(appId string, stackName string, needDeploy string) error {
 		net.NewCloudControllerGateway(configRepository))
 
 	appName, _ := git.DetectAppName(configRepository.GitHost())
-	if(appName != ""){
-		if(!askForOverrideExistingApp()){
+	if (appName != "") {
+		if (!askForOverrideExistingApp()) {
 			return fmt.Errorf("Give up to override existing app")
 		}
 	}
@@ -191,7 +191,7 @@ func outputDependentServices(appId string) error {
 	}
 	servicesArray := servicesModel
 	for index, service := range servicesArray {
-		fmt.Printf("-----> Service %d:\n", index+1)
+		fmt.Printf("-----> Service %d:\n", index + 1)
 		table := tablewriter.NewWriter(os.Stdout)
 		table.SetAlignment(tablewriter.ALIGN_LEFT)
 		table.Append([]string{"ID", service.Id()})
@@ -205,34 +205,49 @@ func outputDependentServices(appId string) error {
 }
 
 func DestroyApp(appId string) error {
-	configRepository, currentApp, err := load("")
-	if err != nil {
-		return err
-	}
-	if appId != "" && appId != currentApp {
-		return errors.New(fmt.Sprintf("current dir's app %s != %s\n", currentApp, appId))
-	}
-	deployRepo := launcherApi.NewDeploymentRepository(configRepository, deploymentNet.NewCloudControllerGateway(configRepository))
-	err = deployRepo.Destroy(currentApp)
-	if err != nil {
-		return err
-	}
+	configRepository := config.NewConfigRepository(func(error) {})
 
 	appRepository := api.NewAppRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
-	err = appRepository.Delete(currentApp)
+	app, err := appRepository.GetApp(appId)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("destroy %s successfully!\n", currentApp)
+	stack, err := app.GetStack()
+	if err != nil {
+		return err
+	}
 
-	if (git.HasRemoteNameForApp("cde", currentApp)) {
+	if stack.Type() == "BUILD_STACK" {
+		_, currentApp, err := load("")
+		if err != nil {
+			return err
+		}
+		if appId != "" && appId != currentApp {
+			return errors.New(fmt.Sprintf("current dir's app %s != %s\n", currentApp, appId))
+		}
+	}
+
+	deployRepo := launcherApi.NewDeploymentRepository(configRepository, deploymentNet.NewCloudControllerGateway(configRepository))
+	err = deployRepo.Destroy(appId)
+	if err != nil {
+		fmt.Printf("failed to destroy %s deployment\n", app.Id())
+	}
+
+	err = appRepository.Delete(appId)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("destroy %s successfully!\n", appId)
+
+	if (git.HasRemoteNameForApp("cde", appId)) {
 		err = git.DeleteRemote("cde")
 		if (err != nil) {
 			fmt.Print("Remove 'cde' remote failed. \n Please execute git cmd in the app directory: `git remote remove cde`")
 		}
-	}else {
+	} else {
 		fmt.Print("Please execute git cmd in the app directory: `git remote remove cde`")
 	}
 
