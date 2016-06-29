@@ -80,6 +80,8 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 		err = parser.Git(argv)
 	case "config":
 		err = parser.Config(argv)
+	case "dev":
+		err = parser.Dev(argv)
 	case "help":
 		fmt.Print(usage)
 		return 0
