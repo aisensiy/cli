@@ -232,7 +232,7 @@ func outputDependentServices(appId string) error {
 }
 
 func DestroyApp(appId string) error {
-	configRepository := config.NewConfigRepository(func(error) {})
+	configRepository, appId, err := load(appId)
 
 	appRepository := api.NewAppRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
@@ -240,7 +240,6 @@ func DestroyApp(appId string) error {
 	if err != nil {
 		return err
 	}
-
 	stack, err := app.GetStack()
 	if err != nil {
 		return err
