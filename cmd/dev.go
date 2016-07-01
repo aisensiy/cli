@@ -63,8 +63,9 @@ func DevUp() error {
 	containerId := func() string {
 		dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
 		if err != nil {
-			return err
+			panic("Please ensure the current dir can be accessed")
 		}
+
 		basename := filepath.Base(dir)
 		containerNamePrefix := basename + "_" + "runtime"
 
@@ -123,11 +124,93 @@ services:
 }
 
 func DevDown() error {
-	fmt.Println("dev down")
+	if (!git.IsGitDirectory()) {
+		return fmt.Errorf("Execute inside the app dir")
+	}
+
+	configRepository := config.NewConfigRepository(func(error) {})
+	appRepository := api.NewAppRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+	uri, err := url.Parse(configRepository.Endpoint())
+	appId, err := git.DetectAppName(uri.Host)
+
+	if err != nil || appId == "" {
+		return fmt.Errorf("Please use the -remote to specfiy the app")
+	}
+
+	app, err := appRepository.GetApp(appId)
+	if err != nil {
+		return err
+	}
+
+	stack, err := app.GetStack()
+	if err != nil {
+		return err
+	}
+
+	f, err := toCompose(stack)
+	if err != nil {
+		return err
+	}
+
+	dockerComposeUp := exec.Command("docker-compose", "-f", f, "stop")
+
+	var out bytes.Buffer
+	var errout bytes.Buffer
+	dockerComposeUp.Stdin = strings.NewReader("test")
+	dockerComposeUp.Stdout = &out
+	dockerComposeUp.Stderr = &errout
+	err = dockerComposeUp.Run()
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(errout.String())
 	return nil
 }
 
 func DevDestroy() error {
-	fmt.Println("dev destroy")
+	if (!git.IsGitDirectory()) {
+		return fmt.Errorf("Execute inside the app dir")
+	}
+
+	configRepository := config.NewConfigRepository(func(error) {})
+	appRepository := api.NewAppRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+	uri, err := url.Parse(configRepository.Endpoint())
+	appId, err := git.DetectAppName(uri.Host)
+
+	if err != nil || appId == "" {
+		return fmt.Errorf("Please use the -remote to specfiy the app")
+	}
+
+	app, err := appRepository.GetApp(appId)
+	if err != nil {
+		return err
+	}
+
+	stack, err := app.GetStack()
+	if err != nil {
+		return err
+	}
+
+	f, err := toCompose(stack)
+	if err != nil {
+		return err
+	}
+
+	dockerComposeUp := exec.Command("docker-compose", "-f", f, "rm", "-f")
+
+	var out bytes.Buffer
+	var errout bytes.Buffer
+	dockerComposeUp.Stdin = strings.NewReader("test")
+	dockerComposeUp.Stdout = &out
+	dockerComposeUp.Stderr = &errout
+	err = dockerComposeUp.Run()
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(errout.String())
 	return nil
 }
