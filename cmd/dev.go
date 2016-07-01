@@ -14,6 +14,7 @@ import (
 	"os"
 	"bytes"
 	"strings"
+	"path/filepath"
 )
 
 func DevUp() error {
@@ -58,10 +59,32 @@ func DevUp() error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(out.String())
-	fmt.Println(errout.String())
 
-	dockerExec := exec.Command("docker", "exec", "-it", "template_runtime_1", "sh")
+	containerId := func() string {
+		dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+		if err != nil {
+			return err
+		}
+		basename := filepath.Base(dir)
+		containerNamePrefix := basename + "_" + "runtime"
+
+		psOutput, err := exec.Command("docker-compose", "-f", f, "ps").Output()
+		if err != nil {
+			panic(fmt.Sprintf("Can not find the proper container id: cause %v", err))
+		}
+		a := string(psOutput)
+		splits := strings.Split(a, "\n")
+		for _, item := range splits {
+			if strings.Contains(item, containerNamePrefix) {
+				return strings.Split(item, " ")[0]
+			}
+		}
+		panic("Can not find the proper container id")
+	}()
+
+	fmt.Println(fmt.Sprintf("container id %s", containerId))
+
+	dockerExec := exec.Command("docker", "exec", "-it", containerId, "sh")
 	dockerExec.Stdin = os.Stdin
 	dockerExec.Stderr = os.Stderr
 	dockerExec.Stdout = os.Stdout
