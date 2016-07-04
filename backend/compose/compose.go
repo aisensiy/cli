@@ -14,12 +14,14 @@ type ComposeBackend struct {
 
 }
 type Service struct {
-	Image      string `json:"image" yaml:"image"`
-	Entrypoint string `json:"entrypoint" yaml:"entrypoint,omitempty"`
-	Command    string `json:"command" yaml:"command,omitempty"`
-	Volumes    []string `json:"volumes" yaml:"volumes,omitempty"`
-	Links      []string `json:"links" yaml:"links,omitempty"`
-	Ports      []string `json:"ports" yaml:"ports,omitempty"`
+	Image       string `json:"image" yaml:"image"`
+	Entrypoint  string `json:"entrypoint" yaml:"entrypoint,omitempty"`
+	Command     string `json:"command" yaml:"command,omitempty"`
+	Volumes     []string `json:"volumes" yaml:"volumes,omitempty"`
+	Links       []string `json:"links" yaml:"links,omitempty"`
+	Ports       []string `json:"ports" yaml:"ports,omitempty"`
+	Environment map[string]string `json:"environment" yaml:"environment,omitempty"`
+	Expose      []int `json:"expose" yaml:"expose,omitempty"`
 }
 
 type ComposeFile struct {
@@ -60,17 +62,19 @@ func (cb ComposeBackend) ToComposeFile(s api.Stack) string {
 	for name, service := range services {
 		if !service.IsBuildable() {
 			volumes := make([]string, 0)
-			for _, v:= range service.GetVolumes() {
+			for _, v := range service.GetVolumes() {
 				volumes = append(volumes, toString(v))
 			}
 			composeServices[name] = Service{
 				Image: service.GetImage(),
 				Links: service.GetLinks(),
 				Volumes: volumes,
+				Environment: service.GetEnv(),
+				Expose: service.GetExpose(),
 			}
 		} else {
 			volumes := make([]string, 0)
-			for _, v:= range service.GetVolumes() {
+			for _, v := range service.GetVolumes() {
 				volumes = append(volumes, toString(v))
 			}
 
@@ -87,6 +91,9 @@ func (cb ComposeBackend) ToComposeFile(s api.Stack) string {
 				Entrypoint: "/bin/sh",
 				Command: "-c 'tail -f /dev/null'",
 				Volumes: volumes,
+				Links: service.GetLinks(),
+				Environment: service.GetEnv(),
+				Expose: service.GetExpose(),
 			}
 		}
 	}
