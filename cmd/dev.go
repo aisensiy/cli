@@ -62,13 +62,7 @@ func DevUp() error {
 	}
 
 	containerId := func() string {
-		dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
-		if err != nil {
-			panic("Please ensure the current dir can be accessed")
-		}
-
-		basename := filepath.Base(dir)
-		containerNamePrefix := basename + "_" + "runtime"
+		containerNamePrefix := "local" + "_" + "runtime"
 
 		psOutput, err := exec.Command("docker-compose", "-f", f, "ps").Output()
 		if err != nil {
@@ -101,12 +95,19 @@ func DevUp() error {
 func toCompose(stack api.Stack) (string, error) {
 	composeBackend := compose.NewComposeBackend()
 	composeContent := composeBackend.ToComposeFile(stack)
-	err := ioutil.WriteFile("dockercompose.yml", []byte(composeContent), 0600)
+
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		panic(fmt.Sprintf("Please ensure the current dir can be accessed. %v", err))
+	}
+	os.MkdirAll(filepath.Join(dir, ".local"), 0644)
+
+	err = ioutil.WriteFile(".local/dockercompose.yml", []byte(composeContent), 0600)
 	if err != nil {
 		return "", err
 	}
 
-	return "dockercompose.yml", nil
+	return ".local/dockercompose.yml", nil
 }
 
 func DevDown() error {
