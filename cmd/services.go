@@ -62,7 +62,7 @@ func ServiceUpdate(appId, serviceName string, params deployApi.ServiceConfigPara
 	return
 }
 
-func GetService(appId, serviceName string) (service deployApi.Service, apiErr error) {
+func GetService(appId, serviceName string) (service deployApi.LauncherService, apiErr error) {
 	configRepository, appId, err := load(appId)
 	if err != nil {
 		return nil, err

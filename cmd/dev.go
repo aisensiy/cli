@@ -15,6 +15,7 @@ import (
 	"bytes"
 	"strings"
 	"path/filepath"
+	"github.com/sjkyspa/stacks/client/backend/compose"
 )
 
 func DevUp() error {
@@ -98,24 +99,9 @@ func DevUp() error {
 }
 
 func toCompose(stack api.Stack) (string, error) {
-	aa :=
-	`version: '2'
-services:
-  runtime:
-    image: hub.deepi.cn/jersey-mysql-build
-    entrypoint: /bin/sh
-    command: -c 'tail -f /dev/null'
-    volumes:
-      - /Mac/workspace/tmp/cde-stacks/jersey-mysql/template:/codee
-      - /var/run/docker.sock:/var/run/docker.sock
-    links:
-      - mysql
-  mysql:
-    image: tutum/mysql
-    ports:
-     - 5000:5000`
-
-	err := ioutil.WriteFile("dockercompose.yml", []byte(aa), 0600)
+	composeBackend := compose.NewComposeBackend()
+	composeContent := composeBackend.ToComposeFile(stack)
+	err := ioutil.WriteFile("dockercompose.yml", []byte(composeContent), 0600)
 	if err != nil {
 		return "", err
 	}
