@@ -65,12 +65,22 @@ func (cb ComposeBackend) ToComposeFile(s api.Stack) string {
 			for _, v := range service.GetVolumes() {
 				volumes = append(volumes, toString(v))
 			}
+			env := service.GetEnv()
+			links := service.GetLinks()
+			for _, link := range links {
+				fmt.Println(link)
+				env[fmt.Sprintf("%s_HOST", strings.ToUpper(link))] = link
+				env[fmt.Sprintf("%s_PORT", strings.ToUpper(link))] = fmt.Sprintf("%d", services[link].GetExpose()[0])
+			}
+
+
 			composeServices[name] = Service{
 				Image: service.GetImage(),
-				Links: service.GetLinks(),
+				Links: links,
 				Volumes: volumes,
-				Environment: service.GetEnv(),
+				Environment: env,
 				Expose: service.GetExpose(),
+				Ports: Map(service.GetExpose(), func(port int) string {return fmt.Sprintf("%d:%d", port, port)}),
 			}
 		} else {
 			volumes := make([]string, 0)
@@ -86,14 +96,24 @@ func (cb ComposeBackend) ToComposeFile(s api.Stack) string {
 			volumes = append(volumes, "/var/run/docker.sock:/var/run/docker.sock")
 			volumes = append(volumes, fmt.Sprintf("%s:/codebase", filepath.Join("/Mac", dir)))
 
+			env := service.GetEnv()
+			links := service.GetLinks()
+			for _, link := range links {
+				fmt.Println(link)
+				env[fmt.Sprintf("%s_HOST", strings.ToUpper(link))] = link
+				env[fmt.Sprintf("%s_PORT", strings.ToUpper(link))] = fmt.Sprintf("%d", services[link].GetExpose()[0])
+			}
+
+
 			composeServices["runtime"] = Service{
 				Image: service.GetBuild().Name,
 				Entrypoint: "/bin/sh",
 				Command: "-c 'tail -f /dev/null'",
 				Volumes: volumes,
-				Links: service.GetLinks(),
-				Environment: service.GetEnv(),
+				Links: links,
+				Environment: env,
 				Expose: service.GetExpose(),
+				Ports: Map(service.GetExpose(), func(port int) string {return fmt.Sprintf("%d:%d", port, port)}),
 			}
 		}
 	}
@@ -112,4 +132,13 @@ func (cb ComposeBackend) ToComposeFile(s api.Stack) string {
 
 func NewComposeBackend() backend.Runtime {
 	return ComposeBackend{}
+}
+
+
+func Map(src []int, mapper func(int) string) []string {
+	result := make([]string, 0)
+	for _, item := range src {
+		result = append(result, mapper(item))
+	}
+	return result
 }
