@@ -13,6 +13,7 @@ Valid commands for domains:
 domains:create        create a domain
 domains:list          list domains
 domains:remove        remove a domain
+domains:cert          attach cert to domain
 
 Use 'cde help [command]' to learn more.
 `
@@ -23,6 +24,8 @@ Use 'cde help [command]' to learn more.
 		return domainsList(argv)
 	case "domains:remove":
 		return domainsRemove(argv)
+	case "domains:cert":
+		return domainCert(argv)
 	default:
 		if printHelp(argv, usage) {
 			return nil
@@ -92,4 +95,28 @@ Arguments:
 	}
 
 	return cmd.DomainsRemove(safeGetValue(args, "<domain>"))
+}
+
+func domainCert(argv []string) error {
+	usage := `
+Attach cert to the domain
+
+Usage: cde domains:cert <domain> <crt> <private-key>
+
+Arguments:
+  <domain>
+    the domain name to be removed.
+  <crt>
+    the certificate file of the domain.
+  <private-key>
+    the private key file of the domain crt
+`
+
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	return cmd.DomainsCert(safeGetValue(args, "<domain>"), safeGetValue(args, "<crt>"), safeGetValue(args, "<private-key>"),)
 }

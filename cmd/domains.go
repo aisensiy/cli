@@ -5,6 +5,7 @@ import (
 	"github.com/sjkyspa/stacks/controller/api/api"
 	"github.com/sjkyspa/stacks/controller/api/net"
 	"github.com/sjkyspa/stacks/client/config"
+	"io/ioutil"
 )
 
 func DomainsAdd(name string) error {
@@ -45,5 +46,45 @@ func DomainsRemove(domainName string) error {
 		return err
 	}
 	fmt.Printf("=== Domain [%s] deleted\n", domainName)
+	return nil
+}
+
+func DomainsCert(domainName, crtFile, privateKeyFile string) error {
+	if "" == crtFile {
+		return fmt.Errorf("%s", "The crt can not be empty")
+	}
+
+	if "" == privateKeyFile {
+		return fmt.Errorf("%s", "The crt can not be empty")
+	}
+
+	crt, err := ioutil.ReadFile(crtFile)
+	if err != nil {
+		return fmt.Errorf("Please ensure %s exist and can be accessed", crtFile)
+	}
+
+	privateKey, err := ioutil.ReadFile(privateKeyFile)
+	if err != nil {
+		return fmt.Errorf("Please ensure %s exist and can be accessed", privateKeyFile)
+	}
+
+	configRepository := config.NewConfigRepository(func(err error) {})
+	domainRepository := api.NewDomainRepository(configRepository, net.NewCloudControllerGateway(configRepository))
+	domain, err := domainRepository.GetDomain(domainName)
+	if err != nil {
+		return err
+	}
+
+
+	err = domain.AttachCert(api.CertParams{
+		Crt: string(crt),
+		Key: string(privateKey),
+	})
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("=== Domain(%s) crt [%s] key[%s] attached\n", domainName, crtFile, privateKeyFile)
 	return nil
 }
