@@ -99,7 +99,6 @@ func (cb ComposeBackend) ToComposeFile(s api.Stack) string {
 			env := service.GetEnv()
 			links := service.GetLinks()
 			for _, link := range links {
-				fmt.Println(link)
 				env[fmt.Sprintf("%s_HOST", strings.ToUpper(link))] = link
 				env[fmt.Sprintf("%s_PORT", strings.ToUpper(link))] = fmt.Sprintf("%d", services[link].GetExpose()[0])
 			}

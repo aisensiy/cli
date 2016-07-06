@@ -78,8 +78,6 @@ func DevUp() error {
 		panic("Can not find the proper container id")
 	}()
 
-	fmt.Println(fmt.Sprintf("container id %s", containerId))
-
 	dockerExec := exec.Command("docker", "exec", "-it", containerId, "sh")
 	dockerExec.Stdin = os.Stdin
 	dockerExec.Stderr = os.Stderr
@@ -100,9 +98,9 @@ func toCompose(stack api.Stack) (string, error) {
 	if err != nil {
 		panic(fmt.Sprintf("Please ensure the current dir can be accessed. %v", err))
 	}
-	os.MkdirAll(filepath.Join(dir, ".local"), 0644)
+	os.MkdirAll(filepath.Join(dir, ".local"), 0766)
 
-	err = ioutil.WriteFile(".local/dockercompose.yml", []byte(composeContent), 0600)
+	err = ioutil.WriteFile(".local/dockercompose.yml", []byte(composeContent), 0644)
 	if err != nil {
 		return "", err
 	}
