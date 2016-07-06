@@ -12,7 +12,7 @@ Valid commands for config:
 
 dev:up        	 start up the dev env
 dev:down         shutdown the dev env
-dev:destroy
+dev:destroy      destroy the dev env
 
 Use 'cde help [command]' to learn more.
 `
@@ -42,7 +42,7 @@ func devUp(argv []string) error {
 	usage := `
 Start up the local dev env
 
-Usage: cde dev:up [options]
+Usage: cde dev:up
 `
 
 	_, err := docopt.Parse(usage, argv, true, "", false, true)
@@ -58,9 +58,7 @@ func devDown(argv []string) error {
 	usage := `
 Shutdown the local dev env
 
-Usage: cde dev:down [options]
-
-Options:
+Usage: cde dev:down
 `
 
 	_, err := docopt.Parse(usage, argv, true, "", false, true)
@@ -76,9 +74,7 @@ func devDestroy(argv []string) error {
 	usage := `
 Destroy the local dev env
 
-Usage: cde dev:destroy [options]
-
-Options:
+Usage: cde dev:destroy
 `
 
 	_, err := docopt.Parse(usage, argv, true, "", false, true)
