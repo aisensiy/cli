@@ -16,6 +16,7 @@ import (
 	"strings"
 	"path/filepath"
 	"github.com/sjkyspa/stacks/client/backend/compose"
+	"time"
 )
 
 func DevUp() error {
@@ -60,6 +61,30 @@ func DevUp() error {
 	if err != nil {
 		return err
 	}
+
+	for i := 0; i < 100; i++ {
+		content, err := Pipe(
+			exec.Command("docker-compose", "-f", f, "ps"),
+			exec.Command("grep", "-E", "runtime|db"),
+			exec.Command("/bin/sh", "-c", "grep -v Up||true"),
+			exec.Command("wc", "-l"))
+		if err != nil {
+			fmt.Fprint(os.Stderr, fmt.Sprintf("error occured: %v", err))
+			return err
+		}
+		if "0" == strings.TrimSpace(string(content)) {
+			break
+		} else {
+			time.Sleep(1 * time.Second)
+		}
+	}
+
+	psOutput, err := exec.Command("docker-compose", "-f", f, "logs").Output()
+	if err != nil {
+		panic(fmt.Sprintf("Can not find the proper container id: cause %v", err))
+	}
+	
+	fmt.Println(string(psOutput))
 
 	containerId := func() string {
 		containerNamePrefix := "local" + "_" + "runtime"
@@ -184,7 +209,7 @@ func DevDestroy() error {
 		return err
 	}
 
-	dockerComposeUp := exec.Command("docker-compose", "-f", f, "rm", "-f")
+	dockerComposeUp := exec.Command("docker-compose", "-f", f, "down", "-v", "--remove-orphans")
 
 	var out bytes.Buffer
 	var errout bytes.Buffer
@@ -198,4 +223,46 @@ func DevDestroy() error {
 
 	fmt.Println(errout.String())
 	return nil
+}
+
+func Pipe(cmds ...*exec.Cmd) ([]byte, error) {
+	readFile, writeFile, err := os.Pipe()
+	if err != nil {
+		return nil, err
+	}
+	execCmds := make([]*exec.Cmd, 0)
+	execCmds = append(execCmds, cmds...)
+	i := 0;
+	for ; i < len(execCmds) - 1; i++ {
+		stdout, _ := execCmds[i].StdoutPipe()
+		execCmds[i + 1].Stdin = stdout
+		err := execCmds[i].Start()
+		if err != nil {
+			return nil, err
+		}
+	}
+	execCmds[i].Stdout = writeFile
+
+	err = execCmds[i].Run()
+	if err != nil {
+		return nil, err
+	}
+
+	for i := 0; i < len(execCmds) - 1; i++ {
+		err := execCmds[i].Wait()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	writeFile.Close()
+
+	content, err := ioutil.ReadAll(readFile)
+	if err != nil {
+		return nil, err
+	}
+
+	readFile.Close()
+
+	return content, nil
 }
