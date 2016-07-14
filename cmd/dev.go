@@ -50,7 +50,7 @@ func DevUp() error {
 		return err
 	}
 
-	dockerComposeCreate := exec.Command("docker-compose", "-f", f, "create")
+	dockerComposeCreate := exec.Command("docker-compose", "-f", f, "pull")
 	stdoutReadFile, stdoutWriteFile, err := os.Pipe()
 	stderrReadFile, stderrWriteFile, err := os.Pipe()
 	dockerComposeCreate.Stdout = stdoutWriteFile
