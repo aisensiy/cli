@@ -61,42 +61,51 @@ func DevUp() error {
 	}
 	createDone := make(chan bool, 1)
 	go func() {
+		defer func() {
+			recover()
+		}()
 		dockerComposeCreate.Wait()
 		createDone <- true
 	}()
 
 	var wg sync.WaitGroup
+	stdoutStop := make(chan int, 1)
+	stderrStop := make(chan int, 1)
+	go func() {
+		wg.Add(1)
+		defer wg.Done()
+		for {
+			select {
+			case <-stdoutStop:
+				return
+			default:
+				stdout := bufio.NewScanner(stdoutReadFile)
+				if stdout.Scan() {
+					fmt.Println(stdout.Text())
+				}
+			}
+		}
+	}()
+
+	go func() {
+		wg.Add(1)
+		defer wg.Done()
+		for {
+			select {
+			case <-stderrStop:
+				return
+			default:
+				stderr := bufio.NewScanner(stderrReadFile)
+				if stderr.Scan() {
+					fmt.Fprintln(os.Stderr, string(stderr.Bytes()))
+				}
+			}
+		}
+	}()
+
 	go (func() {
 		wg.Add(1)
 		defer wg.Done()
-		stdoutStop := make(chan int, 1)
-		stderrStop := make(chan int, 1)
-		go func() {
-			for {
-				select {
-				case <-stdoutStop:
-					return
-				default:
-					stdout := bufio.NewScanner(stdoutReadFile)
-					if stdout.Scan() {
-						fmt.Println(stdout.Text())
-					}
-				}
-			}
-		}()
-		go func() {
-			for {
-				select {
-				case <-stderrStop:
-					return
-				default:
-					stderr := bufio.NewScanner(stderrReadFile)
-					if stderr.Scan() {
-						fmt.Fprintln(os.Stderr, string(stderr.Bytes()))
-					}
-				}
-			}
-		}()
 		for {
 			select {
 			case <-createDone:
@@ -115,6 +124,7 @@ func DevUp() error {
 
 	var composeUpOut bytes.Buffer
 	var composeUpErr bytes.Buffer
+	dockerComposeUp.Stdin = strings.NewReader("")
 	dockerComposeUp.Stdout = &composeUpOut
 	dockerComposeUp.Stderr = &composeUpErr
 	err = dockerComposeUp.Run()
