@@ -279,6 +279,11 @@ func DevDestroy() error {
 	if err != nil {
 		return err
 	}
+	err = os.RemoveAll(".local")
+	if err != nil {
+		fmt.Println("Error when remove the local dir .local %v", err)
+		return err
+	}
 
 	fmt.Println(errout.String())
 	return nil
