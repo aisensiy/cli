@@ -9,14 +9,14 @@ import (
 	"net/url"
 	"io/ioutil"
 	"os/exec"
-	//"bytes"
-	//"strings"
 	"os"
 	"bytes"
 	"strings"
 	"path/filepath"
 	"github.com/sjkyspa/stacks/client/backend/compose"
 	"time"
+	"bufio"
+	"sync"
 )
 
 func DevUp() error {
@@ -50,13 +50,74 @@ func DevUp() error {
 		return err
 	}
 
+	dockerComposeCreate := exec.Command("docker-compose", "-f", f, "create")
+	stdoutReadFile, stdoutWriteFile, err := os.Pipe()
+	stderrReadFile, stderrWriteFile, err := os.Pipe()
+	dockerComposeCreate.Stdout = stdoutWriteFile
+	dockerComposeCreate.Stderr = stderrWriteFile
+	err = dockerComposeCreate.Start()
+	if err != nil {
+		return err
+	}
+	createDone := make(chan bool, 1)
+	go func() {
+		dockerComposeCreate.Wait()
+		createDone <- true
+	}()
+
+	var wg sync.WaitGroup
+	go (func() {
+		wg.Add(1)
+		defer wg.Done()
+		stdoutStop := make(chan int, 1)
+		stderrStop := make(chan int, 1)
+		go func() {
+			for {
+				select {
+				case <-stdoutStop:
+					return
+				default:
+					stdout := bufio.NewScanner(stdoutReadFile)
+					if stdout.Scan() {
+						fmt.Println(stdout.Text())
+					}
+				}
+			}
+		}()
+		go func() {
+			for {
+				select {
+				case <-stderrStop:
+					return
+				default:
+					stderr := bufio.NewScanner(stderrReadFile)
+					if stderr.Scan() {
+						fmt.Fprintln(os.Stderr, string(stderr.Bytes()))
+					}
+				}
+			}
+		}()
+		for {
+			select {
+			case <-createDone:
+				stdoutStop <- 0
+				stderrStop <- 0
+				return
+			default:
+				fmt.Println("Creating ...")
+				time.Sleep(5 * time.Second)
+			}
+		}
+	})()
+
+	wg.Wait()
 	dockerComposeUp := exec.Command("docker-compose", "-f", f, "up", "-d")
 
-	var out bytes.Buffer
-	var errout bytes.Buffer
+	var composeUpOut bytes.Buffer
+	var composeUpErr bytes.Buffer
 	dockerComposeUp.Stdin = strings.NewReader("test")
-	dockerComposeUp.Stdout = &out
-	dockerComposeUp.Stderr = &errout
+	dockerComposeUp.Stdout = &composeUpOut
+	dockerComposeUp.Stderr = &composeUpErr
 	err = dockerComposeUp.Run()
 	if err != nil {
 		return err
@@ -75,6 +136,7 @@ func DevUp() error {
 		if "0" == strings.TrimSpace(string(content)) {
 			break
 		} else {
+			fmt.Println("starting...")
 			time.Sleep(1 * time.Second)
 		}
 	}
@@ -83,7 +145,7 @@ func DevUp() error {
 	if err != nil {
 		panic(fmt.Sprintf("Can not find the proper container id: cause %v", err))
 	}
-	
+
 	fmt.Println(string(psOutput))
 
 	containerId := func() string {
