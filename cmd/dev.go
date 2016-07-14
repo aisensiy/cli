@@ -271,7 +271,7 @@ func DevDestroy() error {
 		return err
 	}
 
-	dockerComposeUp := exec.Command("docker-compose", "-f", f, "down", "-v", "--remove-orphans")
+	dockerComposeUp := exec.Command("docker-compose", "-f", f, "down", "-v", "--remove-orphans", "--rmi", "all")
 
 	var out bytes.Buffer
 	var errout bytes.Buffer
