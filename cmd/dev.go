@@ -115,7 +115,6 @@ func DevUp() error {
 
 	var composeUpOut bytes.Buffer
 	var composeUpErr bytes.Buffer
-	dockerComposeUp.Stdin = strings.NewReader("test")
 	dockerComposeUp.Stdout = &composeUpOut
 	dockerComposeUp.Stderr = &composeUpErr
 	err = dockerComposeUp.Run()
@@ -229,7 +228,6 @@ func DevDown() error {
 
 	var out bytes.Buffer
 	var errout bytes.Buffer
-	dockerComposeUp.Stdin = strings.NewReader("test")
 	dockerComposeUp.Stdout = &out
 	dockerComposeUp.Stderr = &errout
 	err = dockerComposeUp.Run()
@@ -275,7 +273,6 @@ func DevDestroy() error {
 
 	var out bytes.Buffer
 	var errout bytes.Buffer
-	dockerComposeUp.Stdin = strings.NewReader("test")
 	dockerComposeUp.Stdout = &out
 	dockerComposeUp.Stderr = &errout
 	err = dockerComposeUp.Run()
