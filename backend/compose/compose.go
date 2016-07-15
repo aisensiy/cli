@@ -49,7 +49,7 @@ func toString(v api.Volume) string {
 	}
 
 	if !filepath.IsAbs(v.HostPath) {
-		hostpath = filepath.Join("/Mac", dir, ".local", v.HostPath)
+		hostpath = filepath.Join(dir, ".local", v.HostPath)
 	}
 
 	return fmt.Sprintf("%s:%s:%s", hostpath, v.ContainerPath, strings.ToLower(v.Mode))
@@ -94,7 +94,7 @@ func (cb ComposeBackend) ToComposeFile(s api.Stack) string {
 			}
 
 			volumes = append(volumes, "/var/run/docker.sock:/var/run/docker.sock")
-			volumes = append(volumes, fmt.Sprintf("%s:/codebase", filepath.Join("/Mac", dir)))
+			volumes = append(volumes, fmt.Sprintf("%s:/codebase", dir))
 
 			env := service.GetEnv()
 			links := service.GetLinks()
