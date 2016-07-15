@@ -60,20 +60,25 @@ func DevUp() error {
 		return err
 	}
 	createDone := make(chan bool, 1)
+	var wg sync.WaitGroup
+	wg.Add(1)
 	go func() {
 		defer func() {
 			recover()
+			wg.Done()
+			stdoutWriteFile.Close()
+			stderrWriteFile.Close()
 		}()
 		dockerComposeCreate.Wait()
 		createDone <- true
 	}()
 
-	var wg sync.WaitGroup
 	stdoutStop := make(chan int, 1)
-	stderrStop := make(chan int, 1)
+	wg.Add(1)
 	go func() {
-		wg.Add(1)
-		defer wg.Done()
+		defer func() {
+			wg.Done()
+		}()
 		for {
 			select {
 			case <-stdoutStop:
@@ -87,9 +92,12 @@ func DevUp() error {
 		}
 	}()
 
+	stderrStop := make(chan int, 1)
+	wg.Add(1)
 	go func() {
-		wg.Add(1)
-		defer wg.Done()
+		defer func() {
+			wg.Done()
+		}()
 		for {
 			select {
 			case <-stderrStop:
@@ -103,9 +111,11 @@ func DevUp() error {
 		}
 	}()
 
+	wg.Add(1)
 	go (func() {
-		wg.Add(1)
-		defer wg.Done()
+		defer func() {
+			wg.Done()
+		}()
 		for {
 			select {
 			case <-createDone:
@@ -113,7 +123,7 @@ func DevUp() error {
 				stderrStop <- 0
 				return
 			default:
-				fmt.Println("Creating ...")
+				fmt.Println("Pulling image ...")
 				time.Sleep(5 * time.Second)
 			}
 		}
