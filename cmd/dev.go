@@ -340,8 +340,8 @@ func DevEnv() error {
 	var envs []string
 	var links []string
 
-	for name, service := range services {
-		if (strings.EqualFold(name, "web")) {
+	for _, service := range services {
+		if (service.IsBuildable()) {
 			links = service.GetLinks()
 			break
 		}
