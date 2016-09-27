@@ -13,6 +13,7 @@ Valid commands for config:
 dev:up        	 start up the dev env
 dev:down         shutdown the dev env
 dev:destroy      destroy the dev env
+dev:env          display the env variables
 
 Use 'cde help [command]' to learn more.
 `
@@ -23,6 +24,8 @@ Use 'cde help [command]' to learn more.
 		return devDown(argv)
 	case "dev:destroy":
 		return devDestroy(argv)
+	case "dev:env":
+		return devEnv(argv)
 	default:
 		if printHelp(argv, usage) {
 			return nil
@@ -84,4 +87,20 @@ Usage: cde dev:destroy
 	}
 
 	return cmd.DevDestroy()
+}
+
+func devEnv(argv []string) error {
+	usage := `
+Display the env variables
+
+Usage: cde dev:env
+	`
+
+	_, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	return cmd.DevEnv()
 }

@@ -17,6 +17,7 @@ import (
 	"time"
 	"bufio"
 	"sync"
+	"strconv"
 )
 
 func DevUp() error {
@@ -306,6 +307,60 @@ func DevDestroy() error {
 	}
 
 	fmt.Println(errout.String())
+	return nil
+}
+
+func DevEnv() error {
+	if (!git.IsGitDirectory()) {
+		return fmt.Errorf("Execute inside the app dir")
+	}
+
+	configRepository := config.NewConfigRepository(func(error) {})
+	appRepository := api.NewAppRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+	uri, err := url.Parse(configRepository.Endpoint())
+	appId, err := git.DetectAppName(uri.Host)
+
+	if err != nil || appId == "" {
+		return fmt.Errorf("Please use the -remote to specfiy the app")
+	}
+
+	app, err := appRepository.GetApp(appId)
+	if err != nil {
+		return err
+	}
+
+	stack, err := app.GetStack()
+	if err != nil {
+		return err
+	}
+
+	services := stack.GetServices()
+
+	var envs []string
+	var links []string
+
+	for name, service := range services {
+		if (strings.EqualFold(name, "web")) {
+			links = service.GetLinks()
+			break
+		}
+	}
+
+	for _, link := range links {
+		envs = append(envs, "export " + strings.ToUpper(link + "_HOST=" + link))
+		envs = append(envs, "export " + strings.ToUpper(link + "_PORT=" + strconv.Itoa(services[link].GetExpose()[0])))
+
+		linkEnvs := services[link].GetEnv()
+		for name, linkEnv := range linkEnvs {
+			envs = append(envs, "export " + strings.ToUpper(link + "_" + name + "=" + linkEnv))
+		}
+	}
+
+	for _, env := range envs {
+		fmt.Println(env)
+	}
+
 	return nil
 }
 
