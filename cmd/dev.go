@@ -348,12 +348,12 @@ func DevEnv() error {
 	}
 
 	for _, link := range links {
-		envs = append(envs, "export " + strings.ToUpper(link + "_HOST=" + link))
-		envs = append(envs, "export " + strings.ToUpper(link + "_PORT=" + strconv.Itoa(services[link].GetExpose()[0])))
+		envs = append(envs, "export " + strings.ToUpper(link + "_HOST=") + link)
+		envs = append(envs, "export " + strings.ToUpper(link + "_PORT=") + strconv.Itoa(services[link].GetExpose()[0]))
 
 		linkEnvs := services[link].GetEnv()
 		for name, linkEnv := range linkEnvs {
-			envs = append(envs, "export " + strings.ToUpper(link + "_" + name + "=" + linkEnv))
+			envs = append(envs, "export " + strings.ToUpper(link + "_" + name + "=") + linkEnv)
 		}
 	}
 
