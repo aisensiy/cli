@@ -1,4 +1,5 @@
 package cmd
+
 import (
 	"os"
 	"fmt"
@@ -14,6 +15,7 @@ import (
 	deploymentNet "github.com/sjkyspa/stacks/launcher/api/net"
 	"bufio"
 )
+
 func askForOverrideExistingApp() bool {
 	reader := bufio.NewReader(os.Stdin)
 	for (true) {
@@ -21,7 +23,7 @@ func askForOverrideExistingApp() bool {
 		text, _ := reader.ReadString('\n')
 		if (strings.TrimSpace(text) == "y") {
 			return true
-		}else if (strings.TrimSpace(text) == "N") {
+		} else if (strings.TrimSpace(text) == "N") {
 			return false
 		}
 	}
@@ -278,7 +280,6 @@ func DestroyApp(appId string) error {
 			fmt.Print("Please execute git cmd in the app directory: `git remote remove cde`")
 		}
 	}
-
 
 	return nil
 }
