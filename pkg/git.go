@@ -81,7 +81,8 @@ func DetectAppName(host string) (string, error) {
 	remote, err := findRemote(host)
 
 	if err != nil {
-		return "", err
+		return "", errors.New("Cannot detect the app name.\n" +
+			"You may not be in a project OR no application has been created for this project")
 	}
 
 	ss := strings.Split(remote, "/")

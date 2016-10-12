@@ -270,7 +270,7 @@ func DestroyApp(appId string) error {
 
 	err = appRepository.Delete(appId)
 	if err != nil {
-		return err
+		return errors.New("No application for this project")
 	}
 
 	fmt.Printf("destroy %s successfully!\n", appId)
