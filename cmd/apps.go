@@ -236,12 +236,17 @@ func outputDependentServices(appId string) error {
 func DestroyApp(appId string) error {
 	configRepository, appId, err := load(appId)
 
+	if appId == "" {
+		return errors.New("Please execute 'cde apps:destroy' inside a project with an application created for it")
+	}
+
 	appRepository := api.NewAppRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
 	app, err := appRepository.GetApp(appId)
 	if err != nil {
 		return err
 	}
+
 	stack, err := app.GetStack()
 	if err != nil {
 		return err
