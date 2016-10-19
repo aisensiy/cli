@@ -6,6 +6,7 @@ import (
 	"github.com/sjkyspa/stacks/client/config"
 	"github.com/sjkyspa/stacks/controller/api/api"
 	"github.com/sjkyspa/stacks/controller/api/net"
+	"github.com/kr/pty"
 	"net/url"
 	"io/ioutil"
 	"os/exec"
@@ -15,9 +16,8 @@ import (
 	"path/filepath"
 	"github.com/sjkyspa/stacks/client/backend/compose"
 	"time"
-	"bufio"
-	"sync"
 	"strconv"
+	"io"
 )
 
 func DevUp() error {
@@ -51,101 +51,23 @@ func DevUp() error {
 		return err
 	}
 
-	dockerComposeCreate := exec.Command("docker-compose", "-f", f, "pull")
-	stdoutReadFile, stdoutWriteFile, err := os.Pipe()
-	stderrReadFile, stderrWriteFile, err := os.Pipe()
-	dockerComposeCreate.Stdout = stdoutWriteFile
-	dockerComposeCreate.Stderr = stderrWriteFile
-	err = dockerComposeCreate.Start()
+	dockerComposeCreate := exec.Command("docker-compose", "-f", f, "-p", app.Id(), "up", "-d")
+	fi, err := pty.Start(dockerComposeCreate)
 	if err != nil {
+		fmt.Println(err)
 		return err
 	}
-	createDone := make(chan bool, 1)
-	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		defer func() {
-			recover()
-			wg.Done()
-			stdoutWriteFile.Close()
-			stderrWriteFile.Close()
-		}()
-		dockerComposeCreate.Wait()
-		createDone <- true
-	}()
 
-	stdoutStop := make(chan int, 1)
-	wg.Add(1)
-	go func() {
-		defer func() {
-			wg.Done()
-		}()
-		for {
-			select {
-			case <-stdoutStop:
-				return
-			default:
-				stdout := bufio.NewScanner(stdoutReadFile)
-				if stdout.Scan() {
-					fmt.Println(stdout.Text())
-				}
-			}
-		}
-	}()
-
-	stderrStop := make(chan int, 1)
-	wg.Add(1)
-	go func() {
-		defer func() {
-			wg.Done()
-		}()
-		for {
-			select {
-			case <-stderrStop:
-				return
-			default:
-				stderr := bufio.NewScanner(stderrReadFile)
-				if stderr.Scan() {
-					fmt.Fprintln(os.Stderr, string(stderr.Bytes()))
-				}
-			}
-		}
-	}()
-
-	wg.Add(1)
-	go (func() {
-		defer func() {
-			wg.Done()
-		}()
-		for {
-			select {
-			case <-createDone:
-				stdoutStop <- 0
-				stderrStop <- 0
-				return
-			default:
-				fmt.Println("Pulling image ...")
-				time.Sleep(5 * time.Second)
-			}
-		}
-	})()
-
-	wg.Wait()
-	dockerComposeUp := exec.Command("docker-compose", "-f", f, "up", "-d")
-
-	var composeUpOut bytes.Buffer
-	var composeUpErr bytes.Buffer
-	dockerComposeUp.Stdin = strings.NewReader("")
-	dockerComposeUp.Stdout = &composeUpOut
-	dockerComposeUp.Stderr = &composeUpErr
-	err = dockerComposeUp.Run()
+	io.Copy(os.Stdout, fi)
+	err = dockerComposeCreate.Wait()
 	if err != nil {
+		fmt.Println(err)
 		return err
 	}
 
 	for i := 0; i < 100; i++ {
 		content, err := Pipe(
-			exec.Command("docker-compose", "-f", f, "ps"),
+			exec.Command("docker-compose", "-f", f, "-p", app.Id(), "ps"),
 			exec.Command("grep", "-E", "runtime|db"),
 			exec.Command("/bin/sh", "-c", "grep -v Up||true"),
 			exec.Command("wc", "-l"))
@@ -161,17 +83,10 @@ func DevUp() error {
 		}
 	}
 
-	psOutput, err := exec.Command("docker-compose", "-f", f, "logs").Output()
-	if err != nil {
-		panic(fmt.Sprintf("Can not find the proper container id: cause %v", err))
-	}
-
-	fmt.Println(string(psOutput))
-
 	containerId := func() string {
-		containerNamePrefix := "local" + "_" + "runtime"
+		containerNamePrefix := app.Id() + "_" + "runtime"
 
-		psOutput, err := exec.Command("docker-compose", "-f", f, "ps").Output()
+		psOutput, err := exec.Command("docker-compose", "-f", f, "-p", app.Id(), "ps").Output()
 		if err != nil {
 			panic(fmt.Sprintf("Can not find the proper container id: cause %v", err))
 		}
@@ -245,18 +160,20 @@ func DevDown() error {
 		return err
 	}
 
-	dockerComposeUp := exec.Command("docker-compose", "-f", f, "stop")
+	dockerComposeUp := exec.Command("docker-compose", "-f", f, "-p", app.Id(), "stop")
 
 	var out bytes.Buffer
 	var errout bytes.Buffer
 	dockerComposeUp.Stdout = &out
 	dockerComposeUp.Stderr = &errout
-	err = dockerComposeUp.Run()
+	fi, err := pty.Start(dockerComposeUp)
+
+	io.Copy(os.Stdout, fi)
+	err = dockerComposeUp.Wait()
 	if err != nil {
+		fmt.Println(err)
 		return err
 	}
-
-	fmt.Println(errout.String())
 	return nil
 }
 
@@ -290,16 +207,23 @@ func DevDestroy() error {
 		return err
 	}
 
-	dockerComposeUp := exec.Command("docker-compose", "-f", f, "down", "-v", "--remove-orphans", "--rmi", "all")
+	dockerComposeUp := exec.Command("docker-compose", "-f", f, "-p", app.Id(), "down", "-v", "--remove-orphans", "--rmi", "all")
 
 	var out bytes.Buffer
 	var errout bytes.Buffer
 	dockerComposeUp.Stdout = &out
 	dockerComposeUp.Stderr = &errout
-	err = dockerComposeUp.Run()
+	fi, err := pty.Start(dockerComposeUp)
 	if err != nil {
 		return err
 	}
+	io.Copy(os.Stdout, fi)
+	err = dockerComposeUp.Wait()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
 	err = os.RemoveAll(".local")
 	if err != nil {
 		fmt.Println("Error when remove the local dir .local %v", err)
@@ -349,11 +273,11 @@ func DevEnv() error {
 
 	for _, link := range links {
 		envs = append(envs, "export " + strings.ToUpper(link + "_HOST=") + link + ";")
-		envs = append(envs, "export " + strings.ToUpper(link + "_PORT=") + strconv.Itoa(services[link].GetExpose()[0])+ ";")
+		envs = append(envs, "export " + strings.ToUpper(link + "_PORT=") + strconv.Itoa(services[link].GetExpose()[0]) + ";")
 
 		linkEnvs := services[link].GetEnv()
 		for name, linkEnv := range linkEnvs {
-			envs = append(envs, "export " + strings.ToUpper(link + "_" + name + "=") + linkEnv+ ";")
+			envs = append(envs, "export " + strings.ToUpper(link + "_" + name + "=") + linkEnv + ";")
 		}
 	}
 
