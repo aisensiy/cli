@@ -88,7 +88,7 @@ func DevUp() error {
 		return strings.TrimSpace(string(psOutput))
 	}
 
-	dockerExec := exec.Command("docker", "exec", "-it", containerId(), "bash")
+	dockerExec := exec.Command("docker", "exec", "-it", containerId(), "bash", "-c", "cd /codebase; exec ${SHELL:-bash}")
 	dockerExec.Stdin = os.Stdin
 	dockerExec.Stderr = os.Stderr
 	dockerExec.Stdout = os.Stdout
