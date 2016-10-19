@@ -66,16 +66,13 @@ func DevUp() error {
 	}
 
 	for i := 0; i < 100; i++ {
-		content, err := Pipe(
+		_, err := Pipe(
 			exec.Command("docker-compose", "-f", f, "-p", app.Id(), "ps"),
-			exec.Command("grep", "-E", "runtime|db"),
-			exec.Command("/bin/sh", "-c", "grep -v Up||true"),
-			exec.Command("wc", "-l"))
+			exec.Command("grep", "-E", app.Id()),
+			exec.Command("/bin/sh", "-c", "grep -v Up"))
+
+		// All the containers are started (All containers is Up, all the lines is with Up, so the grep return error.)
 		if err != nil {
-			fmt.Fprint(os.Stderr, fmt.Sprintf("error occured: %v", err))
-			return err
-		}
-		if "0" == strings.TrimSpace(string(content)) {
 			break
 		} else {
 			fmt.Println("starting...")
@@ -84,23 +81,14 @@ func DevUp() error {
 	}
 
 	containerId := func() string {
-		containerNamePrefix := app.Id() + "_" + "runtime"
-
-		psOutput, err := exec.Command("docker-compose", "-f", f, "-p", app.Id(), "ps").Output()
+		psOutput, err := exec.Command("docker-compose", "-f", f, "-p", app.Id(), "ps", "-q", "runtime").Output()
 		if err != nil {
 			panic(fmt.Sprintf("Can not find the proper container id: cause %v", err))
 		}
-		a := string(psOutput)
-		splits := strings.Split(a, "\n")
-		for _, item := range splits {
-			if strings.Contains(item, containerNamePrefix) {
-				return strings.Split(item, " ")[0]
-			}
-		}
-		panic("Can not find the proper container id")
-	}()
+		return strings.TrimSpace(string(psOutput))
+	}
 
-	dockerExec := exec.Command("docker", "exec", "-it", containerId, "sh")
+	dockerExec := exec.Command("docker", "exec", "-it", containerId(), "bash")
 	dockerExec.Stdin = os.Stdin
 	dockerExec.Stderr = os.Stderr
 	dockerExec.Stdout = os.Stdout
