@@ -11,9 +11,9 @@ build:
 
 release:
 	@echo -e '\033[0;32m' "Building cde client" '\033[0m'
-	@GOOS=linux GOARCH=amd64 go build -o out/cde_linux_amd64 cde.go
-	@GOOS=darwin GOARCH=amd64 go build -o out/cde_darwin_amd64 cde.go
-	@GOOS=windows GOARCH=amd64 go build -o out/cde_windows_amd64.exe cde.go
+	@GOOS=linux GOARCH=amd64 godep go build -a -installsuffix cgo -ldflags '-s' -o out/cde_linux_amd64 cde.go
+	@GOOS=darwin GOARCH=amd64 godep go build -a -installsuffix cgo -ldflags '-s' -o out/cde_darwin_amd64 cde.go
+	@GOOS=windows GOARCH=amd64 godep go build -a -installsuffix cgo -ldflags '-s' -o out/cde_windows_amd64.exe cde.go
 	@echo -e '\033[0;32m' "Building cde complete" '\033[0m'
 
 install: build
