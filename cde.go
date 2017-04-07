@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 	docopt "github.com/docopt/docopt-go"
+	"github.com/fatih/color"
 	"github.com/sjkyspa/stacks/client/parser"
 	"github.com/sjkyspa/stacks/version"
 	"os"
 	"strings"
-	"github.com/fatih/color"
 )
 
 func main() {

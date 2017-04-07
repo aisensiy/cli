@@ -35,7 +35,7 @@ func ServiceCreate() error {
 }
 
 func ServiceInfo(appName, serviceName string) (apiErr error) {
-	service, apiErr := GetService(appName,serviceName)
+	service, apiErr := GetService(appName, serviceName)
 	if apiErr != nil {
 		return apiErr
 	}
@@ -53,7 +53,7 @@ func ServiceInfo(appName, serviceName string) (apiErr error) {
 	return
 }
 
-func ServiceUpdate(appId, serviceName string, params deployApi.ServiceConfigParams) ( apiErr error) {
+func ServiceUpdate(appId, serviceName string, params deployApi.ServiceConfigParams) (apiErr error) {
 	service, apiErr := GetService(appId, serviceName)
 	if apiErr != nil {
 		return apiErr

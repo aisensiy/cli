@@ -1,12 +1,12 @@
 package parser
 
 import (
-	"os"
 	"fmt"
-	"strconv"
 	"github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
 	deployApi "github.com/sjkyspa/stacks/launcher/api/api"
+	"os"
+	"strconv"
 )
 
 func Service(argv []string) error {
@@ -67,7 +67,7 @@ Options:
 
 	appName := safeGetOrDefault(args, "--app", "")
 	serviceName := safeGetOrDefault(args, "<service-name>", "")
-	if (serviceName == "") {
+	if serviceName == "" {
 		return fmt.Errorf("Service name is required!")
 	}
 	return cmd.ServiceInfo(appName, serviceName)
@@ -103,7 +103,7 @@ Options:
 
 	appId := safeGetOrDefault(args, "--app", "")
 	serviceName := safeGetOrDefault(args, "<service-name>", "")
-	if (serviceName == "") {
+	if serviceName == "" {
 		return fmt.Errorf("Service name is required!")
 	}
 
@@ -126,26 +126,26 @@ func mergeWithOriginService(appName, serviceName string, params map[string]strin
 	instances := params["instances"]
 
 	originService, apiErr := cmd.GetService(appName, serviceName)
-	if (apiErr != nil) {
+	if apiErr != nil {
 		return
 	}
 
 	newServiceParams = deployApi.ServiceConfigParams{}
 	if mem, err := strconv.ParseFloat(memory, 32); err == nil {
 		newServiceParams.Memory = float32(mem)
-	}else {
+	} else {
 		newServiceParams.Memory = originService.Memory()
 	}
 
 	if ins, err := strconv.Atoi(instances); err == nil {
 		newServiceParams.Instance = ins
-	}else {
+	} else {
 		newServiceParams.Instance = originService.Instance()
 	}
 
 	if cpu, err := strconv.ParseFloat(cpu, 32); err == nil {
 		newServiceParams.CPUS = float32(cpu)
-	}else {
+	} else {
 		newServiceParams.CPUS = originService.CPU()
 	}
 	return newServiceParams, nil

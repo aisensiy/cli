@@ -166,7 +166,6 @@ Options:
 	return cmd.AddMember(orgName, email)
 }
 
-
 func orgRmMember(argv []string) error {
 	usage := `
 Remove member from organization

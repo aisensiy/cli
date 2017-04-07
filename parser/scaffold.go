@@ -1,14 +1,14 @@
 package parser
 
 import (
+	"fmt"
 	docopt "github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/config"
 	"github.com/sjkyspa/stacks/controller/api/api"
 	"github.com/sjkyspa/stacks/controller/api/net"
-	"os/exec"
-	"fmt"
-	"regexp"
 	"io/ioutil"
+	"os/exec"
+	"regexp"
 )
 
 func Scaffold(argv []string) error {
@@ -33,7 +33,7 @@ Options:
 	stackName := safeGetValue(args, "<stackName>")
 
 	dir := safeGetOrDefault(args, "--dir", "")
-	if (dir == "") {
+	if dir == "" {
 		dir = stackName
 	}
 
@@ -44,7 +44,7 @@ Options:
 
 	gitRepo := stack.GetTemplateCode()
 
-	if (gitRepo == "") {
+	if gitRepo == "" {
 		return fmt.Errorf("git repositry is no valid, please check the definition of stack '%s' to make sure it contains valid template code.", stackName)
 	}
 
@@ -59,12 +59,12 @@ func getStack(stackName string) (stackObj api.Stack, err error) {
 		net.NewCloudControllerGateway(configRepository))
 	stacks, err := stackRepository.GetStackByName(stackName)
 
-	if (err != nil || stacks.Count() == 0) {
+	if err != nil || stacks.Count() == 0 {
 		err = fmt.Errorf("stack not found")
 		return
 	}
 
-	stackId := stacks.Items()[0].Id();
+	stackId := stacks.Items()[0].Id()
 	stackObj, err = stackRepository.GetStack(stackId)
 	return
 }
@@ -94,7 +94,7 @@ func retrieveGitName(gitUrl string) (string, error) {
 	regex := regexp.MustCompile(`^.*/(.+).git$`)
 	if regex.MatchString(gitUrl) {
 		captures := regex.FindStringSubmatch(gitUrl)
-		return captures[1], nil;
+		return captures[1], nil
 	}
-	return "", fmt.Errorf("Invalid Git URL");
+	return "", fmt.Errorf("Invalid Git URL")
 }

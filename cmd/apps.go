@@ -1,29 +1,29 @@
 package cmd
 
 import (
-	"os"
-	"fmt"
+	"bufio"
 	"errors"
-	"strings"
-	"net/url"
+	"fmt"
 	"github.com/olekukonko/tablewriter"
-	"github.com/sjkyspa/stacks/controller/api/api"
-	"github.com/sjkyspa/stacks/controller/api/net"
 	"github.com/sjkyspa/stacks/client/config"
 	"github.com/sjkyspa/stacks/client/pkg"
+	"github.com/sjkyspa/stacks/controller/api/api"
+	"github.com/sjkyspa/stacks/controller/api/net"
 	launcherApi "github.com/sjkyspa/stacks/launcher/api/api"
 	deploymentNet "github.com/sjkyspa/stacks/launcher/api/net"
-	"bufio"
+	"net/url"
+	"os"
+	"strings"
 )
 
 func askForOverrideExistingApp() bool {
 	reader := bufio.NewReader(os.Stdin)
-	for (true) {
+	for true {
 		fmt.Printf("Another app is using this repository, are you sure to continue (y/N)?")
 		text, _ := reader.ReadString('\n')
-		if (strings.TrimSpace(text) == "y") {
+		if strings.TrimSpace(text) == "y" {
 			return true
-		} else if (strings.TrimSpace(text) == "N") {
+		} else if strings.TrimSpace(text) == "N" {
 			return false
 		}
 	}
@@ -62,7 +62,7 @@ func AppLaunch(appId string) error {
 func AppCreate(appId string, stackName string, needDeploy string) error {
 	var needDeployBool bool
 
-	if (!git.IsGitDirectory()) {
+	if !git.IsGitDirectory() {
 		return fmt.Errorf("Not in a git repository")
 	}
 
@@ -74,8 +74,8 @@ func AppCreate(appId string, stackName string, needDeploy string) error {
 		net.NewCloudControllerGateway(configRepository))
 
 	appName, _ := git.DetectAppName(configRepository.GitHost())
-	if (appName != "") {
-		if (!askForOverrideExistingApp()) {
+	if appName != "" {
+		if !askForOverrideExistingApp() {
 			return fmt.Errorf("Give up to override existing app")
 		}
 	}
@@ -96,8 +96,8 @@ func AppCreate(appId string, stackName string, needDeploy string) error {
 	}
 
 	appParams := api.AppParams{
-		Name: appId,
-		Stack: stackId,
+		Name:       appId,
+		Stack:      stackId,
 		NeedDeploy: needDeployBool,
 	}
 	createdApp, err := appRepository.Create(appParams)
@@ -192,7 +192,7 @@ func outputRoutes(app api.App) {
 	boundRoutes, err := app.GetRoutes()
 	fmt.Println("--- Access routes:\n")
 
-	if (err != nil) {
+	if err != nil {
 		fmt.Print(err)
 		return
 	}
@@ -214,13 +214,13 @@ func outputDependentServices(appId string) error {
 	repo := launcherApi.NewDeploymentRepository(configRepository, deploymentNet.NewCloudControllerGateway(configRepository))
 	servicesModel, err := repo.GetDependentServicesForApp(appId)
 	fmt.Print("--- Dependent services:\n")
-	if (err != nil) {
+	if err != nil {
 		fmt.Print(err)
 		return err
 	}
 	servicesArray := servicesModel
 	for index, service := range servicesArray {
-		fmt.Printf("-----> Service %d:\n", index + 1)
+		fmt.Printf("-----> Service %d:\n", index+1)
 		table := tablewriter.NewWriter(os.Stdout)
 		table.SetAlignment(tablewriter.ALIGN_LEFT)
 		table.Append([]string{"ID", service.Id()})
@@ -276,9 +276,9 @@ func DestroyApp(appId string) error {
 	fmt.Printf("destroy %s successfully!\n", appId)
 
 	if stack.Type() == "BUILD_STACK" {
-		if (git.HasRemoteNameForApp("cde", appId)) {
+		if git.HasRemoteNameForApp("cde", appId) {
 			err = git.DeleteRemote("cde")
-			if (err != nil) {
+			if err != nil {
 				fmt.Print("Remove 'cde' remote failed. \n Please execute git cmd in the app directory: `git remote remove cde`")
 			}
 		} else {
@@ -418,7 +418,7 @@ func AppAddCollaborator(appId string, email string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Print("Add collaborator success.\n");
+	fmt.Print("Add collaborator success.\n")
 	return nil
 }
 
@@ -446,7 +446,7 @@ func AppRmCollaborator(appId string, email string) error {
 	}
 
 	if len(Users.Items()) <= 0 {
-		return errors.New(fmt.Sprintf("no such user %s", email));
+		return errors.New(fmt.Sprintf("no such user %s", email))
 	}
 
 	user := Users.Items()[0]
@@ -455,15 +455,15 @@ func AppRmCollaborator(appId string, email string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Print("Remove collaborator success.\n");
+	fmt.Print("Remove collaborator success.\n")
 	return nil
 }
 
 func AppTransfer(appId string, email string, org string) error {
-	if (email == "" && org == "") {
+	if email == "" && org == "" {
 		return errors.New(fmt.Sprint("Email or Org Name should given."))
 	}
-	if (email != "" && org != "") {
+	if email != "" && org != "" {
 		return errors.New(fmt.Sprint("Only one of Email and Org Name should given."))
 	}
 
@@ -482,7 +482,7 @@ func AppTransfer(appId string, email string, org string) error {
 		return err
 	}
 
-	if (email != "") {
+	if email != "" {
 		err = app.TransferToUser(email)
 		if err != nil {
 			return err

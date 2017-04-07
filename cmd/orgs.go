@@ -1,10 +1,11 @@
 package cmd
+
 import (
-	"github.com/sjkyspa/stacks/client/config"
-	"github.com/sjkyspa/stacks/controller/api/net"
-	"github.com/sjkyspa/stacks/controller/api/api"
-	"fmt"
 	"errors"
+	"fmt"
+	"github.com/sjkyspa/stacks/client/config"
+	"github.com/sjkyspa/stacks/controller/api/api"
+	"github.com/sjkyspa/stacks/controller/api/net"
 )
 
 func OrgCreate(orgName string) error {
@@ -53,7 +54,7 @@ func SetCurrentOrg(orgName string) error {
 func ListMembers(orgName string) error {
 	configRepository, orgName := loadOrg(orgName)
 
-	if (orgName == "") {
+	if orgName == "" {
 		return errors.New("can not find default org")
 	}
 
@@ -76,7 +77,7 @@ func ListMembers(orgName string) error {
 func AddMember(orgName string, email string) error {
 	configRepository, orgName := loadOrg(orgName)
 
-	if (orgName == "") {
+	if orgName == "" {
 		return errors.New("can not find default org")
 	}
 
@@ -95,7 +96,7 @@ func AddMember(orgName string, email string) error {
 func RemoveMember(orgName string, email string) error {
 	configRepository, orgName := loadOrg(orgName)
 
-	if (orgName == "") {
+	if orgName == "" {
 		return errors.New("can not find default org")
 	}
 
@@ -124,7 +125,7 @@ func RemoveMember(orgName string, email string) error {
 func ListApps(orgName string) error {
 	configRepository, orgName := loadOrg(orgName)
 
-	if (orgName == "") {
+	if orgName == "" {
 		return errors.New("can not find default org")
 	}
 
@@ -147,7 +148,7 @@ func ListApps(orgName string) error {
 func AddOrgApp(orgName string, appName string) error {
 	configRepository, orgName := loadOrg(orgName)
 
-	if (orgName == "") {
+	if orgName == "" {
 		return errors.New("can not find default org")
 	}
 
@@ -166,7 +167,7 @@ func AddOrgApp(orgName string, appName string) error {
 func DestroyOrg(orgName string) error {
 	configRepository, orgName := loadOrg(orgName)
 
-	if (orgName == "") {
+	if orgName == "" {
 		return errors.New("can not find default org")
 	}
 
@@ -179,7 +180,7 @@ func DestroyOrg(orgName string) error {
 	}
 
 	fmt.Printf("Destroy org %s\n", orgName)
-	if (orgName == configRepository.Org()) {
+	if orgName == configRepository.Org() {
 		configRepository.SetCurrentOrg("")
 	}
 	return nil

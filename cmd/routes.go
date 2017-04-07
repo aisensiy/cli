@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 	"github.com/sjkyspa/stacks/client/config"
-	"github.com/sjkyspa/stacks/controller/api/net"
 	"github.com/sjkyspa/stacks/controller/api/api"
+	"github.com/sjkyspa/stacks/controller/api/net"
 )
 
 // RouteCreate creates an route.
@@ -13,7 +13,7 @@ func RoutesCreate(domainName string, path string) error {
 	routeRepository := api.NewRouteRepository(configRepository, net.NewCloudControllerGateway(configRepository))
 	routeParams := api.RouteParams{
 		Domain: domainName,
-		Path: path,
+		Path:   path,
 	}
 	err := routeRepository.Create(routeParams)
 

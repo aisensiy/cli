@@ -1,28 +1,28 @@
 package cmd
 
 import (
+	"bytes"
 	"fmt"
-	"github.com/sjkyspa/stacks/client/pkg"
+	"github.com/kr/pty"
+	"github.com/sjkyspa/stacks/client/backend/compose"
 	"github.com/sjkyspa/stacks/client/config"
+	"github.com/sjkyspa/stacks/client/pkg"
 	"github.com/sjkyspa/stacks/controller/api/api"
 	"github.com/sjkyspa/stacks/controller/api/net"
-	"github.com/kr/pty"
-	"net/url"
-	"io/ioutil"
-	"os/exec"
-	"os"
-	"bytes"
-	"strings"
-	"path/filepath"
-	"github.com/sjkyspa/stacks/client/backend/compose"
-	"time"
-	"strconv"
 	"io"
+	"io/ioutil"
+	"net/url"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"strconv"
+	"strings"
+	"time"
 )
 
 func DevUp() error {
 
-	if (!git.IsGitDirectory()) {
+	if !git.IsGitDirectory() {
 		return fmt.Errorf("Execute inside the app dir")
 	}
 
@@ -119,7 +119,7 @@ func toCompose(stack api.Stack) (string, error) {
 }
 
 func DevDown() error {
-	if (!git.IsGitDirectory()) {
+	if !git.IsGitDirectory() {
 		return fmt.Errorf("Execute inside the app dir")
 	}
 
@@ -166,7 +166,7 @@ func DevDown() error {
 }
 
 func DevDestroy() error {
-	if (!git.IsGitDirectory()) {
+	if !git.IsGitDirectory() {
 		return fmt.Errorf("Execute inside the app dir")
 	}
 
@@ -223,7 +223,7 @@ func DevDestroy() error {
 }
 
 func DevEnv() error {
-	if (!git.IsGitDirectory()) {
+	if !git.IsGitDirectory() {
 		return fmt.Errorf("Execute inside the app dir")
 	}
 
@@ -253,19 +253,19 @@ func DevEnv() error {
 	var links []string
 
 	for _, service := range services {
-		if (service.IsBuildable()) {
+		if service.IsBuildable() {
 			links = service.GetLinks()
 			break
 		}
 	}
 
 	for _, link := range links {
-		envs = append(envs, "export " + strings.ToUpper(link + "_HOST=") + link + ";")
-		envs = append(envs, "export " + strings.ToUpper(link + "_PORT=") + strconv.Itoa(services[link].GetExpose()[0]) + ";")
+		envs = append(envs, "export "+strings.ToUpper(link+"_HOST=")+link+";")
+		envs = append(envs, "export "+strings.ToUpper(link+"_PORT=")+strconv.Itoa(services[link].GetExpose()[0])+";")
 
 		linkEnvs := services[link].GetEnv()
 		for name, linkEnv := range linkEnvs {
-			envs = append(envs, "export " + strings.ToUpper(link + "_" + name + "=") + linkEnv + ";")
+			envs = append(envs, "export "+strings.ToUpper(link+"_"+name+"=")+linkEnv+";")
 		}
 	}
 
@@ -283,10 +283,10 @@ func Pipe(cmds ...*exec.Cmd) ([]byte, error) {
 	}
 	execCmds := make([]*exec.Cmd, 0)
 	execCmds = append(execCmds, cmds...)
-	i := 0;
-	for ; i < len(execCmds) - 1; i++ {
+	i := 0
+	for ; i < len(execCmds)-1; i++ {
 		stdout, _ := execCmds[i].StdoutPipe()
-		execCmds[i + 1].Stdin = stdout
+		execCmds[i+1].Stdin = stdout
 		err := execCmds[i].Start()
 		if err != nil {
 			return nil, err
@@ -299,7 +299,7 @@ func Pipe(cmds ...*exec.Cmd) ([]byte, error) {
 		return nil, err
 	}
 
-	for i := 0; i < len(execCmds) - 1; i++ {
+	for i := 0; i < len(execCmds)-1; i++ {
 		err := execCmds[i].Wait()
 		if err != nil {
 			return nil, err

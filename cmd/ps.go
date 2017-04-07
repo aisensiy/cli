@@ -1,10 +1,10 @@
 package cmd
+
 import (
 	"fmt"
 	deployApi "github.com/sjkyspa/stacks/launcher/api/api"
 	"github.com/sjkyspa/stacks/launcher/api/net"
 )
-
 
 func RestartApp(appId string) error {
 	configRepository, appId, err := load(appId)
@@ -26,12 +26,12 @@ func RestartApp(appId string) error {
 }
 
 func Scale(appId, serviceName string, params deployApi.ServiceConfigParams) (apiErr error) {
-//	configRepository := config.NewConfigRepository(func(error) {})
-//	deployRepo := deployApi.NewDeploymentRepository(configRepository, net.NewCloudControllerGateway(configRepository))
-//	deployment, apiErr := deployRepo.GetDeploymentByAppName(appName)
-//	if apiErr != nil {
-//		return apiErr
-//	}
+	//	configRepository := config.NewConfigRepository(func(error) {})
+	//	deployRepo := deployApi.NewDeploymentRepository(configRepository, net.NewCloudControllerGateway(configRepository))
+	//	deployment, apiErr := deployRepo.GetDeploymentByAppName(appName)
+	//	if apiErr != nil {
+	//		return apiErr
+	//	}
 	service, apiErr := GetService(appId, serviceName)
 	if apiErr != nil {
 		return apiErr

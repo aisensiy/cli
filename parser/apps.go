@@ -6,8 +6,8 @@ import (
 	docopt "github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
 	"os"
-	"strconv"
 	"regexp"
+	"strconv"
 )
 
 func Apps(argv []string) error {
@@ -322,5 +322,3 @@ Options:
 	appId := safeGetValue(args, "--app")
 	return cmd.AppLaunch(appId)
 }
-
-

@@ -1,4 +1,5 @@
 package parser
+
 import (
 	"fmt"
 	"os"

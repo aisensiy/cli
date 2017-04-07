@@ -1,7 +1,8 @@
 package cmd
+
 import (
-	"github.com/sjkyspa/stacks/client/pkg"
 	"github.com/sjkyspa/stacks/client/config"
+	"github.com/sjkyspa/stacks/client/pkg"
 )
 
 func load(appID string) (config.ConfigRepository, string, error) {

@@ -118,5 +118,5 @@ Arguments:
 		return err
 	}
 
-	return cmd.DomainsCert(safeGetValue(args, "<domain>"), safeGetValue(args, "<crt>"), safeGetValue(args, "<private-key>"),)
+	return cmd.DomainsCert(safeGetValue(args, "<domain>"), safeGetValue(args, "<crt>"), safeGetValue(args, "<private-key>"))
 }

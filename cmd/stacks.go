@@ -1,13 +1,13 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/ghodss/yaml"
+	"github.com/sjkyspa/stacks/client/config"
 	"github.com/sjkyspa/stacks/controller/api/api"
 	"github.com/sjkyspa/stacks/controller/api/net"
-	"github.com/sjkyspa/stacks/client/config"
 	"io/ioutil"
-	"encoding/json"
 )
 
 func StackCreate(filename string) error {
@@ -77,7 +77,7 @@ func StackRemove(name string) error {
 	return nil
 }
 
-func StackUpdate(id string, filename string) (error) {
+func StackUpdate(id string, filename string) error {
 	configRepository := config.NewConfigRepository(func(err error) {})
 	stackRepository := api.NewStackRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
@@ -109,7 +109,7 @@ func StackUpdate(id string, filename string) (error) {
 	return nil
 }
 
-func StackPublish(id string) (error) {
+func StackPublish(id string) error {
 	configRepository := config.NewConfigRepository(func(err error) {})
 	stackRepository := api.NewStackRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
@@ -128,7 +128,7 @@ func StackPublish(id string) (error) {
 	return nil
 }
 
-func StackUnPublish(id string) (error) {
+func StackUnPublish(id string) error {
 	configRepository := config.NewConfigRepository(func(err error) {})
 	stackRepository := api.NewStackRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))

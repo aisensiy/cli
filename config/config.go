@@ -1,11 +1,11 @@
 package config
 
 import (
-	"sync"
-	"path/filepath"
-	"os"
-	"strings"
 	"net/url"
+	"os"
+	"path/filepath"
+	"strings"
+	"sync"
 )
 
 type ConfigRepository interface {
@@ -80,7 +80,6 @@ func (c *DefaultConfigRepository) init() {
 	})
 }
 
-
 func (c *DefaultConfigRepository) read(cb func()) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
@@ -148,7 +147,7 @@ func (c DefaultConfigRepository) SetDeploymentEndpoint(endpoint string) {
 func (c DefaultConfigRepository) GitHost() (gitHost string) {
 	c.read(func() {
 		splits := strings.Split(c.Endpoint(), "//")
-		gitHost = splits[len(splits) - 1]
+		gitHost = splits[len(splits)-1]
 	})
 	return
 }

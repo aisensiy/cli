@@ -1,13 +1,14 @@
 package cmd
+
 import (
 	"fmt"
+	"github.com/sjkyspa/stacks/client/config"
+	"github.com/sjkyspa/stacks/controller/api/api"
+	"github.com/sjkyspa/stacks/controller/api/net"
+	"io/ioutil"
 	"path"
 	"regexp"
 	"strings"
-	"io/ioutil"
-	"github.com/sjkyspa/stacks/controller/api/api"
-	"github.com/sjkyspa/stacks/controller/api/net"
-	"github.com/sjkyspa/stacks/client/config"
 )
 
 // AddKey creates an key.
@@ -25,7 +26,7 @@ func AddKey(sshFilePath string) error {
 	}
 	keyParams := api.KeyParams{
 		Public: public,
-		Name: name,
+		Name:   name,
 	}
 	_, err = user.UploadKey(keyParams)
 	if err != nil {

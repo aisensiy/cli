@@ -50,9 +50,9 @@ func DeleteRemote(appID string) error {
 	return nil
 }
 
-func HasRemoteNameForApp(remoteName, appId string) (bool){
+func HasRemoteNameForApp(remoteName, appId string) bool {
 	name, err := remoteNameFromAppID(appId)
-	if(err != nil) {
+	if err != nil {
 		return false
 	}
 	return name == remoteName
@@ -123,6 +123,5 @@ func DeleteCdeRemote() error {
 
 func IsGitDirectory() bool {
 	_, err := exec.Command("git", "rev-parse", "--is-inside-work-tree").Output()
-	return err==nil
+	return err == nil
 }
-

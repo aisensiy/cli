@@ -102,7 +102,6 @@ func ConfigUnset(appId string, keys []string) error {
 	return ConfigList(appId, false)
 }
 
-
 func parseConfig(configVars []string) map[string]interface{} {
 	configMap := make(map[string]interface{})
 

@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/sjkyspa/stacks/client/config"
 	"github.com/sjkyspa/stacks/controller/api/api"
 	"github.com/sjkyspa/stacks/controller/api/net"
-	"github.com/sjkyspa/stacks/client/config"
 	"io/ioutil"
 )
 
@@ -74,7 +74,6 @@ func DomainsCert(domainName, crtFile, privateKeyFile string) error {
 	if err != nil {
 		return err
 	}
-
 
 	err = domain.AttachCert(api.CertParams{
 		Crt: string(crt),
