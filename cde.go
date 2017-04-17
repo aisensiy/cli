@@ -43,7 +43,7 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 `
 	command, argv := parseArgs(argv)
 
-	_, err := docopt.Parse(usage, []string{command}, false, version.Version, true, false)
+	_, err := docopt.Parse(usage, []string{command}, false, version.Version(), true, false)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
