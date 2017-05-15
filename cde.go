@@ -30,6 +30,7 @@ Auth commands:
 Subcommands, use 'cde help [subcommand]' to learn more::
 
   apps          manage applications used to provide services
+  clusters      manage clusters used to provide services
   orgs          manage organizations
   scaffold      create scaffold project quickly
   stacks        manage stacks
@@ -82,6 +83,8 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 		err = parser.Config(argv)
 	case "dev":
 		err = parser.Dev(argv)
+	case "clusters":
+		err = parser.Clusters(argv)
 	case "help":
 		fmt.Print(usage)
 		return 0
