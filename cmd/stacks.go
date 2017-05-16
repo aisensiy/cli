@@ -3,7 +3,11 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"strconv"
+	"reflect"
 	"github.com/ghodss/yaml"
+	"github.com/olekukonko/tablewriter"
 	"github.com/sjkyspa/stacks/client/config"
 	"github.com/sjkyspa/stacks/controller/api/api"
 	"github.com/sjkyspa/stacks/controller/api/net"
@@ -58,6 +62,148 @@ func StacksList() error {
 		fmt.Printf("name: %s id: %s\n", stack.Name(), stack.Id())
 	}
 	return nil
+}
+
+func GetStack(stackId string) error {
+	configRepository := config.NewConfigRepository(func(error) {})
+	stackRepository := api.NewStackRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+	stack, err := stackRepository.GetStack(stackId)
+	if err != nil {
+		return err
+	}
+
+	outputStackDescription(stack)
+	outputStackTemplate(stack.GetTemplate())
+	outputStackLanguages(stack.GetLanguages())
+	outputStackFrameworks(stack.GetFrameworks())
+	outputStackServices(stack.GetServices())
+	return nil
+}
+
+func outputStackDescription(stack api.Stack){
+	fmt.Printf("--- %s Stack\n", stack.Name())
+	data := make([][]string, 3)
+	data[0] = []string{"Type", stack.Type()}
+	data[1] = []string{"Status", stack.GetStatus()}
+	data[2] = []string{"Description", stack.GetDescription()}
+
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
+
+	for _, v := range data {
+		table.Append(v)
+	}
+	table.Render()
+}
+
+func outputStackTemplate(template api.Template){
+	fmt.Printf("--- Template\n")
+	data := make([][]string, 2)
+	data[0] = []string{"Type", template.Type}
+	data[1] = []string{"Uri", template.URI}
+
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
+
+	for _, v := range data {
+		table.Append(v)
+	}
+	table.Render()
+}
+
+func outputStackLanguages(languages []api.Language){
+	fmt.Printf("--- Languages\n")
+	data := make([][]string, len(languages))
+	for index, language := range languages {
+		data[index] = []string{strconv.Itoa(index), language.Name, language.Version}
+	}
+
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
+	table.SetHeader([]string{"", "Name", "Version"})
+
+	for _, v := range data {
+		table.Append(v)
+	}
+	table.Render()
+}
+
+func outputStackFrameworks(frameworks []api.Framework){
+	fmt.Printf("--- Frameworks\n")
+	data := make([][]string, len(frameworks))
+	for index, framework := range frameworks {
+		data[index] = []string{strconv.Itoa(index), framework.Name, framework.Version}
+	}
+
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
+	table.SetHeader([]string{"", "Name", "Version"})
+
+	for _, v := range data {
+		table.Append(v)
+	}
+	table.Render()
+}
+
+func outputStackServices(services map[string]api.Service){
+	fmt.Println("--- Services")
+	keys := reflect.ValueOf(services).MapKeys()
+
+	for _,key := range keys{
+		var data [][]string
+		service := services[key.String()]
+		data = append(data, []string{key.String(), "name", service.GetName()})
+		data = append(data, []string{key.String(), "image", service.GetImage()})
+		data = append(data, []string{key.String(), "mem", fmt.Sprintf("%f", service.GetMem())})
+		data = append(data, []string{key.String(), "cpus", fmt.Sprintf("%f", service.GetCpu())})
+		data = append(data, []string{key.String(), "instances", fmt.Sprintf("%d", service.GetInstances())})
+		data = append(data, []string{key.String(), "expose", fmt.Sprintf("%d", service.GetExpose())})
+		if api.NotEmptyImage(service.GetBuild()) {
+			data = append(data, []string{key.String(), "build", fmt.Sprintf("image:%s", service.GetBuild().Name)})
+			data = append(data, []string{key.String(), "build", fmt.Sprintf("mem:%d", service.GetBuild().Mem)})
+			data = append(data, []string{key.String(), "build", fmt.Sprintf("cpus:%f", service.GetBuild().Cpus)})
+		}
+		if api.NotEmptyImage(service.GetVerify()) {
+			data = append(data, []string{key.String(), "verify", fmt.Sprintf("image:%s", service.GetVerify().Name)})
+			data = append(data, []string{key.String(), "verify", fmt.Sprintf("mem:%d", service.GetVerify().Mem)})
+			data = append(data, []string{key.String(), "verify", fmt.Sprintf("cpus:%f", service.GetVerify().Cpus)})
+		}
+		healthChecks := service.GetHealthChecks()
+		for index, healthcheck := range healthChecks{
+			data = append(data, []string{key.String(), fmt.Sprintf("healthcheck %d", index), fmt.Sprintf("protocol:%s", healthcheck.Protocol)})
+			data = append(data, []string{key.String(), fmt.Sprintf("healthcheck %d", index), fmt.Sprintf("command:%s", healthcheck.Command)})
+			data = append(data, []string{key.String(), fmt.Sprintf("healthcheck %d", index), fmt.Sprintf("path:%s", healthcheck.Path)})
+			data = append(data, []string{key.String(), fmt.Sprintf("healthcheck %d", index), fmt.Sprintf("grace:%d", healthcheck.Grace)})
+			data = append(data, []string{key.String(), fmt.Sprintf("healthcheck %d", index), fmt.Sprintf("timeout:%d", healthcheck.Timeout)})
+			data = append(data, []string{key.String(), fmt.Sprintf("healthcheck %d", index), fmt.Sprintf("interval:%d", healthcheck.Interval)})
+			data = append(data, []string{key.String(), fmt.Sprintf("healthcheck %d", index), fmt.Sprintf("port:%d", healthcheck.Port)})
+			data = append(data, []string{key.String(), fmt.Sprintf("healthcheck %d", index), fmt.Sprintf("portIndex:%d", healthcheck.PortIndex)})
+			data = append(data, []string{key.String(), fmt.Sprintf("healthcheck %d", index), fmt.Sprintf("maxConsecutiveFailures:%d", healthcheck.MaxConsecutiveFailures)})
+		}
+		envKeys := reflect.ValueOf(service.GetEnv()).MapKeys()
+		if len(envKeys) > 0 {
+			envs := service.GetEnv()
+			for _, envKey := range envKeys {
+				data = append(data, []string{key.String(), "environment", fmt.Sprintf("%s:%s", envKey.String(), envs[envKey.String()])})
+			}
+		}
+		volumes := service.GetVolumes()
+		for index, volume := range volumes {
+			data = append(data, []string{key.String(), fmt.Sprintf("volume %d", index), fmt.Sprintf("container:%s", volume.ContainerPath)})
+			data = append(data, []string{key.String(), fmt.Sprintf("volume %d", index), fmt.Sprintf("host:%s", volume.HostPath)})
+			data = append(data, []string{key.String(), fmt.Sprintf("volume %d", index), fmt.Sprintf("mode:%s", volume.Mode)})
+		}
+		data = append(data, []string{key.String(), "buildable", fmt.Sprintf("%s", strconv.FormatBool(service.IsBuildable()))})
+
+		table := tablewriter.NewWriter(os.Stdout)
+		table.SetAlignment(tablewriter.ALIGN_LEFT)
+		table.SetRowSeparator("-")
+		table.SetAutoMergeCells(true)
+		table.SetRowLine(true)
+		table.AppendBulk(data)
+		table.Render()
+	}
 }
 
 func StackRemove(name string) error {

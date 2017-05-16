@@ -11,6 +11,7 @@ Valid commands for apps:
 
 stacks:create        create a new stack
 stacks:list          list accessible stacks
+stacks:info          view info about a stack
 stacks:remove        remove an existing stack
 stacks:update        update stack
 stacks:publish       publish stack
@@ -23,6 +24,8 @@ Use 'cde help [command]' to learn more.
 		return stackCreate(argv)
 	case "stacks:list":
 		return stackList()
+	case "stacks:info":
+		return stackInfo(argv)
 	case "stacks:remove":
 		return stackRemove(argv)
 	case "stacks:update":
@@ -69,7 +72,27 @@ Arguments:
 
 func stackList() error {
 	return cmd.StacksList()
+}
 
+func stackInfo(argv []string) error {
+	usage := `
+View info about a stack
+
+Usage: cde stacks:info <stack-id>
+
+Arguments:
+  <stack-id>
+    a stack id.
+`
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	stackName := safeGetValue(args, "<stack-id>")
+
+	return cmd.GetStack(stackName)
 }
 
 func stackRemove(argv []string) error {

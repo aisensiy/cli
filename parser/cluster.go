@@ -12,10 +12,10 @@ func Clusters(argv []string) error {
 Valid commands for config:
 
 clusters:list           list clusters
-clusters:info           view info about an cluster
+clusters:info           view info about a cluster
 clusters:create         create a new cluster
-clusters:delete         unset environment variables for an app
-clusters:update         unset environment variables for an app
+clusters:delete         unset environment variables for a cluster
+clusters:update         unset environment variables for a cluster
 
 Use 'cde help [command]' to learn more.
 `
