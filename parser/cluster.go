@@ -100,16 +100,22 @@ func clustersDelete(argv []string) error {
 	usage := `
 Delete the cluster.
 
-Usage: cde clusters:delete
+Usage: cde clusters:delete <clusterId>
+
+Arguments:
+  <clusterId>
+  	a cluster Id
 `
 
-	_, err := docopt.Parse(usage, argv, true, "", false, true)
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
 
 	if err != nil {
 		return err
 	}
 
-	return cmd.ClusterList()
+	clusterId := safeGetValue(args, "<clusterId>")
+
+	return cmd.ClusterRemove(clusterId)
 }
 
 func clusterInfo(argv []string) error {

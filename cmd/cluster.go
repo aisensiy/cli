@@ -21,7 +21,7 @@ func ClusterList() error {
 	fmt.Printf("=== Clusters [%d]\n", len(clusters.Items()))
 
 	for _, cluster := range clusters.Items() {
-		fmt.Printf("name: %s ,\t id: %d \n", cluster.Name(), cluster.Id())
+		fmt.Printf("name: %s\t id: %d \n", cluster.Name(), cluster.Id())
 	}
 	return nil
 }
@@ -69,5 +69,17 @@ func ClusterCreate(clusterName string, clusterType string, clusterUri string) er
 		return err
 	}
 	fmt.Printf("create cluster %s with id %d\n", createdCluster.Name(), createdCluster.Id())
+	return nil
+}
+
+func ClusterRemove(clusterId string) error {
+	configRepository := config.NewConfigRepository(func(error) {})
+	clusterRepository := launcherApi.NewClusterRepository(configRepository, deploymentNet.NewCloudControllerGateway(configRepository))
+
+	err := clusterRepository.DeleteClusterById(clusterId)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("delete cluster successfully\n")
 	return nil
 }
