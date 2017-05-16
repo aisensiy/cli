@@ -18,7 +18,7 @@ func ClusterList() error {
 	fmt.Printf("=== Clusters [%d]\n", len(clusters.Items()))
 
 	for _, cluster := range clusters.Items() {
-		fmt.Printf("name: %s\n", cluster.Name())
+		fmt.Printf("name: %s,\t id: %d\n", cluster.Name(), cluster.Id())
 	}
 	return nil
 }
