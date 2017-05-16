@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"errors"
 	docopt "github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
 )
@@ -12,7 +13,7 @@ Valid commands for config:
 
 clusters:list           list clusters
 clusters:info           view info about an cluster
-clusters:create         set environment variables for an app
+clusters:create         create a new cluster
 clusters:delete         unset environment variables for an app
 clusters:update         unset environment variables for an app
 
@@ -49,18 +50,34 @@ Use 'cde help [command]' to learn more.
 
 func clustersCreate(argv []string) error {
 	usage := `
-List the cluster for user.
+Creates a new cluster.
 
-Usage: cde clusters:create
+Usage: cde clusters:create <name> <type> <uri>
+
+Arguments:
+  <name>
+  	cluster name
+  <type>
+  	cluster type
+  <uri>
+  	cluster uri
 `
 
-	_, err := docopt.Parse(usage, argv, true, "", false, true)
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
 
 	if err != nil {
 		return err
 	}
 
-	return cmd.ClusterCreate()
+	clusterName := safeGetValue(args, "<name>")
+	clusterType := safeGetValue(args, "<type>")
+	clusterUri := safeGetValue(args, "<uri>")
+
+	if clusterName == "" || clusterType == "" || clusterUri == "" {
+		return errors.New("<name> <type> <uri> are essential parameters")
+	}
+
+	return cmd.ClusterCreate(clusterName, clusterType, clusterUri)
 }
 
 func clustersList(argv []string) error {

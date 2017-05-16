@@ -55,7 +55,19 @@ func outputClusterDescription(cluster launcherApi.ClusterRef){
 	table.Render()
 }
 
-func ClusterCreate() error {
+func ClusterCreate(clusterName string, clusterType string, clusterUri string) error {
+	configRepository := config.NewConfigRepository(func(error) {})
+	clusterRepository := launcherApi.NewClusterRepository(configRepository, deploymentNet.NewCloudControllerGateway(configRepository))
+	clusterParams := launcherApi.ClusterParams{
+		Name:	clusterName,
+		Type:	clusterType,
+		Uri:	clusterUri,
+	}
 
+	createdCluster, err := clusterRepository.CreateCluster(clusterParams)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("create cluster %s with id %d\n", createdCluster.Name(), createdCluster.Id())
 	return nil
 }
