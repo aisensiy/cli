@@ -100,10 +100,10 @@ func clustersDelete(argv []string) error {
 	usage := `
 Delete the cluster.
 
-Usage: cde clusters:delete <clusterId>
+Usage: cde clusters:delete <cluster-id>
 
 Arguments:
-  <clusterId>
+  <cluster-id>
   	a cluster Id
 `
 
@@ -113,7 +113,7 @@ Arguments:
 		return err
 	}
 
-	clusterId := safeGetValue(args, "<clusterId>")
+	clusterId := safeGetValue(args, "<cluster-id>")
 
 	return cmd.ClusterRemove(clusterId)
 }
@@ -122,10 +122,10 @@ func clusterInfo(argv []string) error {
 	usage := `
 Prints info about an cluster.
 
-Usage: cde clusters:info <clusterId>
+Usage: cde clusters:info <cluster-id>
 
 Arguments:
-  <clusterId>
+  <cluster-id>
   	a cluster Id
 	`
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
@@ -134,7 +134,7 @@ Arguments:
 		return err
 	}
 
-	clusterId := safeGetValue(args, "<clusterId>")
+	clusterId := safeGetValue(args, "<cluster-id>")
 
 	return cmd.GetCluster(clusterId)
 }
@@ -144,15 +144,36 @@ func clustersUpdate(argv []string) error {
 	usage := `
 Update cluster info.
 
-Usage: cde clusters:update
+Usage: cde clusters:update <cluster-id> [options]
+
+Arguments:
+  <cluster-id>
+  	a cluster Id
+
+Options:
+  -n --name=<name>
+    the new name for cluster
+  -t --type=<org>
+    the new type for cluster
+  -u --uri=<uri>
+    the new uri for cluster
 `
 
-	_, err := docopt.Parse(usage, argv, true, "", false, true)
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
 
 	if err != nil {
 		return err
 	}
 
-	return cmd.ClusterList()
+	clusterId := safeGetValue(args, "<cluster-id>")
+	clusterName := safeGetValue(args, "--name")
+	clusterType := safeGetValue(args, "--type")
+	clusterUri := safeGetValue(args, "--uri")
+
+	if clusterName == "" && clusterType == "" && clusterUri == "" {
+		return errors.New("name, type or uri should given")
+	}
+
+	return cmd.ClusterUpdate(clusterId, clusterName, clusterType, clusterUri)
 }
 

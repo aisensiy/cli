@@ -83,3 +83,35 @@ func ClusterRemove(clusterId string) error {
 	fmt.Printf("delete cluster successfully\n")
 	return nil
 }
+
+func ClusterUpdate(clusterId string, clusterName string, clusterType string, clusterUri string) error {
+	configRepository := config.NewConfigRepository(func(error) {})
+	clusterRepository := launcherApi.NewClusterRepository(configRepository, deploymentNet.NewCloudControllerGateway(configRepository))
+
+	cluster, err := clusterRepository.GetClusterById(clusterId)
+	if err != nil {
+		return err
+	}
+
+	if clusterName == "" {
+		clusterName = cluster.Name()
+	}
+	if clusterType == "" {
+		clusterType = cluster.Type()
+	}
+	if clusterUri == "" {
+		clusterUri = cluster.Uri()
+	}
+	clusterParams := launcherApi.ClusterParams{
+		Name:	clusterName,
+		Type:	clusterType,
+		Uri:	clusterUri,
+	}
+
+	updateErr := clusterRepository.UpdateCluster(clusterId, clusterParams)
+	if updateErr != nil {
+		return updateErr
+	}
+	fmt.Printf("update cluster successfully\n")
+	return nil
+}
