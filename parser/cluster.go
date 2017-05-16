@@ -11,6 +11,7 @@ func Clusters(argv []string) error {
 Valid commands for config:
 
 clusters:list           list clusters
+clusters:info           view info about an cluster
 clusters:create         set environment variables for an app
 clusters:delete         unset environment variables for an app
 clusters:update         unset environment variables for an app
@@ -21,6 +22,8 @@ Use 'cde help [command]' to learn more.
 	switch argv[0] {
 	case "clusters:list":
 		return clustersList(argv)
+	case "clusters:info":
+		return clusterInfo(argv)
 	case "clusters:create":
 		return clustersCreate(argv)
 	case "clusters:delete":
@@ -90,6 +93,27 @@ Usage: cde clusters:delete
 	}
 
 	return cmd.ClusterList()
+}
+
+func clusterInfo(argv []string) error {
+	usage := `
+Prints info about an cluster.
+
+Usage: cde clusters:info <clusterId>
+
+Arguments:
+  <clusterId>
+  	a cluster Id
+	`
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	clusterId := safeGetValue(args, "<clusterId>")
+
+	return cmd.GetCluster(clusterId)
 }
 
 
