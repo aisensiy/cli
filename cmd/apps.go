@@ -234,14 +234,10 @@ func outputDependentServices(appId string) error {
 }
 
 func DestroyApp(appId string) error {
-	configRepository, currentAppId, err := load("")
+	configRepository, appId, err := load(appId)
 
-	if appId == "" && currentAppId == "" {
+	if err != nil {
 		return errors.New("Please execute 'cde apps:destroy' inside a project with an application created for it or specify the app to be destroyed")
-	}
-
-	if appId == "" {
-		appId = currentAppId
 	}
 
 	appRepository := api.NewAppRepository(configRepository,
