@@ -234,10 +234,14 @@ func outputDependentServices(appId string) error {
 }
 
 func DestroyApp(appId string) error {
-	configRepository, appId, err := load(appId)
+	configRepository, currentAppId, err := load("")
+
+	if appId == "" && currentAppId == "" {
+		return errors.New("Please execute 'cde apps:destroy' inside a project with an application created for it or specify the app to be destroyed")
+	}
 
 	if appId == "" {
-		return errors.New("Please execute 'cde apps:destroy' inside a project with an application created for it")
+		appId = currentAppId
 	}
 
 	appRepository := api.NewAppRepository(configRepository,
@@ -250,16 +254,6 @@ func DestroyApp(appId string) error {
 	stack, err := app.GetStack()
 	if err != nil {
 		return err
-	}
-
-	if stack.Type() == "BUILD_STACK" {
-		_, currentApp, err := load("")
-		if err != nil {
-			return err
-		}
-		if appId != "" && appId != currentApp {
-			return errors.New(fmt.Sprintf("current dir's app %s != %s\n", currentApp, appId))
-		}
 	}
 
 	deployRepo := launcherApi.NewDeploymentRepository(configRepository, deploymentNet.NewCloudControllerGateway(configRepository))

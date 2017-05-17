@@ -12,7 +12,7 @@ func load(appID string) (config.ConfigRepository, string, error) {
 		appID, err = git.DetectAppName(configRepository.GitHost())
 
 		if err != nil {
-			return nil, "", err
+			return configRepository, "", err
 		}
 	}
 
