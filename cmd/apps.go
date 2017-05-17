@@ -267,7 +267,7 @@ func DestroyApp(appId string) error {
 
 	if stack.Type() == "BUILD_STACK" {
 		if git.HasRemoteNameForApp("cde", appId) {
-			err = git.DeleteRemote("cde")
+			err = git.DeleteRemote(appId)
 			if err != nil {
 				fmt.Print("Remove 'cde' remote failed. \n Please execute git cmd in the app directory: `git remote remove cde`")
 			}

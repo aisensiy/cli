@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os/exec"
 	"strings"
+	"regexp"
 )
 
 // CreateRemote adds a git remote in the current directory.
@@ -68,8 +69,13 @@ func remoteNameFromAppID(appID string) (string, error) {
 	cmd := string(out)
 
 	for _, line := range strings.Split(cmd, "\n") {
-		if strings.Contains(line, appID) {
-			return strings.Split(line, "\t")[0], nil
+		re, _ := regexp.Compile(`/([-a-zA-Z0-9_]*)\.git`)
+		res := re.FindSubmatch([]byte(line))
+
+		if len(res) > 1 {
+			if strings.Compare(string(res[1]), appID) == 0 {
+				return strings.Split(line, "\t")[0], nil
+			}
 		}
 	}
 
