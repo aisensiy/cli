@@ -358,6 +358,12 @@ func handleOutput(output api.LogsModel) {
 }
 
 func AppCollaborators(appId string) error {
+	configRepository, appId, err := load(appId)
+
+	if err != nil {
+		return errors.New("Please execute 'cde apps:collaborators' inside a project with an application created for it or specify the app")
+	}
+
 	configRepository, currentApp, err := load(appId)
 	if err != nil {
 		return err
