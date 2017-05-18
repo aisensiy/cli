@@ -32,10 +32,14 @@ func askForOverrideExistingApp() bool {
 }
 
 func AppLaunch(appId string) error {
-	configRepository := config.NewConfigRepository(func(error) {})
+	configRepository, appId, err := load(appId)
+
+	if err != nil {
+		return errors.New("Please execute 'cde apps:launch' inside a project with an application created for it or specify the app to be launched")
+	}
+
 	appRepository := api.NewAppRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
-
 	app, err := appRepository.GetApp(appId)
 	if err != nil {
 		return err
