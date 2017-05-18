@@ -63,8 +63,16 @@ func AppLaunch(appId string) error {
 }
 
 // AppCreate creates an app.
-func AppCreate(appId string, stackName string, needDeploy string) error {
+func AppCreate(appId string, stackName string, needDeploy string, needScaffold bool) error {
 	var needDeployBool bool
+
+	if needScaffold {
+		ScaffoldCreate(stackName, appId)
+		currentDir,_ := os.Getwd()
+		target := fmt.Sprintf("%s//%s", currentDir, appId)
+		os.Chdir(target)
+		ExecuteCmd("pwd")
+	}
 
 	if !git.IsGitDirectory() {
 		return fmt.Errorf("Not in a git repository")
