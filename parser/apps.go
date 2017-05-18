@@ -231,13 +231,15 @@ func appAddCollaborator(argv []string) error {
 	usage := `
 Add collaborator for app
 
-Usage: cde apps:add-collaborator [options]
+Usage: cde apps:add-collaborator <email> [options]
+
+Arguments:
+  <email>
+    email of collaborator
 
 Options:
   -a --app=<app>
     the uniquely identifiable id for the application.
-  -e --email=<email>
-    email of collaborator
 `
 
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
@@ -247,7 +249,12 @@ Options:
 	}
 
 	appId := safeGetValue(args, "--app")
-	email := safeGetValue(args, "--email")
+	email := safeGetValue(args, "<email>")
+
+	if email == ""{
+		return errors.New("<email> is essential parameters")
+	}
+
 	return cmd.AppAddCollaborator(appId, email)
 }
 
