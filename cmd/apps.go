@@ -451,12 +451,10 @@ func AppTransfer(appId string, email string, org string) error {
 		return errors.New(fmt.Sprint("Only one of Email and Org Name should given."))
 	}
 
-	configRepository, currentApp, err := load(appId)
+	configRepository, appId, err := load(appId)
+
 	if err != nil {
-		return err
-	}
-	if appId != "" && appId != currentApp {
-		return errors.New(fmt.Sprintf("current dir's app %s != %s\n", currentApp, appId))
+		return errors.New("Please execute 'cde apps:transfer' inside a project with an application created for it or specify the app")
 	}
 
 	appRepository := api.NewAppRepository(configRepository,
@@ -471,13 +469,13 @@ func AppTransfer(appId string, email string, org string) error {
 		if err != nil {
 			return err
 		}
-		fmt.Println("Finish transfer %s to %s", app.Id(), email)
+		fmt.Printf("Finish transfer %s to %s\n", app.Id(), email)
 	} else {
 		err = app.TransferToOrg(org)
 		if err != nil {
 			return err
 		}
-		fmt.Println("Finish transfer %s to %s", app.Id(), org)
+		fmt.Printf("Finish transfer %s to %s\n", app.Id(), org)
 	}
 
 	return nil
