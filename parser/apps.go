@@ -248,12 +248,12 @@ Options:
 		return err
 	}
 
-	appId := safeGetValue(args, "--app")
 	email := safeGetValue(args, "<email>")
-
 	if email == ""{
 		return errors.New("<email> is essential parameters")
 	}
+
+	appId := safeGetValue(args, "--app")
 
 	return cmd.AppAddCollaborator(appId, email)
 }
@@ -262,13 +262,15 @@ func appRmCollaborator(argv []string) error {
 	usage := `
 Remove collaborator for app
 
-Usage: cde apps:rm-collaborator [options]
+Usage: cde apps:rm-collaborator <email> [options]
+
+Arguments:
+  <email>
+    email of collaborator
 
 Options:
   -a --app=<app>
     the uniquely identifiable id for the application.
-  -e --email=<email>
-    email of collaborator
 `
 
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
@@ -277,8 +279,13 @@ Options:
 		return err
 	}
 
+	email := safeGetValue(args, "<email>")
+	if email == ""{
+		return errors.New("<email> is essential parameters")
+	}
+
 	appId := safeGetValue(args, "--app")
-	email := safeGetValue(args, "--email")
+
 	return cmd.AppRmCollaborator(appId, email)
 }
 

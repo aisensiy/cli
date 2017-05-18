@@ -409,12 +409,10 @@ func AppAddCollaborator(appId string, email string) error {
 }
 
 func AppRmCollaborator(appId string, email string) error {
-	configRepository, currentApp, err := load(appId)
+	configRepository, appId, err := load(appId)
+
 	if err != nil {
-		return err
-	}
-	if appId != "" && appId != currentApp {
-		return errors.New(fmt.Sprintf("current dir's app %s != %s\n", currentApp, appId))
+		return errors.New("Please execute 'cde apps:rm-collaborators' inside a project with an application created for it or specify the app")
 	}
 
 	appRepository := api.NewAppRepository(configRepository,
