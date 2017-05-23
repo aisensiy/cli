@@ -19,6 +19,8 @@ Arguments:
 
 Options:
   -d --dir=<dir> default sub directory name
+  -a --app=<app-name> create a new scaffold and create a new app in sub directory
+  --deploy tell system to deploy this app or not, 1 means need, 0 mean no, default 1
 `
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
 
@@ -30,7 +32,15 @@ Options:
 
 	dir := safeGetOrDefault(args, "--dir", "")
 
-	return cmd.ScaffoldCreate(stackName, dir)
+	appName := safeGetOrDefault(args, "--app", "")
+
+	needDeploy := safeGetOrDefault(args, "--deploy", "1")
+
+	if appName!="" && !cmd.IsAppNameInvalid(appName) {
+		return fmt.Errorf("'%s' does not match the pattern '[a-z0-9-]+'\n", appName)
+	}
+
+	return cmd.ScaffoldCreate(stackName, dir, appName, needDeploy)
 }
 
 func retrieveGitName(gitUrl string) (string, error) {

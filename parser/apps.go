@@ -6,7 +6,6 @@ import (
 	docopt "github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
 	"os"
-	"regexp"
 	"strconv"
 )
 
@@ -83,8 +82,6 @@ Arguments:
 Options:
   -d --deploy=<deploy>
     tell system to deploy this app or not, 1 means need, 0 mean no, default 1
-  -s --scaffold
-    tell system to creates a new scaffold in current directory when create app
 `
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
 
@@ -95,18 +92,16 @@ Options:
 	name := safeGetValue(args, "<name>")
 	stack := safeGetValue(args, "<stack>")
 	needDeploy := safeGetOrDefault(args, "--deploy", "1")
-	needScaffold := args["--scaffold"]
 
 	if stack == "" || name == "" {
 		return errors.New("<name> <stack> are essential parameters")
 	}
 
-	regex := regexp.MustCompile(`^[a-z0-9\-]+$`)
-	if !regex.MatchString(name) {
+	if !cmd.IsAppNameInvalid(name) {
 		return fmt.Errorf("'%s' does not match the pattern '[a-z0-9-]+'\n", name)
 	}
 
-	return cmd.AppCreate(name, stack, needDeploy, needScaffold.(bool))
+	return cmd.AppCreate(name, stack, needDeploy)
 }
 
 func appList() error {

@@ -7,12 +7,29 @@ import (
 	"github.com/sjkyspa/stacks/controller/api/net"
 	"io/ioutil"
 	"os/exec"
+	"os"
 )
 
-func ScaffoldCreate(stackName string, directory string) error {
+func ScaffoldCreate(stackName string, directory string, appName string, needDeploy string) error {
+
+	if appName != "" {
+		if isApplicationExist(appName) {
+			return fmt.Errorf("Application %s already exists.", appName)
+		}
+		if directory == "" {
+			directory = appName
+		}
+	}
+
 	if directory == "" {
 		directory = stackName
 	}
+	currentDir,_ := os.Getwd()
+	target := fmt.Sprintf("%s//%s", currentDir, directory)
+	if directoryExist(target) {
+		return fmt.Errorf("directory %s already exists", directory);
+	}
+
 
 	stack, err := getStack(stackName)
 	if err != nil {
@@ -27,7 +44,20 @@ func ScaffoldCreate(stackName string, directory string) error {
 
 	cmdString := fmt.Sprintf("git clone %s %s; cd %s; git remote remove origin; rm -rf .git; git init", gitRepo, directory, directory)
 
-	return ExecuteCmd(cmdString)
+	err = ExecuteCmd(cmdString)
+
+	if err != nil {
+		return err
+	}
+
+	if appName != "" {
+		os.Chdir(target)
+		err = AppCreate(appName, stackName, needDeploy)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func ExecuteCmd(cmdString string) error {
@@ -65,4 +95,20 @@ func getStack(stackName string) (stackObj api.Stack, err error) {
 	stackId := stacks.Items()[0].Id()
 	stackObj, err = stackRepository.GetStack(stackId)
 	return
+}
+
+func directoryExist(directory string)(bool){
+	if _, notExistErr := os.Stat(directory); notExistErr != nil {
+		return false
+	}
+
+	return true
+}
+
+func isApplicationExist(appName string) bool {
+	configRepository := config.NewConfigRepository(func(error) {})
+	appRepository := api.NewAppRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+	app, _ := appRepository.GetApp(appName)
+	return app != nil
 }
