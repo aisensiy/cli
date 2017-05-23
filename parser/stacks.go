@@ -78,11 +78,11 @@ func stackInfo(argv []string) error {
 	usage := `
 View info about a stack
 
-Usage: cde stacks:info <stack-id>
+Usage: cde stacks:info <stack-name>
 
 Arguments:
-  <stack-id>
-    a stack id.
+  <stack-name>
+    a stack name.
 `
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
 
@@ -90,7 +90,7 @@ Arguments:
 		return err
 	}
 
-	stackName := safeGetValue(args, "<stack-id>")
+	stackName := safeGetValue(args, "<stack-name>")
 
 	return cmd.GetStack(stackName)
 }

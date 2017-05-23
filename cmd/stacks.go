@@ -64,20 +64,25 @@ func StacksList() error {
 	return nil
 }
 
-func GetStack(stackId string) error {
+func GetStack(stackName string) error {
 	configRepository := config.NewConfigRepository(func(error) {})
 	stackRepository := api.NewStackRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
-	stack, err := stackRepository.GetStack(stackId)
-	if err != nil {
+	stacks, err := stackRepository.GetStackByName(stackName)
+
+	if err != nil || stacks.Count() == 0 {
+		err = fmt.Errorf("stack not found")
 		return err
 	}
 
-	outputStackDescription(stack)
-	outputStackTemplate(stack.GetTemplate())
-	outputStackLanguages(stack.GetLanguages())
-	outputStackFrameworks(stack.GetFrameworks())
-	outputStackServices(stack.GetServices())
+	stackId := stacks.Items()[0].Id()
+	stackObj, err := stackRepository.GetStack(stackId)
+
+	outputStackDescription(stackObj)
+	outputStackTemplate(stackObj.GetTemplate())
+	outputStackLanguages(stackObj.GetLanguages())
+	outputStackFrameworks(stackObj.GetFrameworks())
+	outputStackServices(stackObj.GetServices())
 	return nil
 }
 
