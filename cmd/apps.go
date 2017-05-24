@@ -356,6 +356,44 @@ func ServiceLog(appId, serviceName string, lines int) error {
 	return nil
 }
 
+func AppLocalization(appName string, directory string) error{
+	configRepository := config.NewConfigRepository(func(error) {})
+	appRepository := api.NewAppRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+	_, err := appRepository.GetApp(appName)
+	if err != nil {
+		return err
+	}
+
+	host := configRepository.GitHost()
+	gitRepo := git.RemoteURL(host, appName);
+	if directory == "" {
+		directory = appName
+	}
+
+	currentDir,_ := os.Getwd()
+	target := fmt.Sprintf("%s//%s", currentDir, directory)
+
+	if IsDirectoryExist(target){
+		return fmt.Errorf("directory %s already exists", directory);
+	}
+
+	cmdString := fmt.Sprintf("git clone %s %s;cd %s; git remote remove origin; rm -rf .git; git init", gitRepo, directory, directory)
+	ExecuteCmd(cmdString)
+
+	os.Chdir(target)
+	git.DeleteCdeRemote()
+
+	if err = git.CreateRemote(host, "cde", appName); err != nil {
+		if err.Error() == "exit status 128" {
+			fmt.Println("To replace the existing git remote entry, run:")
+			fmt.Printf("  git remote rename cde cde.old && cde git:remote -a %s\n", appName)
+		}
+		return err
+	}
+	return nil
+}
+
 func handleOutput(output api.LogsModel) {
 	for _, log := range output.ItemsField {
 		fmt.Printf("%s\n", log.MessageField)

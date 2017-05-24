@@ -26,7 +26,7 @@ func ScaffoldCreate(stackName string, directory string, appName string, needDepl
 	}
 	currentDir,_ := os.Getwd()
 	target := fmt.Sprintf("%s//%s", currentDir, directory)
-	if directoryExist(target) {
+	if IsDirectoryExist(target) {
 		return fmt.Errorf("directory %s already exists", directory);
 	}
 
@@ -97,7 +97,7 @@ func getStack(stackName string) (stackObj api.Stack, err error) {
 	return
 }
 
-func directoryExist(directory string)(bool){
+func IsDirectoryExist(directory string)(bool){
 	if _, notExistErr := os.Stat(directory); notExistErr != nil {
 		return false
 	}

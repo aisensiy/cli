@@ -24,6 +24,7 @@ apps:add-collaborator	add collaborator
 apps:rm-collaborator    remove collaborator
 apps:transfer           transfer app to others, user or organization
 apps:launch             launch non build app
+apps:localization	get codebase for an app
 
 Use 'cde help [command]' to learn more.
 `
@@ -50,6 +51,8 @@ Use 'cde help [command]' to learn more.
 		return appTransfer(argv)
 	case "apps:launch":
 		return appLaunch(argv)
+	case "apps:localization":
+		return appLocalization(argv)
 	default:
 		if printHelp(argv, usage) {
 			return nil
@@ -64,6 +67,35 @@ Use 'cde help [command]' to learn more.
 		return nil
 	}
 	return nil
+}
+func appLocalization(argv []string) error {
+	usage := `
+Get codebase for an app in sub directory.
+
+Usage: cde apps:localization <name> [options]
+
+Arguments:
+  <name>
+  	the uniquely identifiable name for the application
+
+Options:
+  -d --directory=<directory>
+  	default sub directory name
+	`
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	appName := safeGetValue(args, "<name>")
+	directory := safeGetValue(args, "--directory")
+
+	if appName == "" {
+		return errors.New("<name> are essential parameters")
+	}
+
+	return cmd.AppLocalization(appName, directory)
 }
 
 func appCreate(argv []string) error {
@@ -116,7 +148,7 @@ Usage: cde apps:info [options]
 
 Options:
   -a --app=<app>
-    the uniquely identifiable id for the application.
+    the uniquely identifiable name for the application.
 `
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
 
