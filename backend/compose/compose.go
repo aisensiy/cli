@@ -78,7 +78,7 @@ func (cb ComposeBackend) ToComposeFile(s api.Stack) string {
 				Volumes:     volumes,
 				Environment: env,
 				Expose:      service.GetExpose(),
-				Ports:       Map(service.GetExpose(), func(port int) string { return fmt.Sprintf("%d:%d", port, port) }),
+				Ports:       Map(service.GetExpose(), func(port int) string { return fmt.Sprintf("%d", port) }),
 			}
 		} else {
 			volumes := make([]string, 0)
@@ -109,7 +109,7 @@ func (cb ComposeBackend) ToComposeFile(s api.Stack) string {
 				Links:       links,
 				Environment: env,
 				Expose:      service.GetExpose(),
-				Ports:       Map(service.GetExpose(), func(port int) string { return fmt.Sprintf("%d:%d", port, port) }),
+				Ports:       Map(service.GetExpose(), func(port int) string { return fmt.Sprintf("%d", port) }),
 			}
 		}
 	}
