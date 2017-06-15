@@ -18,6 +18,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"regexp"
+	"errors"
 )
 
 func DevUp() error {
@@ -260,8 +262,12 @@ func DevEnv() error {
 	}
 
 	for _, link := range links {
-		envs = append(envs, "export "+strings.ToUpper(link+"_HOST=")+link+";")
-		envs = append(envs, "export "+strings.ToUpper(link+"_PORT=")+strconv.Itoa(services[link].GetExpose()[0])+";")
+		envs = append(envs, "export "+strings.ToUpper(link+"_HOST=")+"localhost;")
+		mappingPort, err := getServiceMappingPort(appId, link, services[link].GetExpose()[0])
+		if err != nil {
+			return err
+		}
+		envs = append(envs, "export "+strings.ToUpper(link+"_PORT=")+strconv.Itoa(mappingPort)+";")
 
 		linkEnvs := services[link].GetEnv()
 		for name, linkEnv := range linkEnvs {
@@ -274,6 +280,40 @@ func DevEnv() error {
 	}
 
 	return nil
+}
+
+func getServiceMappingPort(appName string, serviceName string, port int) (int, error) {
+	out, err := exec.Command("docker", "ps").Output()
+
+	if err != nil {
+		return 0, err
+	}
+
+	containerInfo := string(out)
+
+	for _, line := range strings.Split(containerInfo, "\n") {
+		if strings.Contains(line, strings.Replace(appName, "-", "", -1)+"_"+serviceName) {
+			containerId := strings.Split(line, " ")[0]
+			output, err := exec.Command("docker", "port", containerId).Output()
+
+			if err != nil {
+				return 0, err
+			}
+			mappingInfo := string(output)
+
+			for _, infoLine := range strings.Split(mappingInfo, "\n") {
+				re, _ := regexp.Compile(strconv.Itoa(port) + `/.*`)
+				res := re.FindSubmatch([]byte(line))
+
+				if len(res) > 0 {
+					return strconv.Atoi(strings.Split(infoLine, ":")[1])
+				}
+			}
+			return 0, errors.New(fmt.Sprintf("Cannot find mapping port for service %s port %d", serviceName, strconv.Itoa(port)))
+		}
+	}
+
+	return 0, errors.New("Cannot find container for service " + serviceName)
 }
 
 func Pipe(cmds ...*exec.Cmd) ([]byte, error) {
