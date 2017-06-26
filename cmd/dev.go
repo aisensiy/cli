@@ -2,24 +2,24 @@ package cmd
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
-	"github.com/kr/pty"
-	"github.com/sjkyspa/stacks/client/backend/compose"
-	"github.com/sjkyspa/stacks/client/config"
-	"github.com/sjkyspa/stacks/client/pkg"
-	"github.com/sjkyspa/stacks/controller/api/api"
-	"github.com/sjkyspa/stacks/controller/api/net"
 	"io"
 	"io/ioutil"
 	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
-	"regexp"
-	"errors"
+
+	"github.com/sjkyspa/stacks/client/backend/compose"
+	"github.com/sjkyspa/stacks/client/config"
+	"github.com/sjkyspa/stacks/client/pkg"
+	"github.com/sjkyspa/stacks/controller/api/api"
+	"github.com/sjkyspa/stacks/controller/api/net"
 )
 
 func DevUp() error {
@@ -54,13 +54,12 @@ func DevUp() error {
 	}
 
 	dockerComposeCreate := exec.Command("docker-compose", "-f", f, "-p", app.Id(), "up", "-d")
-	fi, err := pty.Start(dockerComposeCreate)
+	startOutput, err := CmdStart(dockerComposeCreate)
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
-
-	io.Copy(os.Stdout, fi)
+	io.Copy(os.Stdout, startOutput)
 	err = dockerComposeCreate.Wait()
 	if err != nil {
 		fmt.Println(err)
@@ -156,7 +155,7 @@ func DevDown() error {
 	var errout bytes.Buffer
 	dockerComposeUp.Stdout = &out
 	dockerComposeUp.Stderr = &errout
-	fi, err := pty.Start(dockerComposeUp)
+	fi, err := CmdStart(dockerComposeUp)
 
 	io.Copy(os.Stdout, fi)
 	err = dockerComposeUp.Wait()
@@ -203,7 +202,7 @@ func DevDestroy() error {
 	var errout bytes.Buffer
 	dockerComposeUp.Stdout = &out
 	dockerComposeUp.Stderr = &errout
-	fi, err := pty.Start(dockerComposeUp)
+	fi, err := CmdStart(dockerComposeUp)
 	if err != nil {
 		return err
 	}
