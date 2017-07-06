@@ -226,6 +226,13 @@ func DefaultFilePath() string {
 		configDir = filepath.Join(userHomeDir(), ".cde")
 	}
 
+	if _, err := os.Stat(configDir); err != nil && !os.IsExist(err) {
+		err := os.Mkdir(configDir, 0700)
+		if err != nil {
+			panic(err)
+		}
+	}
+
 	return filepath.Join(configDir, "config.json")
 }
 
