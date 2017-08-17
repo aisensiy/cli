@@ -7,14 +7,14 @@ import (
 
 // PrintUsage runs if no matching command is found.
 func PrintUsage() {
-	fmt.Fprintln(os.Stderr, "Found no matching command, try 'cde help'")
+	fmt.Fprintln(os.Stderr, "No matched command found, try 'cde help'")
 	fmt.Fprintln(os.Stderr, "Usage: cde <command> [<args>...]")
 }
 
 func printHelp(argv []string, usage string) bool {
 	if len(argv) > 1 {
 		if argv[1] == "--help" || argv[1] == "-h" {
-			fmt.Print(usage)
+			fmt.Println(usage)
 			return true
 		}
 	}

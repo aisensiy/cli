@@ -8,6 +8,7 @@ import (
 	"github.com/sjkyspa/stacks/version"
 	"os"
 	"strings"
+	"github.com/sjkyspa/stacks/client/util"
 )
 
 func main() {
@@ -71,6 +72,8 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 		err = parser.Service(argv)
 	case "stacks":
 		err = parser.Stacks(argv)
+	case "ups":
+		err = parser.Ups(argv)
 	case "routes":
 		err = parser.Routes(argv)
 	case "keys":
@@ -106,6 +109,8 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 // parseArgs returns the provided args with "--help" as the last arg if need be,
 // expands shortcuts and formats commands to be properly routed.
 func parseArgs(argv []string) (string, []string) {
+	argv = util.Map(argv, strings.ToLower)
+
 	if len(argv) == 1 {
 		// rearrange "cde --help" as "cde help"
 		if argv[0] == "--help" || argv[0] == "-h" {
