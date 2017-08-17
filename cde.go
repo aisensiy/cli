@@ -109,35 +109,31 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 // parseArgs returns the provided args with "--help" as the last arg if need be,
 // expands shortcuts and formats commands to be properly routed.
 func parseArgs(argv []string) (string, []string) {
-	argv = util.Map(argv, strings.ToLower)
+	argv = argsToLowerCase(argv)
 
-	if len(argv) == 1 {
+	if len(argv) == 0 {
+		return "", argv
+	}
+
+	if len(argv) == 1 && (argv[0] == "-h" || argv[0] == "--help" ) {
 		// rearrange "cde --help" as "cde help"
-		if argv[0] == "--help" || argv[0] == "-h" {
-			argv[0] = "help"
-		}
+		argv[0] = "help"
 	}
 
-	if len(argv) >= 2 {
-		// Rearrange "cde help <command>" to "cde <command> --help".
-		if argv[0] == "help" || argv[0] == "--help" || argv[0] == "-h" {
-			argv = append(argv[1:], "--help")
-		}
+	if len(argv) >= 2 && (argv[0] == "help" || argv[0] == "-h" || argv[0] == "--help" ) {
+		argv = append(argv[1:], "--help")
 	}
 
-	if len(argv) > 0 {
-		argv[0] = replaceShortcut(argv[0])
-		index := strings.Index(argv[0], ":")
+	argv[0] = replaceShortcut(argv[0])
+	return pickMainCommand(argv[0]), argv
+}
 
-		if index != -1 {
-			command := argv[0]
-			return command[:index], argv
-		}
+func argsToLowerCase(argv []string) []string {
+	return util.Map(argv, strings.ToLower)
+}
 
-		return argv[0], argv
-	}
-
-	return "", argv
+func pickMainCommand(command string) string {
+	return strings.Split(command, ":")[0]
 }
 
 func replaceShortcut(command string) string {
@@ -150,10 +146,8 @@ func replaceShortcut(command string) string {
 		"whoami":   "auth:whoami",
 	}
 
-	expandedCommand := shortcuts[command]
-	if expandedCommand == "" {
-		return command
+	if expandedCommand, ok := shortcuts[command]; ok {
+		return expandedCommand
 	}
-
-	return expandedCommand
+	return command
 }
