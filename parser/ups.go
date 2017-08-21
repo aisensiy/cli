@@ -3,6 +3,7 @@ package parser
 import (
 	"fmt"
 	"github.com/sjkyspa/stacks/client/cmd"
+	"github.com/docopt/docopt-go"
 )
 
 func Ups(argv []string) error {
@@ -62,8 +63,24 @@ func upsList() error {
 }
 
 func upsInfo(argv []string) error {
-	fmt.Println("TODO ups:info command")
-	return nil
+	usage := `
+View info about an UP
+
+Usage: cde ups:info <up-name>
+
+Arguments:
+  <up-name>
+    an up name.
+`
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	upName := safeGetValue(args, "<up-name>")
+
+	return cmd.UpsInfo(upName)
 }
 
 func upsDeprecate(argv []string) error {
