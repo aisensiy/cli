@@ -40,7 +40,7 @@ Use 'cde help [command]' to learn more.`
 		}
 
 		if argv[0] == "ups" {
-			return stackList()
+			return upsList()
 		}
 
 		PrintUsage()

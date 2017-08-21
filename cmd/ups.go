@@ -10,7 +10,19 @@ import (
 )
 
 func UpsList() error {
-	fmt.Println("test list")
+	configRepository := config.NewConfigRepository(func(error) {})
+	upsRepository := api.NewUpsRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+	ups, err := upsRepository.GetUps()
+	if err != nil || ups.Count() == 0 {
+		err = fmt.Errorf("up not found")
+		return err
+	}
+
+	fmt.Printf("=== Unified Procedures: [%d]\n", ups.Count())
+	for _, up := range ups.Items() {
+		fmt.Printf("name: %s; id: %s\n", up.Name(), up.Id())
+	}
 	return nil
 }
 
