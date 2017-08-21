@@ -7,12 +7,21 @@ import (
 	"github.com/sjkyspa/stacks/launcher/api/net"
 	"github.com/olekukonko/tablewriter"
 	"os"
+
+	"io/ioutil"
+	"github.com/ghodss/yaml"
+	"encoding/json"
 )
 
-func UpsList() error {
+func createUpsRepoository() (upsRepository api.UpsRepository) {
 	configRepository := config.NewConfigRepository(func(error) {})
-	upsRepository := api.NewUpsRepository(configRepository,
+	upsRepository = api.NewUpsRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
+	return
+}
+
+func UpsList() error {
+	upsRepository := createUpsRepoository()
 	ups, err := upsRepository.GetUps()
 	if err != nil || ups.Count() == 0 {
 		err = fmt.Errorf("up not found")
@@ -27,9 +36,7 @@ func UpsList() error {
 }
 
 func UpsInfo(upName string) error {
-	configRepository := config.NewConfigRepository(func(error) {})
-	upsRepository := api.NewUpsRepository(configRepository,
-		net.NewCloudControllerGateway(configRepository))
+	upsRepository := createUpsRepoository()
 	ups, err := upsRepository.GetUPByName(upName)
 
 	if err != nil || ups.Count() == 0 {
@@ -45,6 +52,37 @@ func UpsInfo(upName string) error {
 	return nil
 }
 
+func UpCreate(filename string) error {
+	upsRepository := createUpsRepoository()
+
+	content, err := getUpFileContent(filename)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+	content, err = yaml.YAMLToJSON(content)
+	upParams := make(map[string]interface{})
+	err = json.Unmarshal(content, &upParams)
+	if err != nil {
+		return err
+	}
+	upModel, err := upsRepository.CreateUp(upParams)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("created new UP [%s] with id %s", upModel.Name(), upModel.Id())
+	return nil
+}
+
+
+func getUpFileContent(filename string) (content []byte, err error) {
+	contents, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return []byte{}, err
+	}
+	return contents, err
+}
 
 func outputUpDescription(up api.Up) {
 	fmt.Println("--- Unified Procedures Detail\n")

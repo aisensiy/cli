@@ -1,0 +1,287 @@
+{
+  "name": "tes1",
+  "description": "A sample java jersey com.thoughtworks.cnup.up",
+  "template": {
+    "type": "git",
+    "uri": "https://github.com/aisensiy/javajersey_api.git"
+  },
+  "tags": [
+    "java"
+  ],
+  "languages": [
+    {
+      "name": "java",
+      "version": "1.8"
+    },
+    {
+      "name": "xml",
+      "version": "4.0"
+    }
+  ],
+  "frameworks": [
+    {
+      "name": "jersey",
+      "version": "2.17"
+    }
+  ],
+  "tools": [
+    {
+      "name": "gradle",
+      "version": "2.8"
+    }
+  ],
+  "ups": {
+    "build": {
+      "app": {
+        "cpu": 1,
+        "mem": 1024,
+        "disk": 1024,
+        "instances": 1,
+        "image": "hub.deepi.cn/up-jersey-mysql-build",
+        "links": [
+          "db",
+          "redis"
+        ],
+        "volumes": [
+          "{{cache}}:/root/.gradle",
+          "{{artifacts}}:/artifacts",
+          "{{codebase}}:/codebase"
+        ],
+        "environment": {
+          "DB_PASSWORD": "mysql",
+          "DB_USERNAME": "mysql",
+          "DB_DATABASE": "datastore",
+          "RUNNABLE": "{{runnable}}"
+        },
+        "healths": [
+          {
+            "protocol": "COMMAND",
+            "command": "exit 0",
+            "interval": 30,
+            "timeout": 5,
+            "consecutive": 2,
+            "ignore": 120
+          }
+        ]
+      },
+      "runtime": {
+        "db": {
+          "image": "mysql:5.7",
+          "mem": 256,
+          "instances": 1,
+          "cpu": 0.2,
+          "exposes": [
+            3306
+          ],
+          "environment": {
+            "MYSQL_USER": "mysql",
+            "MYSQL_PASSWORD": "mysql",
+            "MYSQL_ROOT_PASSWORD": "mysql",
+            "MYSQL_DATABASE": "stacks"
+          },
+          "healths": [
+            {
+              "protocol": "TCP",
+              "mapped": 0,
+              "interval": 30,
+              "timeout": 5,
+              "consecutive": 2,
+              "ignore": 120
+            }
+          ],
+          "volumes": [
+            "datastore:/var/lib/mysql"
+          ]
+        },
+        "redis": {
+          "mem": 256,
+          "instances": 1,
+          "cpu": 0.2,
+          "image": "redis",
+          "exposes": [
+            6379
+          ],
+          "volumes": [
+            "redis:/data"
+          ],
+          "environment": {
+            "DUMMY": "dummy"
+          },
+          "healths": [
+            {
+              "protocol": "TCP",
+              "mapped": 0,
+              "interval": 30,
+              "timeout": 5,
+              "ignore": 120,
+              "consecutive": 3
+            }
+          ]
+        }
+      }
+    },
+    "verify": {
+      "app": {
+        "image": "hub.deepi.cn/jersey-mysql-verify",
+        "cpu": 1,
+        "mem": 1024,
+        "disk": 1024,
+        "instances": 1,
+        "links": [
+          "api"
+        ],
+        "volumes": [
+          "{{cache}}:/home/.gradle",
+          "{{artifacts}}:/artifacts",
+          "/test:/test"
+        ],
+        "environment": {
+          "ENDPOINT_HOST": "{{runtime api.host}}",
+          "ENDPOINT_PORT": "{{runtime api.port 0}}"
+        },
+        "healths": [
+          {
+            "protocol": "TCP",
+            "mapped": 0,
+            "interval": 30,
+            "timeout": 5,
+            "ignore": 120,
+            "consecutive": 3
+          }
+        ]
+      },
+      "runtime": {
+        "api": {
+          "image": "{{runnable}}",
+          "cpu": 1,
+          "mem": 1,
+          "disk": 1024,
+          "instances": 1,
+          "exposes": [
+            8080
+          ],
+          "links": [
+            "mock",
+            "db"
+          ],
+          "environment": {
+            "DB_HOST": "{{runtime db.host}}",
+            "DB_PORT": "{{runtime db.port 0}}",
+            "DB_PASSWORD": "{{db.MYSQL_PASS}}",
+            "DB_USERNAME": "{{db.MYSQL_USER}}",
+            "DB_DATABASE": "{{db.ON_CREATE_DB}}"
+          },
+          "healths": [
+            {
+              "protocol": "TCP",
+              "mapped": 0,
+              "interval": 60,
+              "timeout": 5,
+              "consecutive": 3,
+              "ignore": 120
+            }
+          ]
+        },
+        "db": {
+          "image": "mysql:5.7",
+          "cpu": 1,
+          "mem": 1024,
+          "instances": 1,
+          "exposes": [
+            3306
+          ],
+          "environment": {
+            "MYSQL_PASS": "mysql",
+            "MYSQL_USER": "mysql",
+            "MYSQL_PASSWORD": "mysql",
+            "ON_CREATE_DB": "stacks",
+            "EXTRA_OPTS": "--lower_case_table_names=1"
+          },
+          "health": [
+            {
+              "protocol": "TCP",
+              "mapped": 0,
+              "interval": 3,
+              "timeout": 2,
+              "consecutive": 2,
+              "ignore": 30
+            }
+          ]
+        },
+        "mock": {
+          "image": "nginx",
+          "cpu": 1,
+          "mem": 1024,
+          "instances": 1,
+          "exposes": [
+            80
+          ],
+          "healths": [
+            {
+              "protocol": "TCP",
+              "mapped": 0,
+              "interval": 3,
+              "timeout": 2,
+              "consecutive": 2,
+              "ignore": 30
+            }
+          ]
+        }
+      }
+    },
+    "run": {
+      "app": {
+        "image": "{{released}}",
+        "cpu": 1,
+        "mem": 1,
+        "disk": 1024,
+        "instances": 1,
+        "environment": {
+          "DB_HOST": "{{runtime db.host}}",
+          "DB_PORT": "{{runtime db.port 0}}",
+          "DB_PASSWORD": "{{db.MYSQL_PASS}}",
+          "DB_USERNAME": "{{db.MYSQL_USER}}",
+          "DB_DATABASE": "{{db.ON_CREATE_DB}}"
+        },
+        "healths": [
+          {
+            "protocol": "TCP",
+            "mapped": 0,
+            "interval": 3,
+            "timeout": 2,
+            "consecutive": 2,
+            "ignore": 30
+          }
+        ]
+      },
+      "runtime": {
+        "db": {
+          "image": "mysql:5.7",
+          "cpu": 1,
+          "mem": 1,
+          "disk": 1024,
+          "instances": 1,
+          "environment": {
+            "MYSQL_PASS": "mysql",
+            "MYSQL_USER": "mysql",
+            "ON_CREATE_DB": "stacks",
+            "EXTRA_OPTS": "--lower_case_table_names=1"
+          },
+          "healths": [
+            {
+              "protocol": "TCP",
+              "port": 3306,
+              "interval": 3,
+              "timeout": 2,
+              "consecutive": 2,
+              "ignore": 120
+            }
+          ],
+          "volumes": [
+            "datastore:/var/lib/mysql"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -21,7 +21,7 @@ Use 'cde help [command]' to learn more.`
 
 	switch argv[0] {
 	case "ups:draft":
-		return upsCreate(argv)
+		return upsDraft(argv)
 	case "ups:publish":
 		return upsPublish(argv)
 	case "ups:list":
@@ -48,9 +48,24 @@ Use 'cde help [command]' to learn more.`
 	}
 }
 
-func upsCreate(argv []string) error {
-	fmt.Println("TODO ups:draft command")
-	return nil
+func upsDraft(argv []string) error {
+	usage := `
+Create an UP.
+
+Usage: cde ups:draft <upfile>
+
+Arguments:
+  <upfile>
+    the UP file.
+`
+
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+
+	return cmd.UpCreate(safeGetValue(args, "<upfile>"))
 }
 
 func upsPublish(argv []string) error {
