@@ -9,10 +9,59 @@ import (
 	"os"
 	"strings"
 	"github.com/sjkyspa/stacks/client/util"
+	"github.com/urfave/cli"
+	"github.com/sjkyspa/stacks/client/cmd"
+	"time"
 )
 
 func main() {
-	os.Exit(Command(os.Args[1:]))
+	app := cli.NewApp()
+	app.Name = "CDE"
+	app.Version = "0.1.4"
+	app.Usage = "Cloud Development Environment"
+	app.Description = "CDE command line tool"
+	app.Compiled = time.Now()
+	app.Author = "ThoughtWorks"
+	app.EnableBashCompletion = true
+
+	app.Commands = []cli.Command{
+		{
+			Name:    "ups",
+			Usage:   "Unified Procedures Commands",
+			Subcommands: []cli.Command{
+				{
+					Name:  "list",
+					Usage: "list all Unified Procedures",
+					ArgsUsage: " ",
+					Action: func(c *cli.Context) error {
+						return cmd.UpsList()
+					},
+				},
+				{
+					Name:  "info",
+					Usage: "get info of an Unified Procedure",
+					ArgsUsage: "<up-name>",
+					Action: func(c *cli.Context) error {
+						return cmd.UpsInfo(c.Args().First())
+					},
+				},
+				{
+					Name:  "draft",
+					Usage: "create a new Unified Procedure",
+					ArgsUsage: "<up-file>",
+					Action: func(c *cli.Context) error {
+						return cmd.UpCreate(c.Args().First())
+					},
+				},
+			},
+		},
+	}
+
+	if len(os.Args) > 1 && os.Args[1] == "ups" {
+		app.Run(os.Args)
+	} else {
+		os.Exit(Command(os.Args[1:]))
+	}
 }
 
 func Command(argv []string) int {
@@ -73,8 +122,6 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 		err = parser.Service(argv)
 	case "stacks":
 		err = parser.Stacks(argv)
-	case "ups":
-		err = parser.Ups(argv)
 	case "routes":
 		err = parser.Routes(argv)
 	case "keys":
