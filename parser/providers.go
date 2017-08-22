@@ -17,7 +17,7 @@ Use 'cde help [command]' to learn more.
 `
 	switch argv[0] {
 	case "providers:enroll":
-		providerEnroll(argv)
+		return providerEnroll(argv)
 	default:
 		if printHelp(argv, usage) {
 			return nil

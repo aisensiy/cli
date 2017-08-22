@@ -21,6 +21,6 @@ func ProviderCreate(providerName string, providerType string, configMap map[stri
 	if err != nil {
 		return err
 	}
-	fmt.Printf("create provider %s", provider.Name())
+	fmt.Printf("create provider %s\n", provider.Name())
 	return nil
 }
