@@ -32,3 +32,10 @@ func safeGetOrDefault(args map[string]interface{}, key string, defaultVal string
 	}
 	return args[key].(string)
 }
+
+func safeGetValues(args map[string]interface{}, key string) []string {
+	if args[key] == false || args[key] == nil {
+		return []string{}
+	}
+	return args[key].([]string)
+}

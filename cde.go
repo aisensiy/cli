@@ -42,6 +42,7 @@ Subcommands, use 'cde help [subcommand]' to learn more::
   git           manage git for applications
   config        manage environment variables that define app config
   ps            manage process status
+  providers 	manage providers
 `
 	command, argv := parseArgs(argv)
 
@@ -88,6 +89,8 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 		err = parser.Dev(argv)
 	case "clusters":
 		err = parser.Clusters(argv)
+	case "providers":
+		err = parser.Providers(argv)
 	case "help":
 		fmt.Print(usage)
 		return 0
