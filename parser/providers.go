@@ -62,7 +62,7 @@ Arguments:
 		return err
 	}
 
-	return cmd.ProviderCreate(name, strings.ToUpper(providerType), configMap)
+	return cmd.ProviderCreate(name, providerType, configMap)
 }
 
 func configConvert(config []string) (map[string]interface{}, error) {

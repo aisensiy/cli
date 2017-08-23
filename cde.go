@@ -112,7 +112,6 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 // parseArgs returns the provided args with "--help" as the last arg if need be,
 // expands shortcuts and formats commands to be properly routed.
 func parseArgs(argv []string) (string, []string) {
-	argv = argsToLowerCase(argv)
 
 	if len(argv) == 0 {
 		return "", argv
@@ -129,10 +128,6 @@ func parseArgs(argv []string) (string, []string) {
 
 	argv[0] = replaceShortcut(argv[0])
 	return pickMainCommand(argv[0]), argv
-}
-
-func argsToLowerCase(argv []string) []string {
-	return util.Map(argv, strings.ToLower)
 }
 
 func pickMainCommand(command string) string {
