@@ -25,42 +25,126 @@ func main() {
 	app.EnableBashCompletion = true
 
 	app.Commands = []cli.Command{
-		{
-			Name:    "ups",
-			Usage:   "Unified Procedures Commands",
-			Subcommands: []cli.Command{
-				{
-					Name:  "list",
-					Usage: "list all Unified Procedures",
-					ArgsUsage: " ",
-					Action: func(c *cli.Context) error {
-						return cmd.UpsList()
-					},
+		upsCommand(),
+		stacksCommand(),
+	}
+
+	commandList := os.Args
+
+	if len(commandList) > 1 &&
+		!strings.Contains(commandList[1], "ups") &&
+		!strings.Contains(commandList[1], "stacks") {
+		os.Exit(Command(commandList[1:]))
+	} else {
+		commandList = preProcessCommand(commandList)
+		app.Run(commandList)
+	}
+}
+
+func preProcessCommand(args []string) (processedArgs []string) {
+	if len(args) == 1 {
+		return args
+	}
+	processedArgs = append(args[:1], strings.Split(args[1], ":")...)
+	processedArgs = append(processedArgs, args[2:]...)
+	return
+}
+
+func upsCommand() cli.Command {
+	return cli.Command{
+		Name:  "ups",
+		Usage: "Unified Procedures Commands",
+		Subcommands: []cli.Command{
+			{
+				Name:      "list",
+				Usage:     "list all Unified Procedures",
+				ArgsUsage: " ",
+				Action: func(c *cli.Context) error {
+					return cmd.UpsList()
 				},
-				{
-					Name:  "info",
-					Usage: "get info of an Unified Procedure",
-					ArgsUsage: "<up-name>",
-					Action: func(c *cli.Context) error {
-						return cmd.UpsInfo(c.Args().First())
-					},
+			},
+			{
+				Name:      "info",
+				Usage:     "get info of an Unified Procedure",
+				ArgsUsage: "<up-name>",
+				Action: func(c *cli.Context) error {
+					return cmd.UpsInfo(c.Args().First())
 				},
-				{
-					Name:  "draft",
-					Usage: "create a new Unified Procedure",
-					ArgsUsage: "<up-file>",
-					Action: func(c *cli.Context) error {
-						return cmd.UpCreate(c.Args().First())
-					},
+			},
+			{
+				Name:      "draft",
+				Usage:     "create a new Unified Procedure",
+				ArgsUsage: "<up-file>",
+				Action: func(c *cli.Context) error {
+					return cmd.UpCreate(c.Args().First())
 				},
 			},
 		},
 	}
+}
 
-	if len(os.Args) > 1 && os.Args[1] == "ups" {
-		app.Run(os.Args)
-	} else {
-		os.Exit(Command(os.Args[1:]))
+func stacksCommand() cli.Command {
+	return cli.Command{
+		Name:  "stacks",
+		Usage: "Stacks Commands",
+		Subcommands: []cli.Command{
+			{
+				Name:      "list",
+				Usage:     "list all Stacks",
+				ArgsUsage: " ",
+				Action: func(c *cli.Context) error {
+					return cmd.StacksList()
+				},
+			},
+			{
+				Name:      "info",
+				Usage:     "get info of a Stack",
+				ArgsUsage: "<stack-name>",
+				Action: func(c *cli.Context) error {
+					return cmd.GetStack(c.Args().First())
+				},
+			},
+			{
+				Name:      "create",
+				Usage:     "create a new Stack",
+				ArgsUsage: "<stack-file>",
+				Action: func(c *cli.Context) error {
+					return cmd.StackCreate(c.Args().First())
+				},
+			},
+			{
+				Name:      "update",
+				Usage:     "update an existing Stack",
+				ArgsUsage: "<stack-id> <stack-file>",
+				Action: func(c *cli.Context) error {
+					return cmd.StackUpdate(c.Args().First(), c.Args().Get(1))
+				},
+			},
+			{
+				Name:      "remove",
+				Usage:     "remove a Stack",
+				ArgsUsage: "<stack-name>",
+				Action: func(c *cli.Context) error {
+					return cmd.StackRemove(c.Args().First())
+				},
+			},
+			{
+				Name:      "publish",
+				Usage:     "publish a Stack",
+				ArgsUsage: "<stack-id>",
+				Action: func(c *cli.Context) error {
+					return cmd.StackPublish(c.Args().First())
+				},
+			},
+			{
+				Name:      "unpublish",
+				Usage:     "unpublish a Stack",
+				ArgsUsage: "<stack-id>",
+				Action: func(c *cli.Context) error {
+					return cmd.StackUnPublish(c.Args().First())
+				},
+			},
+		},
 	}
 }
 
