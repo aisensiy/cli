@@ -8,10 +8,10 @@ import (
 	"github.com/sjkyspa/stacks/version"
 	"os"
 	"strings"
-	"github.com/sjkyspa/stacks/client/util"
 	"github.com/urfave/cli"
 	"github.com/sjkyspa/stacks/client/cmd"
 	"time"
+	"errors"
 )
 
 func main() {
@@ -27,20 +27,21 @@ func main() {
 	app.Commands = []cli.Command{
 		upsCommand(),
 		stacksCommand(),
+		providersCommand(),
 	}
 
 	commandList := os.Args
 
 	if len(commandList) > 1 &&
 		!strings.Contains(commandList[1], "ups") &&
-		!strings.Contains(commandList[1], "stacks") {
+		!strings.Contains(commandList[1], "stacks") &&
+		!strings.Contains(commandList[1], "providers") {
 		os.Exit(Command(commandList[1:]))
 	} else {
 		commandList = preProcessCommand(commandList)
 		app.Run(commandList)
 	}
 }
-
 func preProcessCommand(args []string) (processedArgs []string) {
 	if len(args) == 1 {
 		return args
@@ -146,6 +147,41 @@ func stacksCommand() cli.Command {
 			},
 		},
 	}
+}
+
+func providersCommand() cli.Command {
+	return cli.Command{
+		Name:  "providers",
+		Usage: "Providers Commands",
+		Subcommands: []cli.Command{
+			{
+				Name:      "enroll",
+				Usage:     "Enroll a new Provider",
+				ArgsUsage: "<name> <type> [-c <config>]",
+				Flags: []cli.Flag{
+					cli.StringSliceFlag{
+						Name: "config",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					configMap, _ := configConvert(c.StringSlice("config"))
+					return cmd.ProviderCreate(c.Args().Get(0), c.Args().Get(1), configMap)
+				},
+			},
+		},
+	}
+}
+
+func configConvert(config []string) (map[string]interface{}, error) {
+	configMap := map[string]interface{}{}
+	for _, v := range config {
+		pair := strings.Split(v, "=")
+		if len(pair) != 2 {
+			return nil, errors.New("invalid config format")
+		}
+		configMap[pair[0]] = pair[1]
+	}
+	return configMap, nil
 }
 
 func Command(argv []string) int {
