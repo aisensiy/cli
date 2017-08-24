@@ -8,10 +8,14 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"github.com/sjkyspa/stacks/client/config"
+	"github.com/sjkyspa/stacks/controller/api/api"
+	"github.com/sjkyspa/stacks/controller/api/net"
 )
 
-func LaunchBuild(filename string) error {
+func LaunchBuild(filename,  appName string) error {
 	file, err := read(filename)
+
 	if err != nil {
 		return err
 	}
@@ -32,7 +36,38 @@ func LaunchBuild(filename string) error {
 	}
 
 	location := res.Header.Get("Location")
-	fmt.Println(location)
+	configRepository := config.NewConfigRepository(func(err error) {
+
+	})
+	gateway := net.NewCloudControllerGateway(configRepository)
+	apps := api.NewAppRepository(configRepository, gateway)
+
+	if appName == "" {
+		_, appId, err := load("")
+		if err != nil {
+			return err
+		}
+		appName = appId
+	}
+
+	app, err := apps.GetApp(appName)
+	if err != nil {
+		return err
+	}
+
+	build, err := app.CreateBuild(api.BuildParams{
+		GitSha: "mockedsh",
+		User:   "should_be_replaced_to_the_build_owner",
+		Source: location,
+	})
+
+	if err != nil {
+		fmt.Println("create build", err)
+		return err
+	}
+
+	fmt.Println(build.Id())
+
 	return nil
 }
 

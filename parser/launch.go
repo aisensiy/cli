@@ -31,11 +31,13 @@ func launchBuild(argv []string) error {
 	usage := `
 Launch a build procedure.
 
-Usage: cde launch:build (-f <filename>)
+Usage: cde launch:build (-f <filename>) (-a <app-name>)
 
 Arguments:
   <filename>
   the code base to build with
+  <app-name>
+  the app to build with
 `
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
 
@@ -43,6 +45,7 @@ Arguments:
 		return err
 	}
 	filename := safeGetValue(args, "<filename>")
+	appName := safeGetValue(args, "<app-name>")
 
-	return cmd.LaunchBuild(filename)
+	return cmd.LaunchBuild(filename, appName)
 }
