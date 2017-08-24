@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	docopt "github.com/docopt/docopt-go"
+	"github.com/docopt/docopt-go"
 	"github.com/fatih/color"
 	"github.com/sjkyspa/stacks/client/parser"
 	"github.com/sjkyspa/stacks/version"
@@ -260,6 +260,8 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 		err = parser.Clusters(argv)
 	case "providers":
 		err = parser.Providers(argv)
+	case "launch":
+		err = parser.Launch(argv)
 	case "help":
 		fmt.Print(usage)
 		return 0
@@ -286,12 +288,12 @@ func parseArgs(argv []string) (string, []string) {
 		return "", argv
 	}
 
-	if len(argv) == 1 && (argv[0] == "-h" || argv[0] == "--help" ) {
+	if len(argv) == 1 && (argv[0] == "-h" || argv[0] == "--help") {
 		// rearrange "cde --help" as "cde help"
 		argv[0] = "help"
 	}
 
-	if len(argv) >= 2 && (argv[0] == "help" || argv[0] == "-h" || argv[0] == "--help" ) {
+	if len(argv) >= 2 && (argv[0] == "help" || argv[0] == "-h" || argv[0] == "--help") {
 		argv = append(argv[1:], "--help")
 	}
 
