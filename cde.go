@@ -41,11 +41,14 @@ func main() {
 		app.Run(commandList)
 	}
 }
+
 func preProcessCommand(args []string) (processedArgs []string) {
 	if len(args) == 1 {
 		return args
 	}
-	processedArgs = append(args[:1], strings.Split(args[1], ":")...)
+
+	basicCommand := args[0]
+	processedArgs = append([]string{basicCommand}, strings.Split(args[1], ":")...)
 	processedArgs = append(processedArgs, args[2:]...)
 	return
 }
