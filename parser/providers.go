@@ -18,6 +18,8 @@ Use 'cde help [command]' to learn more.
 	switch argv[0] {
 	case "providers:enroll":
 		return providerEnroll(argv)
+	case "providers:list":
+		return providerList();
 	default:
 		if printHelp(argv, usage) {
 			return nil
@@ -80,4 +82,8 @@ func configConvert(config []string) (map[string]interface{}, error) {
 		configMap[pair[0]] = pair[1]
 	}
 	return configMap, nil
+}
+
+func providerList() error {
+	return cmd.ProviderList()
 }

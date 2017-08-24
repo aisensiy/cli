@@ -25,3 +25,22 @@ func ProviderCreate(providerName string, providerType string,consumer string, co
 	fmt.Printf("create provider %s\n", provider.Name())
 	return nil
 }
+
+func ProviderList() error {
+	configRepository := config.NewConfigRepository(func(error) {})
+	providerRepository := api.NewProviderRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+
+	providers, err := providerRepository.GetProviders()
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("=== Providers [%d]\n", len(providers.Items()))
+
+	for _, provider:= range providers.Items() {
+		fmt.Printf("name: %s\n", provider.Name())
+	}
+
+	return nil
+}
