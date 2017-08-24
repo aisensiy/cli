@@ -34,8 +34,7 @@ func main() {
 
 	if len(commandList) > 1 &&
 		!strings.Contains(commandList[1], "ups") &&
-		!strings.Contains(commandList[1], "stacks") &&
-		!strings.Contains(commandList[1], "providers") {
+		!strings.Contains(commandList[1], "stacks") {
 		os.Exit(Command(commandList[1:]))
 	} else {
 		commandList = preProcessCommand(commandList)
