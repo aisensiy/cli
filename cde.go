@@ -167,7 +167,7 @@ func providersCommand() cli.Command {
 				},
 				Action: func(c *cli.Context) error {
 					configMap, _ := configConvert(c.StringSlice("config"))
-					return cmd.ProviderCreate(c.Args().Get(0), c.Args().Get(1), configMap)
+					return cmd.ProviderCreate(c.Args().Get(0), c.Args().Get(1), "", configMap)
 				},
 			},
 		},

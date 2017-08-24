@@ -33,7 +33,7 @@ func providerEnroll(argv []string) error {
 	usage := `
 Enroll a new provider.
 
-Usage: cde providers:enroll <name> <type> (-c <config>)...
+Usage: cde providers:enroll <name> <type> [options] (-c <config>)...
 
 Arguments:
   <name>
@@ -42,6 +42,10 @@ Arguments:
   	provider type.
   <config>
   	provider config. Set config as kay value list. Use -c to set a key value pair.
+
+Options:
+  --for=<for>
+  	specify a organization to use this provider.
 `
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
 
@@ -51,6 +55,7 @@ Arguments:
 	name := safeGetValue(args, "<name>")
 	providerType := safeGetValue(args, "<type>")
 	config := safeGetValues(args, "<config>")
+	consumer := safeGetValue(args, "--for")
 
 	if name == "" || providerType == "" || len(config) <= 0 {
 		return errors.New("<name> <type> <config> are essential parameters")
@@ -62,7 +67,7 @@ Arguments:
 		return err
 	}
 
-	return cmd.ProviderCreate(name, providerType, configMap)
+	return cmd.ProviderCreate(name, providerType, consumer, configMap)
 }
 
 func configConvert(config []string) (map[string]interface{}, error) {

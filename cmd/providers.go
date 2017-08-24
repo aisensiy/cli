@@ -7,7 +7,7 @@ import (
 	"fmt"
 )
 
-func ProviderCreate(providerName string, providerType string, configMap map[string]interface{}) error {
+func ProviderCreate(providerName string, providerType string,consumer string, configMap map[string]interface{}) error {
 	configRepository := config.NewConfigRepository(func(error) {})
 	providerRepository := api.NewProviderRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
@@ -16,6 +16,7 @@ func ProviderCreate(providerName string, providerType string, configMap map[stri
 		Name:   providerName,
 		Type:   providerType,
 		Config: configMap,
+		Consumer: consumer,
 	})
 
 	if err != nil {
