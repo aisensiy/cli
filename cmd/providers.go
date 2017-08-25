@@ -5,17 +5,20 @@ import (
 	"github.com/sjkyspa/stacks/launcher/api/api"
 	"github.com/sjkyspa/stacks/launcher/api/net"
 	"fmt"
+	"strconv"
+	"github.com/olekukonko/tablewriter"
+	"os"
 )
 
-func ProviderCreate(providerName string, providerType string,consumer string, configMap map[string]interface{}) error {
+func ProviderCreate(providerName string, providerType string, consumer string, configMap map[string]interface{}) error {
 	configRepository := config.NewConfigRepository(func(error) {})
 	providerRepository := api.NewProviderRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
 
 	provider, err := providerRepository.Enroll(api.ProviderParams{
-		Name:   providerName,
-		Type:   providerType,
-		Config: configMap,
+		Name:     providerName,
+		Type:     providerType,
+		Config:   configMap,
 		Consumer: consumer,
 	})
 
@@ -36,11 +39,24 @@ func ProviderList() error {
 		return err
 	}
 
-	fmt.Printf("=== Providers [%d]\n", len(providers.Items()))
-
-	for _, provider:= range providers.Items() {
-		fmt.Printf("name: %s\n", provider.Name())
-	}
+	outputProvidersListInfo(providers)
 
 	return nil
+}
+
+func outputProvidersListInfo(providers api.Providers) {
+	fmt.Printf("=== Providers [%d]\n", len(providers.Items()))
+	var data [][]string
+	data = append(data, []string{"name", "type", "owner", "for", "created_at"})
+
+	for _, provider := range providers.Items() {
+		data = append(data, []string{provider.Name(), provider.Type(), provider.Owner(), provider.Consumer(), strconv.Itoa(provider.CreatedAt())})
+	}
+
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
+	table.SetRowSeparator("-")
+	table.SetRowLine(true)
+	table.AppendBulk(data)
+	table.Render()
 }
