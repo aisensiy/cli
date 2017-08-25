@@ -60,3 +60,40 @@ func outputProvidersListInfo(providers api.Providers) {
 	table.AppendBulk(data)
 	table.Render()
 }
+
+func GetProviderByName(name string) error {
+	configRepository := config.NewConfigRepository(func(error) {})
+	providerRepository := api.NewProviderRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+
+	provider, err := providerRepository.GetProviderByName(name)
+	if err != nil {
+		return err
+	}
+
+	outputProviderInfo(provider)
+
+	return nil
+}
+
+func outputProviderInfo(provider api.Provider) {
+	var data [][]string
+	data = append(data, []string{"name", provider.Name(), ""})
+	data = append(data, []string{"type", provider.Type(), ""})
+	data = append(data, []string{"owner", provider.Owner(), ""})
+	data = append(data, []string{"for", provider.Consumer(), ""})
+	data = append(data, []string{"created_at", strconv.Itoa(provider.CreatedAt()), ""})
+
+	if len(provider.Config()) > 0 {
+		for key, value := range provider.Config() {
+			data = append(data, []string{"config", key, value.(string)})
+		}
+	}
+
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
+	table.SetAutoMergeCells(true)
+	table.SetRowLine(true)
+	table.AppendBulk(data)
+	table.Render()
+}

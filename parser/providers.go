@@ -19,7 +19,9 @@ Use 'cde help [command]' to learn more.
 	case "providers:enroll":
 		return providerEnroll(argv)
 	case "providers:list":
-		return providerList();
+		return providerList()
+	case "providers:info":
+		return providerInfo(argv)
 	default:
 		if printHelp(argv, usage) {
 			return nil
@@ -86,4 +88,28 @@ func configConvert(config []string) (map[string]interface{}, error) {
 
 func providerList() error {
 	return cmd.ProviderList()
+}
+
+func providerInfo(argv []string) error {
+	usage := `
+View info about a provider.
+
+Usage: cde providers:info <name>
+
+Arguments:
+  <name>
+  	a provider name.
+`
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+	name := safeGetValue(args, "<name>")
+
+	if name == "" {
+		return errors.New("<name> are essential parameters")
+	}
+
+	return cmd.GetProviderByName(name)
 }
