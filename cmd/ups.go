@@ -75,6 +75,19 @@ func UpCreate(filename string) error {
 	return nil
 }
 
+func UpRemove(idOrName string) error {
+	fmt.Println(idOrName)
+	upsRepository := createUpsRepoository()
+
+	err := upsRepository.RemoveUp(idOrName)
+	if (err != nil) {
+		fmt.Println(err)
+		fmt.Printf("failed")
+		return err
+	}
+	fmt.Printf("success")
+	return nil
+}
 
 func getUpFileContent(filename string) (content []byte, err error) {
 	contents, err := ioutil.ReadFile(filename)
@@ -96,12 +109,10 @@ func outputUpDescription(up api.Up) {
 	table.Render()
 }
 
-
 func outputUpBuildProcedure(up api.Up) {
 	fmt.Println("--- Build Procedure Detail\n")
 
 	build, _ := up.GetProcedureByType("BUILD")
-
 
 	data := make([][]string, 2)
 	data[0] = []string{"id", build.Id()}

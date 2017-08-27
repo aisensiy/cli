@@ -47,8 +47,7 @@ func preProcessCommand(args []string) (processedArgs []string) {
 		return args
 	}
 
-	basicCommand := args[0]
-	processedArgs = append([]string{basicCommand}, strings.Split(args[1], ":")...)
+	processedArgs = append([]string{args[0]}, strings.Split(args[1], ":")...)
 	processedArgs = append(processedArgs, args[2:]...)
 	return
 }
@@ -80,6 +79,14 @@ func upsCommand() cli.Command {
 				ArgsUsage: "<up-file>",
 				Action: func(c *cli.Context) error {
 					return cmd.UpCreate(c.Args().First())
+				},
+			},
+			{
+				Name:      "remove",
+				Usage:     "delete an existing Unified Procedure",
+				ArgsUsage: "<up-id>",
+				Action: func(c *cli.Context) error {
+					return cmd.UpRemove(c.Args().First())
 				},
 			},
 		},
