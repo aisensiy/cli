@@ -20,8 +20,7 @@ func StackCreate(filename string) error {
 		net.NewCloudControllerGateway(configRepository))
 	content, err := getStackFileContent(filename)
 	if err != nil {
-		fmt.Println(err)
-		return nil
+		return err
 	}
 	content, err = yaml.YAMLToJSON(content)
 	if err != nil {
@@ -53,7 +52,8 @@ func StacksList() error {
 	stackRepository := api.NewStackRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
 	stacks, err := stackRepository.GetStacks()
-	if err != nil {
+	if err != nil || stacks.Count() == 0{
+		err = fmt.Errorf("no stack found")
 		return err
 	}
 	fmt.Printf("=== Stacks: [%d]\n", len(stacks.Items()))

@@ -111,7 +111,11 @@ func stacksCommand() cli.Command {
 				Usage:     "list all Stacks",
 				ArgsUsage: " ",
 				Action: func(c *cli.Context) error {
-					return cmd.StacksList()
+					err := cmd.StacksList()
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
 				},
 			},
 			{
@@ -119,7 +123,11 @@ func stacksCommand() cli.Command {
 				Usage:     "get info of a Stack",
 				ArgsUsage: "<stack-name>",
 				Action: func(c *cli.Context) error {
-					return cmd.GetStack(c.Args().First())
+					err := cmd.GetStack(c.Args().First())
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
 				},
 			},
 			{
@@ -127,7 +135,11 @@ func stacksCommand() cli.Command {
 				Usage:     "create a new Stack",
 				ArgsUsage: "<stack-file>",
 				Action: func(c *cli.Context) error {
-					return cmd.StackCreate(c.Args().First())
+					err := cmd.StackCreate(c.Args().First())
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
 				},
 			},
 			{
@@ -135,7 +147,11 @@ func stacksCommand() cli.Command {
 				Usage:     "update an existing Stack",
 				ArgsUsage: "<stack-id> <stack-file>",
 				Action: func(c *cli.Context) error {
-					return cmd.StackUpdate(c.Args().First(), c.Args().Get(1))
+					err := cmd.StackUpdate(c.Args().First(), c.Args().Get(1))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
 				},
 			},
 			{
@@ -143,7 +159,11 @@ func stacksCommand() cli.Command {
 				Usage:     "remove a Stack",
 				ArgsUsage: "<stack-name>",
 				Action: func(c *cli.Context) error {
-					return cmd.StackRemove(c.Args().First())
+					err := cmd.StackRemove(c.Args().First())
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
 				},
 			},
 			{
@@ -151,7 +171,11 @@ func stacksCommand() cli.Command {
 				Usage:     "publish a Stack",
 				ArgsUsage: "<stack-id>",
 				Action: func(c *cli.Context) error {
-					return cmd.StackPublish(c.Args().First())
+					err := cmd.StackPublish(c.Args().First())
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
 				},
 			},
 			{
@@ -159,7 +183,12 @@ func stacksCommand() cli.Command {
 				Usage:     "unpublish a Stack",
 				ArgsUsage: "<stack-id>",
 				Action: func(c *cli.Context) error {
-					return cmd.StackUnPublish(c.Args().First())
+					err := cmd.StackUnPublish(c.Args().First())
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+
 				},
 			},
 		},
