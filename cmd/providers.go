@@ -97,3 +97,27 @@ func outputProviderInfo(provider api.Provider) {
 	table.AppendBulk(data)
 	table.Render()
 }
+
+func ProviderUpdate(providerName string, updateConfigMap map[string]interface{}) error {
+	configRepository := config.NewConfigRepository(func(error) {})
+	providerRepository := api.NewProviderRepository(configRepository,
+		net.NewCloudControllerGateway(configRepository))
+
+	provider, err := providerRepository.GetProviderByName(providerName)
+	if err != nil {
+		return err
+	}
+
+	configMap := provider.Config()
+	for k, v := range updateConfigMap {
+		configMap[k] = v
+	}
+
+	if err := providerRepository.UpdateProvider(provider.ID(), map[string]interface{}{"config": configMap}); err != nil {
+		return err
+	}
+
+	fmt.Printf("Provider %s config updated\n", provider.Name())
+
+	return nil
+}

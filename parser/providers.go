@@ -12,6 +12,9 @@ func Providers(argv []string) error {
 Valid commands for providers:
 
 providers:enroll 	enroll a new provider
+providers:list		list all providers
+providers:info		view info about a provider
+providers:update	update provider config
 
 Use 'cde help [command]' to learn more.
 `
@@ -22,6 +25,8 @@ Use 'cde help [command]' to learn more.
 		return providerList()
 	case "providers:info":
 		return providerInfo(argv)
+	case "providers:update":
+		return providerUpdate(argv)
 	default:
 		if printHelp(argv, usage) {
 			return nil
@@ -112,4 +117,37 @@ Arguments:
 	}
 
 	return cmd.GetProviderByName(name)
+}
+
+func providerUpdate(argv []string) error {
+	usage := `
+Update provider config.
+
+Usage: cde providers:update <name> (-c <config>)...
+
+Arguments:
+  <name>
+  	a provider name.
+  <config>
+  	provider config. Set config as kay value list. Use -c to set a key value pair.
+`
+	args, err := docopt.Parse(usage, argv, true, "", false, true)
+
+	if err != nil {
+		return err
+	}
+	name := safeGetValue(args, "<name>")
+	config := safeGetValues(args, "<config>")
+
+	if name == "" || len(config) <= 0 {
+		return errors.New("<name> <config> are essential parameters")
+	}
+
+	configMap, err := configConvert(config)
+
+	if err != nil {
+		return err
+	}
+
+	return cmd.ProviderUpdate(name, configMap)
 }
