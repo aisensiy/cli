@@ -89,6 +89,30 @@ func UpRemove(idOrName string) error {
 	return nil
 }
 
+func UpUpdate(idOrName string, fileName string) error {
+	upsRepository := createUpsRepoository()
+	content, err := getUpFileContent(fileName)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+	content, err = yaml.YAMLToJSON(content)
+	upParams := make(map[string]interface{})
+	err = json.Unmarshal(content, &upParams)
+	if err != nil {
+		return err
+	}
+
+	err = upsRepository.UpdateUp(idOrName, upParams)
+	if (err != nil) {
+		fmt.Println(err)
+		fmt.Printf("failed")
+		return err
+	}
+	fmt.Printf("success")
+	return nil
+}
+
 func getUpFileContent(filename string) (content []byte, err error) {
 	contents, err := ioutil.ReadFile(filename)
 	if err != nil {

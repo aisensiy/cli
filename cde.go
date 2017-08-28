@@ -89,6 +89,14 @@ func upsCommand() cli.Command {
 					return cmd.UpRemove(c.Args().First())
 				},
 			},
+			{
+				Name:      "update",
+				Usage:     "update an existing Unified Procedure",
+				ArgsUsage: "<up-id> <up-file>",
+				Action: func(c *cli.Context) error {
+					return cmd.UpUpdate(c.Args().First(), c.Args().Get(1))
+				},
+			},
 		},
 	}
 }
