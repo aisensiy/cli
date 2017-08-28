@@ -5,9 +5,9 @@ import (
 	"github.com/sjkyspa/stacks/launcher/api/api"
 	"github.com/sjkyspa/stacks/launcher/api/net"
 	"fmt"
-	"strconv"
 	"github.com/olekukonko/tablewriter"
 	"os"
+	"time"
 )
 
 func ProviderCreate(providerName string, providerType string, consumer string, configMap map[string]interface{}) error {
@@ -50,7 +50,7 @@ func outputProvidersListInfo(providers api.Providers) {
 	data = append(data, []string{"name", "type", "owner", "for", "created_at"})
 
 	for _, provider := range providers.Items() {
-		data = append(data, []string{provider.Name(), provider.Type(), provider.Owner(), provider.Consumer(), strconv.Itoa(provider.CreatedAt())})
+		data = append(data, []string{provider.Name(), provider.Type(), provider.Owner(), provider.Consumer(), time.Unix(int64(provider.CreatedAt()/1000), 0).String()})
 	}
 
 	table := tablewriter.NewWriter(os.Stdout)
@@ -82,7 +82,7 @@ func outputProviderInfo(provider api.Provider) {
 	data = append(data, []string{"type", provider.Type(), ""})
 	data = append(data, []string{"owner", provider.Owner(), ""})
 	data = append(data, []string{"for", provider.Consumer(), ""})
-	data = append(data, []string{"created_at", strconv.Itoa(provider.CreatedAt()), ""})
+	data = append(data, []string{"created_at", time.Unix(int64(provider.CreatedAt()/1000), 0).String(), ""})
 
 	if len(provider.Config()) > 0 {
 		for key, value := range provider.Config() {
