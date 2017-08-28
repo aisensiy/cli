@@ -3,17 +3,18 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"github.com/sjkyspa/stacks/client/config"
+	"github.com/sjkyspa/stacks/controller/api/api"
+	"github.com/sjkyspa/stacks/controller/api/net"
 	"io"
 	"mime/multipart"
 	"net/http"
 	"os"
 	"path/filepath"
-	"github.com/sjkyspa/stacks/client/config"
-	"github.com/sjkyspa/stacks/controller/api/api"
-	"github.com/sjkyspa/stacks/controller/api/net"
+	"time"
 )
 
-func LaunchBuild(filename,  appName string) error {
+func LaunchBuild(filename, appName string) error {
 	file, err := read(filename)
 
 	if err != nil {
@@ -65,10 +66,57 @@ func LaunchBuild(filename,  appName string) error {
 		fmt.Println("create build", err)
 		return err
 	}
+	cerr := make(chan error)
+	succeed := make(chan bool)
 
-	fmt.Println(build.Id())
+	go func() {
+		for {
+			select {
+			case <-succeed:
+				// todo: should fetch log again
+				return
+			default:
+				// todo: fetch log
+				fmt.Println("fetch log")
+				time.Sleep(time.Second * 5)
+			}
+		}
+	}()
 
-	return nil
+	go func() {
+		for {
+			fmt.Println("get build status")
+			if build.IsSuccess() {
+				succeed <- true
+				return
+			}
+			if build.IsFail() {
+				succeed <- false
+				cerr <- errors.New("Build is failed")
+			}
+			time.Sleep(time.Second * 5)
+			build, err = app.GetBuild(build.Id())
+			if err != nil {
+				cerr <- err
+				return
+			}
+		}
+	}()
+
+	for {
+		select {
+		case succ:=<-succeed:
+			if !succ {
+				return errors.New("Build fail")
+			} else {
+				return nil
+			}
+		case err := <-cerr:
+			return err
+		default:
+			time.Sleep(time.Second * 5)
+		}
+	}
 }
 
 func toRequest(file *os.File) (*http.Request, chan error, error) {
