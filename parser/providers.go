@@ -76,6 +76,12 @@ Options:
 		return err
 	}
 
+	for _, v := range configMap {
+		if v == "" {
+			return errors.New("invalid config format")
+		}
+	}
+
 	return cmd.ProviderCreate(name, providerType, consumer, configMap)
 }
 
@@ -83,10 +89,13 @@ func configConvert(config []string) (map[string]interface{}, error) {
 	configMap := map[string]interface{}{}
 	for _, v := range config {
 		pair := strings.Split(v, "=")
-		if len(pair) != 2 {
+		if len(pair) < 1 {
 			return nil, errors.New("invalid config format")
+		} else if len(pair) >=2 {
+			configMap[pair[0]] = pair[1]
+		} else {
+			configMap[pair[0]] = ""
 		}
-		configMap[pair[0]] = pair[1]
 	}
 	return configMap, nil
 }
