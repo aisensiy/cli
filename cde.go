@@ -34,7 +34,8 @@ func main() {
 
 	if len(commandList) > 1 &&
 		!strings.Contains(commandList[1], "ups") &&
-		!strings.Contains(commandList[1], "stacks") {
+		!strings.Contains(commandList[1], "stacks") &&
+		!strings.Contains(commandList[1], "providers") {
 		os.Exit(Command(commandList[1:]))
 	} else {
 		commandList = preProcessCommand(commandList)
@@ -59,7 +60,7 @@ func upsCommand() cli.Command {
 		Subcommands: []cli.Command{
 			{
 				Name:      "list",
-				Usage:     "list all Unified Procedures",
+				Usage:     "List all Unified Procedures",
 				ArgsUsage: " ",
 				Action: func(c *cli.Context) error {
 					return cmd.UpsList()
@@ -67,7 +68,7 @@ func upsCommand() cli.Command {
 			},
 			{
 				Name:      "info",
-				Usage:     "get info of an Unified Procedure",
+				Usage:     "Get info of an Unified Procedure",
 				ArgsUsage: "<up-name>",
 				Action: func(c *cli.Context) error {
 					return cmd.UpsInfo(c.Args().First())
@@ -75,26 +76,26 @@ func upsCommand() cli.Command {
 			},
 			{
 				Name:      "draft",
-				Usage:     "create a new Unified Procedure",
+				Usage:     "Create a new Unified Procedure",
 				ArgsUsage: "<up-file>",
 				Action: func(c *cli.Context) error {
 					return cmd.UpCreate(c.Args().First())
 				},
 			},
 			{
-				Name:      "remove",
-				Usage:     "delete an existing Unified Procedure",
-				ArgsUsage: "<up-id>",
-				Action: func(c *cli.Context) error {
-					return cmd.UpRemove(c.Args().First())
-				},
-			},
-			{
 				Name:      "update",
-				Usage:     "update an existing Unified Procedure",
+				Usage:     "Update an existing Unified Procedure",
 				ArgsUsage: "<up-id> <up-file>",
 				Action: func(c *cli.Context) error {
 					return cmd.UpUpdate(c.Args().First(), c.Args().Get(1))
+				},
+			},
+			{
+				Name:      "remove",
+				Usage:     "Delete an Unified Procedure",
+				ArgsUsage: "<up-id>",
+				Action: func(c *cli.Context) error {
+					return cmd.UpRemove(c.Args().First())
 				},
 			},
 		},
@@ -108,7 +109,7 @@ func stacksCommand() cli.Command {
 		Subcommands: []cli.Command{
 			{
 				Name:      "list",
-				Usage:     "list all Stacks",
+				Usage:     "List all Stacks",
 				ArgsUsage: " ",
 				Action: func(c *cli.Context) error {
 					err := cmd.StacksList()
@@ -120,7 +121,7 @@ func stacksCommand() cli.Command {
 			},
 			{
 				Name:      "info",
-				Usage:     "get info of a Stack",
+				Usage:     "Get info of a Stack",
 				ArgsUsage: "<stack-name>",
 				Action: func(c *cli.Context) error {
 					err := cmd.GetStack(c.Args().First())
@@ -132,7 +133,7 @@ func stacksCommand() cli.Command {
 			},
 			{
 				Name:      "create",
-				Usage:     "create a new Stack",
+				Usage:     "Create a new Stack",
 				ArgsUsage: "<stack-file>",
 				Action: func(c *cli.Context) error {
 					err := cmd.StackCreate(c.Args().First())
@@ -144,7 +145,7 @@ func stacksCommand() cli.Command {
 			},
 			{
 				Name:      "update",
-				Usage:     "update an existing Stack",
+				Usage:     "Update an existing Stack",
 				ArgsUsage: "<stack-id> <stack-file>",
 				Action: func(c *cli.Context) error {
 					err := cmd.StackUpdate(c.Args().First(), c.Args().Get(1))
@@ -156,7 +157,7 @@ func stacksCommand() cli.Command {
 			},
 			{
 				Name:      "remove",
-				Usage:     "remove a Stack",
+				Usage:     "Delete a Stack",
 				ArgsUsage: "<stack-name>",
 				Action: func(c *cli.Context) error {
 					err := cmd.StackRemove(c.Args().First())
@@ -168,7 +169,7 @@ func stacksCommand() cli.Command {
 			},
 			{
 				Name:      "publish",
-				Usage:     "publish a Stack",
+				Usage:     "Publish a Stack",
 				ArgsUsage: "<stack-id>",
 				Action: func(c *cli.Context) error {
 					err := cmd.StackPublish(c.Args().First())
@@ -180,7 +181,7 @@ func stacksCommand() cli.Command {
 			},
 			{
 				Name:      "unpublish",
-				Usage:     "unpublish a Stack",
+				Usage:     "Unpublish a Stack",
 				ArgsUsage: "<stack-id>",
 				Action: func(c *cli.Context) error {
 					err := cmd.StackUnPublish(c.Args().First())
@@ -201,17 +202,70 @@ func providersCommand() cli.Command {
 		Usage: "Providers Commands",
 		Subcommands: []cli.Command{
 			{
+				Name:      "list",
+				Usage:     "List all Providers",
+				ArgsUsage: " ",
+				Action: func(c *cli.Context) error {
+					err := cmd.ProviderList()
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "info",
+				Usage:     "Get info of a Provider",
+				ArgsUsage: "<provider-name>",
+				Action: func(c *cli.Context) error {
+					err := cmd.GetProviderByName(c.Args().Get(0))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
 				Name:      "enroll",
 				Usage:     "Enroll a new Provider",
-				ArgsUsage: "<name> <type> [-c <config>]",
+				ArgsUsage: "<name> <type>",
 				Flags: []cli.Flag{
 					cli.StringSliceFlag{
-						Name: "config",
+						Name:  "config, c",
+						Usage: "Set provider's configuration. Key \"endpoint\" is required.",
+					},
+					cli.StringFlag{
+						Name:  "for, f",
+						Usage: "Specify an organization for the provider.",
 					},
 				},
 				Action: func(c *cli.Context) error {
 					configMap, _ := configConvert(c.StringSlice("config"))
-					return cmd.ProviderCreate(c.Args().Get(0), c.Args().Get(1), "", configMap)
+					consumer := c.String("for")
+					err := cmd.ProviderCreate(c.Args().Get(0), c.Args().Get(1), consumer, configMap)
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "update",
+				Usage:     "Update an existing Provider",
+				ArgsUsage: "<name>",
+				Flags: []cli.Flag{
+					cli.StringSliceFlag{
+						Name:  "config, c",
+						Usage: "Set provider's configuration. Key \"endpoint\" is required.",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					configMap, _ := configConvert(c.StringSlice("config"))
+					err := cmd.ProviderUpdate(c.Args().Get(0), configMap)
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
 				},
 			},
 		},
@@ -286,8 +340,6 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 		err = parser.Domains(argv)
 	case "services":
 		err = parser.Service(argv)
-	case "stacks":
-		err = parser.Stacks(argv)
 	case "routes":
 		err = parser.Routes(argv)
 	case "keys":
@@ -302,8 +354,6 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 		err = parser.Dev(argv)
 	case "clusters":
 		err = parser.Clusters(argv)
-	case "providers":
-		err = parser.Providers(argv)
 	case "launch":
 		err = parser.Launch(argv)
 	case "help":
