@@ -8,7 +8,6 @@ import (
 	"github.com/olekukonko/tablewriter"
 	"os"
 	"time"
-	"errors"
 )
 
 func ProviderCreate(providerName string, providerType string, consumer string, configMap map[string]interface{}) error {
@@ -115,8 +114,6 @@ func ProviderUpdate(providerName string, updateConfigMap map[string]interface{})
 			_, ok := configMap[k]
 			if ok {
 				delete(configMap, k)
-			} else {
-				return errors.New("invalid config format")
 			}
 		} else {
 			configMap[k] = v
