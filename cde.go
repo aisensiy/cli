@@ -69,7 +69,7 @@ func upsCommand() cli.Command {
 			{
 				Name:      "info",
 				Usage:     "Get info of an Unified Procedure",
-				ArgsUsage: "<up-name>",
+				ArgsUsage: "[up-name]",
 				Action: func(c *cli.Context) error {
 					return cmd.UpsInfo(c.Args().First())
 				},
@@ -77,7 +77,7 @@ func upsCommand() cli.Command {
 			{
 				Name:      "draft",
 				Usage:     "Create a new Unified Procedure",
-				ArgsUsage: "<up-file>",
+				ArgsUsage: "[up-file]",
 				Action: func(c *cli.Context) error {
 					return cmd.UpCreate(c.Args().First())
 				},
@@ -85,7 +85,7 @@ func upsCommand() cli.Command {
 			{
 				Name:      "update",
 				Usage:     "Update an existing Unified Procedure",
-				ArgsUsage: "<up-id> <up-file>",
+				ArgsUsage: "[up-id] [up-file]",
 				Action: func(c *cli.Context) error {
 					return cmd.UpUpdate(c.Args().First(), c.Args().Get(1))
 				},
@@ -93,7 +93,7 @@ func upsCommand() cli.Command {
 			{
 				Name:      "remove",
 				Usage:     "Delete an Unified Procedure",
-				ArgsUsage: "<up-id>",
+				ArgsUsage: "[up-id]",
 				Action: func(c *cli.Context) error {
 					return cmd.UpRemove(c.Args().First())
 				},
@@ -122,7 +122,7 @@ func stacksCommand() cli.Command {
 			{
 				Name:      "info",
 				Usage:     "Get info of a Stack",
-				ArgsUsage: "<stack-name>",
+				ArgsUsage: "[stack-name]",
 				Action: func(c *cli.Context) error {
 					err := cmd.GetStack(c.Args().First())
 					if err != nil {
@@ -134,7 +134,7 @@ func stacksCommand() cli.Command {
 			{
 				Name:      "create",
 				Usage:     "Create a new Stack",
-				ArgsUsage: "<stack-file>",
+				ArgsUsage: "[stack-file]",
 				Action: func(c *cli.Context) error {
 					err := cmd.StackCreate(c.Args().First())
 					if err != nil {
@@ -146,7 +146,7 @@ func stacksCommand() cli.Command {
 			{
 				Name:      "update",
 				Usage:     "Update an existing Stack",
-				ArgsUsage: "<stack-id> <stack-file>",
+				ArgsUsage: "[stack-id] [stack-file]",
 				Action: func(c *cli.Context) error {
 					err := cmd.StackUpdate(c.Args().First(), c.Args().Get(1))
 					if err != nil {
@@ -158,7 +158,7 @@ func stacksCommand() cli.Command {
 			{
 				Name:      "remove",
 				Usage:     "Delete a Stack",
-				ArgsUsage: "<stack-name>",
+				ArgsUsage: "[stack-name]",
 				Action: func(c *cli.Context) error {
 					err := cmd.StackRemove(c.Args().First())
 					if err != nil {
@@ -170,7 +170,7 @@ func stacksCommand() cli.Command {
 			{
 				Name:      "publish",
 				Usage:     "Publish a Stack",
-				ArgsUsage: "<stack-id>",
+				ArgsUsage: "[stack-id]",
 				Action: func(c *cli.Context) error {
 					err := cmd.StackPublish(c.Args().First())
 					if err != nil {
@@ -182,7 +182,7 @@ func stacksCommand() cli.Command {
 			{
 				Name:      "unpublish",
 				Usage:     "Unpublish a Stack",
-				ArgsUsage: "<stack-id>",
+				ArgsUsage: "[stack-id]",
 				Action: func(c *cli.Context) error {
 					err := cmd.StackUnPublish(c.Args().First())
 					if err != nil {
@@ -216,8 +216,11 @@ func providersCommand() cli.Command {
 			{
 				Name:      "info",
 				Usage:     "Get info of a Provider",
-				ArgsUsage: "<provider-name>",
+				ArgsUsage: "[provider-name]",
 				Action: func(c *cli.Context) error {
+					if (c.Args().Get(0) == "") {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
 					err := cmd.GetProviderByName(c.Args().Get(0))
 					if err != nil {
 						return cli.NewExitError(err, 1)
@@ -228,7 +231,7 @@ func providersCommand() cli.Command {
 			{
 				Name:      "enroll",
 				Usage:     "Enroll a new Provider",
-				ArgsUsage: "<name> <type>",
+				ArgsUsage: "[name] [type]",
 				Flags: []cli.Flag{
 					cli.StringSliceFlag{
 						Name:  "config, c",
@@ -240,9 +243,15 @@ func providersCommand() cli.Command {
 					},
 				},
 				Action: func(c *cli.Context) error {
-					configMap, _ := configConvert(c.StringSlice("config"))
+					if c.Args().Get(0) == "" || c.Args().Get(1) == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					configMap, err := enrollConfigConvert(c.StringSlice("config"))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
 					consumer := c.String("for")
-					err := cmd.ProviderCreate(c.Args().Get(0), c.Args().Get(1), consumer, configMap)
+					err = cmd.ProviderCreate(c.Args().Get(0), c.Args().Get(1), consumer, configMap)
 					if err != nil {
 						return cli.NewExitError(err, 1)
 					}
@@ -252,7 +261,7 @@ func providersCommand() cli.Command {
 			{
 				Name:      "update",
 				Usage:     "Update an existing Provider",
-				ArgsUsage: "<name>",
+				ArgsUsage: "[name]",
 				Flags: []cli.Flag{
 					cli.StringSliceFlag{
 						Name:  "config, c",
@@ -260,8 +269,14 @@ func providersCommand() cli.Command {
 					},
 				},
 				Action: func(c *cli.Context) error {
-					configMap, _ := configConvert(c.StringSlice("config"))
-					err := cmd.ProviderUpdate(c.Args().Get(0), configMap)
+					if c.Args().Get(0) == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					configMap, err := updateConfigConvert(c.StringSlice("config"))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					err = cmd.ProviderUpdate(c.Args().Get(0), configMap)
 					if err != nil {
 						return cli.NewExitError(err, 1)
 					}
@@ -272,12 +287,28 @@ func providersCommand() cli.Command {
 	}
 }
 
-func configConvert(config []string) (map[string]interface{}, error) {
+func updateConfigConvert(config []string) (map[string]interface{}, error) {
+	configMap := map[string]interface{}{}
+	for _, v := range config {
+		pair := strings.Split(v, "=")
+		if len(pair) != 2 {
+			pair = append(pair, "")
+		}
+		configMap[pair[0]] = pair[1]
+	}
+	return configMap, nil
+}
+
+
+func enrollConfigConvert(config []string) (map[string]interface{}, error) {
 	configMap := map[string]interface{}{}
 	for _, v := range config {
 		pair := strings.Split(v, "=")
 		if len(pair) != 2 {
 			return nil, errors.New("invalid config format")
+		}
+		if pair[1] == "" {
+			return nil, errors.New("config value should not be empty")
 		}
 		configMap[pair[0]] = pair[1]
 	}
@@ -287,7 +318,7 @@ func configConvert(config []string) (map[string]interface{}, error) {
 func Command(argv []string) int {
 	usage := `
 The CDE command-line
-Usage: cde <command> [<args>...]
+Usage: cde [command] [[args]...]
 Use 'git push cde master' to deploy to an application.
 
 Auth commands:
@@ -321,7 +352,7 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 		return 1
 	}
 	if len(argv) == 0 {
-		fmt.Fprintln(os.Stderr, "Usage: cde <command> [<args>...]")
+		fmt.Fprintln(os.Stderr, "Usage: cde [command] [[args]...]")
 		return 1
 	}
 
@@ -362,7 +393,7 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 	case "--version":
 		return 0
 	default:
-		fmt.Fprintln(os.Stderr, "Usage: cde <command> [<args>...]")
+		fmt.Fprintln(os.Stderr, "Usage: cde [command] [[args]...]")
 	}
 
 	if err != nil {
