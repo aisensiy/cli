@@ -324,7 +324,7 @@ func enrollConfigConvert(config []string) (map[string]interface{}, error) {
 func Command(argv []string) int {
 	usage := `
 The CDE command-line
-Usage: cde [command] [[args]...]
+Usage: cde <command> [<args>...]
 Use 'git push cde master' to deploy to an application.
 
 Auth commands:
@@ -358,7 +358,7 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 		return 1
 	}
 	if len(argv) == 0 {
-		fmt.Fprintln(os.Stderr, "Usage: cde [command] [[args]...]")
+		fmt.Fprintln(os.Stderr, "Usage: cde <command> [<args>...]")
 		return 1
 	}
 
@@ -399,7 +399,7 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 	case "--version":
 		return 0
 	default:
-		fmt.Fprintln(os.Stderr, "Usage: cde [command] [[args]...]")
+		fmt.Fprintln(os.Stderr, "Usage: cde <command> [<args>...]")
 	}
 
 	if err != nil {
