@@ -28,6 +28,7 @@ func main() {
 		upsCommand(),
 		stacksCommand(),
 		providersCommand(),
+		authCommand(),
 	}
 
 	commandList := os.Args
@@ -35,7 +36,13 @@ func main() {
 	if len(commandList) > 1 &&
 		!strings.Contains(commandList[1], "ups") &&
 		!strings.Contains(commandList[1], "stacks") &&
-		!strings.Contains(commandList[1], "providers") {
+		!strings.Contains(commandList[1], "providers") &&
+		!strings.Contains(commandList[1], "login") &&
+		!strings.Contains(commandList[1], "create") &&
+		!strings.Contains(commandList[1], "info") &&
+		!strings.Contains(commandList[1], "logout") &&
+		!strings.Contains(commandList[1], "whoami") &&
+		!strings.Contains(commandList[1], "register") {
 		os.Exit(Command(commandList[1:]))
 	} else {
 		commandList = preProcessCommand(commandList)
@@ -48,9 +55,116 @@ func preProcessCommand(args []string) (processedArgs []string) {
 		return args
 	}
 
+	args[1] = replaceShortcut(args[1])
+
+	//TODO: filter command name, because only some commands have list subcommands
+	if len(args) == 2 && !strings.Contains(args[1], ":") {
+		args[1] = args[1] + ":list"
+	}
+
+
 	processedArgs = append([]string{args[0]}, strings.Split(args[1], ":")...)
 	processedArgs = append(processedArgs, args[2:]...)
 	return
+}
+
+func replaceShortcut(command string) string {
+	shortcuts := map[string]string{
+		"create":   "apps:create",
+		"info":     "apps:info",
+		"login":    "auth:login",
+		"logout":   "auth:logout",
+		"register": "auth:register",
+		"whoami":   "auth:whoami",
+	}
+
+	if expandedCommand, ok := shortcuts[command]; ok {
+		return expandedCommand
+	}
+	return command
+}
+
+func authCommand() cli.Command {
+	return cli.Command{
+		Name:  "auth",
+		Usage: "Auth Commands",
+		Subcommands: []cli.Command{
+			{
+				Name:      "register",
+				Usage:     "Register a new user on a specific controller",
+				ArgsUsage: "[controller]",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "email, e",
+						Usage: "Provide email for the new user",
+					},
+					cli.StringFlag{
+						Name:  "password, p",
+						Usage: "Provide password for the new user",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					if c.Args().Get(0) == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					err := cmd.Register(c.Args().First(), c.String("email"), c.String("password"))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "whoami",
+				Usage:     "Display current user.",
+				ArgsUsage: " ",
+				Action: func(c *cli.Context) error {
+					return cmd.Whoami()
+				},
+			},
+			{
+				Name:      "login",
+				Usage:     "Log in on a specific controller.",
+				ArgsUsage: "[controller]",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "email, e",
+						Usage: "Provide user email",
+					},
+					cli.StringFlag{
+						Name:  "password, p",
+						Usage: "Provide user password",
+					},
+					cli.StringFlag{
+						Name:  "ssl-verify, s",
+						Usage: "Disable SSL certificate verification for API requests",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					if c.Args().Get(0) == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					err := cmd.Login(c.Args().First(), c.String("email"), c.String("password"))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "logout",
+				Usage:     "Log out from a controoler",
+				ArgsUsage: " ",
+				Action: func(c *cli.Context) error {
+					err :=  cmd.Logout()
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+		},
+	}
 }
 
 func upsCommand() cli.Command {
@@ -371,8 +485,6 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 		err = parser.Orgs(argv)
 	case "scaffold":
 		err = parser.Scaffold(argv)
-	case "auth":
-		err = parser.Auth(argv)
 	case "domains":
 		err = parser.Domains(argv)
 	case "services":
@@ -434,20 +546,4 @@ func parseArgs(argv []string) (string, []string) {
 
 func pickMainCommand(command string) string {
 	return strings.Split(command, ":")[0]
-}
-
-func replaceShortcut(command string) string {
-	shortcuts := map[string]string{
-		"create":   "apps:create",
-		"info":     "apps:info",
-		"login":    "auth:login",
-		"logout":   "auth:logout",
-		"register": "auth:register",
-		"whoami":   "auth:whoami",
-	}
-
-	if expandedCommand, ok := shortcuts[command]; ok {
-		return expandedCommand
-	}
-	return command
 }
