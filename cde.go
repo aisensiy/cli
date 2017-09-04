@@ -402,10 +402,11 @@ func providersCommand() cli.Command {
 }
 
 func updateConfigConvert(config []string) (map[string]interface{}, error) {
-	configMap := map[string]interface{}{}
-	if len(configMap) == 0 {
+	if len(config) == 0 {
 		return nil, errors.New("please input at least one config")
 	}
+
+	configMap := map[string]interface{}{}
 	for _, v := range config {
 		pair := strings.Split(v, "=")
 		if len(pair) != 2 {
@@ -416,12 +417,12 @@ func updateConfigConvert(config []string) (map[string]interface{}, error) {
 	return configMap, nil
 }
 
-
 func enrollConfigConvert(config []string) (map[string]interface{}, error) {
-	configMap := map[string]interface{}{}
-	if len(configMap) == 0 {
+	if len(config) == 0 {
 		return nil, errors.New("please input at least one config")
 	}
+
+	configMap := map[string]interface{}{}
 	for _, v := range config {
 		pair := strings.Split(v, "=")
 		if len(pair) != 2 {
