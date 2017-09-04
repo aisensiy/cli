@@ -8,6 +8,7 @@ import (
 	"github.com/olekukonko/tablewriter"
 	"os"
 	"time"
+	"errors"
 )
 
 func ProviderCreate(providerName string, providerType string, consumer string, configMap map[string]interface{}) error {
@@ -114,6 +115,8 @@ func ProviderUpdate(providerName string, updateConfigMap map[string]interface{})
 			_, ok := configMap[k]
 			if ok {
 				delete(configMap, k)
+			}else {
+				return errors.New(fmt.Sprintf("could not remove not existed key %s in config", k))
 			}
 		} else {
 			configMap[k] = v
