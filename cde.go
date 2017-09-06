@@ -33,21 +33,21 @@ func main() {
 
 	commandList := os.Args
 
-	if len(commandList) > 1 &&
-		!strings.Contains(commandList[1], "ups") &&
-		!strings.Contains(commandList[1], "stacks") &&
-		!strings.Contains(commandList[1], "providers") &&
-		!strings.Contains(commandList[1], "login") &&
-		!strings.Contains(commandList[1], "create") &&
-		!strings.Contains(commandList[1], "info") &&
-		!strings.Contains(commandList[1], "logout") &&
-		!strings.Contains(commandList[1], "whoami") &&
-		!strings.Contains(commandList[1], "register") {
+	if len(commandList) > 1 && noneMigrated(commandList) {
 		os.Exit(Command(commandList[1:]))
 	} else {
 		commandList = preProcessCommand(commandList)
 		app.Run(commandList)
 	}
+}
+
+func noneMigrated(commandList []string) bool {
+	return !strings.Contains(commandList[1], "ups") &&
+		!strings.Contains(commandList[1], "providers") &&
+		!strings.Contains(commandList[1], "login") &&
+		!strings.Contains(commandList[1], "logout") &&
+		!strings.Contains(commandList[1], "whoami") &&
+		!strings.Contains(commandList[1], "register")
 }
 
 func preProcessCommand(args []string) (processedArgs []string) {
@@ -62,7 +62,6 @@ func preProcessCommand(args []string) (processedArgs []string) {
 		args[1] = args[1] + ":list"
 	}
 
-
 	processedArgs = append([]string{args[0]}, strings.Split(args[1], ":")...)
 	processedArgs = append(processedArgs, args[2:]...)
 	return
@@ -70,8 +69,6 @@ func preProcessCommand(args []string) (processedArgs []string) {
 
 func replaceShortcut(command string) string {
 	shortcuts := map[string]string{
-		"create":   "apps:create",
-		"info":     "apps:info",
 		"login":    "auth:login",
 		"logout":   "auth:logout",
 		"register": "auth:register",
@@ -156,7 +153,7 @@ func authCommand() cli.Command {
 				Usage:     "Log out from a controoler",
 				ArgsUsage: " ",
 				Action: func(c *cli.Context) error {
-					err :=  cmd.Logout()
+					err := cmd.Logout()
 					if err != nil {
 						return cli.NewExitError(err, 1)
 					}
@@ -480,6 +477,8 @@ Subcommands, use 'cde help [subcommand]' to learn more::
 	// Dispatch the command, passing the argv through so subcommands can
 	// re-parse it according to their usage strings.
 	switch command {
+	case "stacks":
+		err = parser.Stacks(argv)
 	case "apps":
 		err = parser.Apps(argv)
 	case "orgs":
