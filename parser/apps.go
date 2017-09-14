@@ -3,7 +3,7 @@ package parser
 import (
 	"errors"
 	"fmt"
-	docopt "github.com/docopt/docopt-go"
+	"github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
 	"os"
 	"strconv"
@@ -102,18 +102,19 @@ func appCreate(argv []string) error {
 	usage := `
 Creates a new application.
 
-Usage: cde apps:create <name> <stack> [options]
+Usage: cde apps:create <name> [options]
 
 Arguments:
   <name>
   	a uniquely identifiable name for the application. No other app can already
     exist with this name.
-  <stack>
-  	a stack name
-
 Options:
   -d --deploy=<deploy>
     tell system to deploy this app or not, 1 means need, 0 mean no, default 1
+  -s --stack=<stack>
+  	a stack name
+  -p --unified_procedure=<unified_procedure>
+	a unified procedure name
 `
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
 
@@ -122,10 +123,11 @@ Options:
 	}
 
 	name := safeGetValue(args, "<name>")
-	stack := safeGetValue(args, "<stack>")
+	stack := safeGetValue(args, "--stack")
+	unifiedProcedure := safeGetValue(args, "--unified_procedure")
 	needDeploy := safeGetOrDefault(args, "--deploy", "1")
 
-	if stack == "" || name == "" {
+	if (stack == "" && unifiedProcedure == "") || name == "" {
 		return errors.New("<name> <stack> are essential parameters")
 	}
 
@@ -133,7 +135,7 @@ Options:
 		return fmt.Errorf("'%s' does not match the pattern '[a-z0-9-]+'\n", name)
 	}
 
-	return cmd.AppCreate(name, stack, needDeploy)
+	return cmd.AppCreate(name, stack, unifiedProcedure, needDeploy)
 }
 
 func appList() error {
@@ -279,7 +281,7 @@ Options:
 	}
 
 	email := safeGetValue(args, "<email>")
-	if email == ""{
+	if email == "" {
 		return errors.New("<email> is essential parameters")
 	}
 
@@ -310,7 +312,7 @@ Options:
 	}
 
 	email := safeGetValue(args, "<email>")
-	if email == ""{
+	if email == "" {
 		return errors.New("<email> is essential parameters")
 	}
 

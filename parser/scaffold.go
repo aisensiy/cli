@@ -11,15 +11,18 @@ func Scaffold(argv []string) error {
 	usage := `
 Creates a new scaffold in current directory.
 
-Usage: cde scaffold <stackName> [options]
+Usage: cde scaffold [options]
 
 Arguments:
-  <stackName>
-  	a stack name
-
 Options:
-  -d --dir=<dir> default sub directory name
-  -a --app=<app-name> create a new scaffold and create a new app in sub directory
+  -s --stack=<stackName>
+  	a stack name
+  -p --unified_procedure=<unified_procedure>
+	a unified procedure name
+  -d --dir=<dir>
+	default sub directory name
+  -a --app=<app-name>
+	create a new scaffold and create a new app in sub directory
   --deploy tell system to deploy this app or not, 1 means need, 0 mean no, default 1
 `
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
@@ -28,7 +31,8 @@ Options:
 		return err
 	}
 
-	stackName := safeGetValue(args, "<stackName>")
+	unifiedProcedure := safeGetValue(args, "--unified_procedure")
+	stackName := safeGetValue(args, "--stack")
 
 	dir := safeGetOrDefault(args, "--dir", "")
 
@@ -40,7 +44,7 @@ Options:
 		return fmt.Errorf("'%s' does not match the pattern '[a-z0-9-]+'\n", appName)
 	}
 
-	return cmd.ScaffoldCreate(stackName, dir, appName, needDeploy)
+	return cmd.ScaffoldCreate(stackName, unifiedProcedure,  dir, appName, needDeploy)
 }
 
 func retrieveGitName(gitUrl string) (string, error) {

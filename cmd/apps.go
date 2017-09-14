@@ -64,7 +64,7 @@ func AppLaunch(appId string) error {
 }
 
 // AppCreate creates an app.
-func AppCreate(appId string, stackName string, needDeploy string) error {
+func AppCreate(appId string, stackName string, unifiedProcedure string, needDeploy string) error {
 	var needDeployBool bool
 
 	if !git.IsGitDirectory() {
@@ -84,15 +84,34 @@ func AppCreate(appId string, stackName string, needDeploy string) error {
 			return fmt.Errorf("Give up to override existing app")
 		}
 	}
+	var stackId string
+	var stack api.Stack
+	var unifiedProcedureId string
 
-	stacks, err := stackRepo.GetStackByName(stackName)
-	if err != nil {
-		return err
+	if len(stackName) != 0 {
+		stacks, err := stackRepo.GetStackByName(stackName)
+		if err != nil {
+			return err
+		}
+
+		stack = stacks.Items()[0]
+
+		stackId = stack.Id()
+	} else {
+		gateway := deploymentNet.NewCloudControllerGateway(configRepository)
+		ups := launcherApi.NewUpsRepository(configRepository, gateway)
+
+		unifiedProcedures, err := ups.GetUPByName(unifiedProcedure)
+		if err != nil {
+			return err
+		}
+
+		if unifiedProcedures.Count() != 1 {
+			return fmt.Errorf("can not find the unified procedure by name given")
+		}
+
+		unifiedProcedureId = unifiedProcedures.Items()[0].Id()
 	}
-
-	stack := stacks.Items()[0]
-
-	stackId := stack.Id()
 
 	if needDeploy == "1" {
 		needDeployBool = true
@@ -101,9 +120,10 @@ func AppCreate(appId string, stackName string, needDeploy string) error {
 	}
 
 	appParams := api.AppParams{
-		Name:       appId,
-		Stack:      stackId,
-		NeedDeploy: needDeployBool,
+		Name:             appId,
+		Stack:            stackId,
+		UnifiedProcedure: unifiedProcedureId,
+		NeedDeploy:       needDeployBool,
 	}
 	createdApp, err := appRepository.Create(appParams)
 	if err != nil {
@@ -130,7 +150,7 @@ func AppCreate(appId string, stackName string, needDeploy string) error {
 
 	fmt.Println("remote available at", git.RemoteURL(host, createdApp.Id()))
 
-	if stack.Type() == "NON_BUILD_STACK" {
+	if stack != nil && stack.Type() == "NON_BUILD_STACK" {
 		releaseMapper := api.NewReleaseMapper(configRepository, net.NewCloudControllerGateway(configRepository))
 		_, err = releaseMapper.Create(createdApp)
 		if err != nil {
@@ -356,7 +376,7 @@ func ServiceLog(appId, serviceName string, lines int) error {
 	return nil
 }
 
-func AppLocalization(appName string, directory string) error{
+func AppLocalization(appName string, directory string) error {
 	configRepository := config.NewConfigRepository(func(error) {})
 	appRepository := api.NewAppRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
@@ -371,10 +391,10 @@ func AppLocalization(appName string, directory string) error{
 		directory = appName
 	}
 
-	currentDir,_ := os.Getwd()
+	currentDir, _ := os.Getwd()
 	target := fmt.Sprintf("%s//%s", currentDir, directory)
 
-	if IsDirectoryExist(target){
+	if IsDirectoryExist(target) {
 		return fmt.Errorf("directory %s already exists", directory);
 	}
 
@@ -524,7 +544,7 @@ func AppTransfer(appId string, email string, org string) error {
 	return nil
 }
 
-func IsAppNameInvalid(appName string)bool{
+func IsAppNameInvalid(appName string) bool {
 	regex := regexp.MustCompile(`^[a-z0-9\-]+$`)
 
 	return regex.MatchString(appName)

@@ -21,7 +21,12 @@ func LaunchBuild(filename, appName string) error {
 		return err
 	}
 
-	request, errChannel, err := toRequest(file)
+	configRepository := config.NewConfigRepository(func(err error) {
+
+	})
+	launcherEntrypoint := configRepository.DeploymentEndpoint()
+
+	request, errChannel, err := toRequest(file, launcherEntrypoint)
 	if err != nil {
 		return err
 	}
@@ -37,9 +42,6 @@ func LaunchBuild(filename, appName string) error {
 	}
 
 	location := res.Header.Get("Location")
-	configRepository := config.NewConfigRepository(func(err error) {
-
-	})
 	gateway := net.NewCloudControllerGateway(configRepository)
 	apps := api.NewAppRepository(configRepository, gateway)
 
@@ -105,7 +107,7 @@ func LaunchBuild(filename, appName string) error {
 
 	for {
 		select {
-		case succ:=<-succeed:
+		case succ := <-succeed:
 			if !succ {
 				return errors.New("Build fail")
 			} else {
@@ -119,7 +121,7 @@ func LaunchBuild(filename, appName string) error {
 	}
 }
 
-func toRequest(file *os.File) (*http.Request, chan error, error) {
+func toRequest(file *os.File, entrypoint string) (*http.Request, chan error, error) {
 	reader, writer := io.Pipe()
 	newWriter := multipart.NewWriter(writer)
 	errChannel := make(chan error, 1)
@@ -141,7 +143,7 @@ func toRequest(file *os.File) (*http.Request, chan error, error) {
 		errChannel <- newWriter.Close()
 	}()
 
-	request, err := http.NewRequest("POST", "http://localhost:8088/files", reader)
+	request, err := http.NewRequest("POST", fmt.Sprintf("%s/files", entrypoint), reader)
 	request.Header.Set("Content-Type", newWriter.FormDataContentType())
 	return request, errChannel, err
 }

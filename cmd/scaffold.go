@@ -5,12 +5,15 @@ import (
 	"github.com/sjkyspa/stacks/client/config"
 	"github.com/sjkyspa/stacks/controller/api/api"
 	"github.com/sjkyspa/stacks/controller/api/net"
+	launcherApi "github.com/sjkyspa/stacks/launcher/api/api"
+	deploymentNet "github.com/sjkyspa/stacks/launcher/api/net"
 	"io/ioutil"
 	"os/exec"
 	"os"
+	"errors"
 )
 
-func ScaffoldCreate(stackName string, directory string, appName string, needDeploy string) error {
+func ScaffoldCreate(stackName, unifiedProcedure string, directory string, appName string, needDeploy string) error {
 
 	if appName != "" {
 		if isApplicationExist(appName) {
@@ -24,40 +27,78 @@ func ScaffoldCreate(stackName string, directory string, appName string, needDepl
 	if directory == "" {
 		directory = stackName
 	}
-	currentDir,_ := os.Getwd()
+	currentDir, _ := os.Getwd()
 	target := fmt.Sprintf("%s//%s", currentDir, directory)
 	if IsDirectoryExist(target) {
 		return fmt.Errorf("directory %s already exists", directory);
 	}
 
+	if stackName != "" {
+		stack, err := getStack(stackName)
+		if err != nil {
 
-	stack, err := getStack(stackName)
-	if err != nil {
-		return err
-	}
+			return err
+		}
+		gitRepo := stack.GetTemplateCode()
 
-	gitRepo := stack.GetTemplateCode()
+		if gitRepo == "" {
+			return fmt.Errorf("git repositry is no valid, please check the definition of stack '%s' to make sure it contains valid template code.", stackName)
+		}
 
-	if gitRepo == "" {
-		return fmt.Errorf("git repositry is no valid, please check the definition of stack '%s' to make sure it contains valid template code.", stackName)
-	}
+		cmdString := fmt.Sprintf("git clone %s %s; cd %s; git remote remove origin; rm -rf .git; git init", gitRepo, directory, directory)
 
-	cmdString := fmt.Sprintf("git clone %s %s; cd %s; git remote remove origin; rm -rf .git; git init", gitRepo, directory, directory)
+		err = ExecuteCmd(cmdString)
 
-	err = ExecuteCmd(cmdString)
-
-	if err != nil {
-		return err
-	}
-
-	if appName != "" {
-		os.Chdir(target)
-		err = AppCreate(appName, stackName, needDeploy)
 		if err != nil {
 			return err
 		}
+
+		if appName != "" {
+			os.Chdir(target)
+			err = AppCreate(appName, stackName, unifiedProcedure, needDeploy)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	} else if unifiedProcedure != "" {
+		configRepository := config.NewConfigRepository(func(error) {})
+		gateway := deploymentNet.NewCloudControllerGateway(configRepository)
+		ups := launcherApi.NewUpsRepository(configRepository, gateway)
+
+		unifiedProcedures, err := ups.GetUPByName(unifiedProcedure)
+		if err != nil {
+			return err
+		}
+
+		if unifiedProcedures.Count() != 1 {
+			return fmt.Errorf("can not find the unified procedure by name given")
+		}
+
+		template := unifiedProcedures.Items()[0].Template()
+		if template.URI == "" {
+			return fmt.Errorf("git repositry is no valid, please check the definition of stack '%s' to make sure it contains valid template code.", stackName)
+		}
+
+		cmdString := fmt.Sprintf("git clone %s %s; cd %s; git remote remove origin; rm -rf .git; git init", template.URI, directory, directory)
+
+		err = ExecuteCmd(cmdString)
+
+		if err != nil {
+			return err
+		}
+
+		if appName != "" {
+			os.Chdir(target)
+			err = AppCreate(appName, stackName, unifiedProcedure, needDeploy)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	} else {
+		return errors.New("please use -s to specify stack or use the -p to specify unified procedure")
 	}
-	return nil
 }
 
 func ExecuteCmd(cmdString string) error {
@@ -97,7 +138,7 @@ func getStack(stackName string) (stackObj api.Stack, err error) {
 	return
 }
 
-func IsDirectoryExist(directory string)(bool){
+func IsDirectoryExist(directory string) (bool) {
 	if _, notExistErr := os.Stat(directory); notExistErr != nil {
 		return false
 	}
