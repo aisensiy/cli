@@ -113,8 +113,12 @@ Options:
     tell system to deploy this app or not, 1 means need, 0 mean no, default 1
   -s --stack=<stack>
   	a stack name
-  -p --unified_procedure=<unified_procedure>
+  -u --unified_procedure=<unified_procedure>
 	a unified procedure name
+  -p --provider=<provider>
+	the provider to provide the app runtime
+  -o --owner=<owner>
+	the app with be possessed by the owner
 `
 	args, err := docopt.Parse(usage, argv, true, "", false, true)
 
@@ -125,9 +129,11 @@ Options:
 	name := safeGetValue(args, "<name>")
 	stack := safeGetValue(args, "--stack")
 	unifiedProcedure := safeGetValue(args, "--unified_procedure")
+	provider := safeGetValue(args, "--provider")
+	owner := safeGetValue(args, "--owner")
 	needDeploy := safeGetOrDefault(args, "--deploy", "1")
 
-	if (stack == "" && unifiedProcedure == "") || name == "" {
+	if (stack == "" && (unifiedProcedure == "" || provider == "")) || name == "" {
 		return errors.New("<name> <stack> are essential parameters")
 	}
 
@@ -135,7 +141,7 @@ Options:
 		return fmt.Errorf("'%s' does not match the pattern '[a-z0-9-]+'\n", name)
 	}
 
-	return cmd.AppCreate(name, stack, unifiedProcedure, needDeploy)
+	return cmd.AppCreate(name, stack, unifiedProcedure, provider, owner, needDeploy)
 }
 
 func appList() error {

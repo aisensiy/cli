@@ -13,7 +13,7 @@ import (
 	"errors"
 )
 
-func ScaffoldCreate(stackName, unifiedProcedure string, directory string, appName string, needDeploy string) error {
+func ScaffoldCreate(stackName, unifiedProcedure, provider, owner string, directory string, appName string, needDeploy string) error {
 
 	if appName != "" {
 		if isApplicationExist(appName) {
@@ -55,7 +55,7 @@ func ScaffoldCreate(stackName, unifiedProcedure string, directory string, appNam
 
 		if appName != "" {
 			os.Chdir(target)
-			err = AppCreate(appName, stackName, unifiedProcedure, needDeploy)
+			err = AppCreate(appName, stackName, unifiedProcedure, provider, owner, needDeploy)
 			if err != nil {
 				return err
 			}
@@ -90,7 +90,7 @@ func ScaffoldCreate(stackName, unifiedProcedure string, directory string, appNam
 
 		if appName != "" {
 			os.Chdir(target)
-			err = AppCreate(appName, stackName, unifiedProcedure, needDeploy)
+			err = AppCreate(appName, stackName, unifiedProcedure, provider, owner, needDeploy)
 			if err != nil {
 				return err
 			}

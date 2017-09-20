@@ -4,6 +4,11 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"net/url"
+	"os"
+	"regexp"
+	"strings"
+
 	"github.com/olekukonko/tablewriter"
 	"github.com/sjkyspa/stacks/client/config"
 	"github.com/sjkyspa/stacks/client/pkg"
@@ -11,10 +16,6 @@ import (
 	"github.com/sjkyspa/stacks/controller/api/net"
 	launcherApi "github.com/sjkyspa/stacks/launcher/api/api"
 	deploymentNet "github.com/sjkyspa/stacks/launcher/api/net"
-	"net/url"
-	"os"
-	"strings"
-	"regexp"
 )
 
 func askForOverrideExistingApp() bool {
@@ -64,7 +65,7 @@ func AppLaunch(appId string) error {
 }
 
 // AppCreate creates an app.
-func AppCreate(appId string, stackName string, unifiedProcedure string, needDeploy string) error {
+func AppCreate(appId string, stackName string, unifiedProcedure, providerName, owner string, needDeploy string) error {
 	var needDeployBool bool
 
 	if !git.IsGitDirectory() {
@@ -87,6 +88,7 @@ func AppCreate(appId string, stackName string, unifiedProcedure string, needDepl
 	var stackId string
 	var stack api.Stack
 	var unifiedProcedureId string
+	var provider launcherApi.Provider
 
 	if len(stackName) != 0 {
 		stacks, err := stackRepo.GetStackByName(stackName)
@@ -100,6 +102,7 @@ func AppCreate(appId string, stackName string, unifiedProcedure string, needDepl
 	} else {
 		gateway := deploymentNet.NewCloudControllerGateway(configRepository)
 		ups := launcherApi.NewUpsRepository(configRepository, gateway)
+		providers := launcherApi.NewProviderRepository(configRepository, gateway)
 
 		unifiedProcedures, err := ups.GetUPByName(unifiedProcedure)
 		if err != nil {
@@ -111,6 +114,12 @@ func AppCreate(appId string, stackName string, unifiedProcedure string, needDepl
 		}
 
 		unifiedProcedureId = unifiedProcedures.Items()[0].Id()
+
+		provider, err = providers.GetProviderByName(providerName)
+		if err != nil {
+			return err
+		}
+
 	}
 
 	if needDeploy == "1" {
@@ -118,10 +127,15 @@ func AppCreate(appId string, stackName string, unifiedProcedure string, needDepl
 	} else {
 		needDeployBool = false
 	}
-
+	providerLink, err := provider.Links().Link("self")
+	if err != nil {
+		return err
+	}
 	appParams := api.AppParams{
 		Name:             appId,
 		Stack:            stackId,
+		Provider:         providerLink.URI,
+		Owner:            owner,
 		UnifiedProcedure: unifiedProcedureId,
 		NeedDeploy:       needDeployBool,
 	}
@@ -386,7 +400,7 @@ func AppLocalization(appName string, directory string) error {
 	}
 
 	host := configRepository.GitHost()
-	gitRepo := git.RemoteURL(host, appName);
+	gitRepo := git.RemoteURL(host, appName)
 	if directory == "" {
 		directory = appName
 	}
@@ -395,7 +409,7 @@ func AppLocalization(appName string, directory string) error {
 	target := fmt.Sprintf("%s//%s", currentDir, directory)
 
 	if IsDirectoryExist(target) {
-		return fmt.Errorf("directory %s already exists", directory);
+		return fmt.Errorf("directory %s already exists", directory)
 	}
 
 	cmdString := fmt.Sprintf("git clone %s %s;cd %s; git remote remove origin; rm -rf .git; git init", gitRepo, directory, directory)
