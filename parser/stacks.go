@@ -3,7 +3,102 @@ package parser
 import (
 	"github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
+	"github.com/urfave/cli"
 )
+
+func StacksCommand() cli.Command {
+	return cli.Command{
+		Name:  "stacks",
+		Usage: "Stacks Commands",
+		Subcommands: []cli.Command{
+			{
+				Name:      "list",
+				Usage:     "List all Stacks",
+				ArgsUsage: " ",
+				Action: func(c *cli.Context) error {
+					err := cmd.StacksList()
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "info",
+				Usage:     "Get info of a Stack",
+				ArgsUsage: "[stack-name]",
+				Action: func(c *cli.Context) error {
+					err := cmd.GetStack(c.Args().First())
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "create",
+				Usage:     "Create a new Stack",
+				ArgsUsage: "[stack-file]",
+				Action: func(c *cli.Context) error {
+					err := cmd.StackCreate(c.Args().First())
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "update",
+				Usage:     "Update an existing Stack",
+				ArgsUsage: "[stack-id] [stack-file]",
+				Action: func(c *cli.Context) error {
+					err := cmd.StackUpdate(c.Args().First(), c.Args().Get(1))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "remove",
+				Usage:     "Delete a Stack",
+				ArgsUsage: "[stack-name]",
+				Action: func(c *cli.Context) error {
+					err := cmd.StackRemove(c.Args().First())
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "publish",
+				Usage:     "Publish a Stack",
+				ArgsUsage: "[stack-id]",
+				Action: func(c *cli.Context) error {
+					err := cmd.StackPublish(c.Args().First())
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "unpublish",
+				Usage:     "Unpublish a Stack",
+				ArgsUsage: "[stack-id]",
+				Action: func(c *cli.Context) error {
+					err := cmd.StackUnPublish(c.Args().First())
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+
+				},
+			},
+		},
+	}
+}
 
 func Stacks(argv []string) error {
 	usage := `

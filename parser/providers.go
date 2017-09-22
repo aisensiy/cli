@@ -1,162 +1,136 @@
 package parser
 
 import (
-	"github.com/docopt/docopt-go"
 	"errors"
 	"github.com/sjkyspa/stacks/client/cmd"
 	"strings"
+	"github.com/urfave/cli"
+	"fmt"
 )
 
-func Providers(argv []string) error {
-	usage := `
-Valid commands for providers:
-
-providers:enroll 	enroll a new provider
-providers:list		list all providers
-providers:info		view info about a provider
-providers:update	update provider config
-
-Use 'cde help [command]' to learn more.
-`
-	switch argv[0] {
-	case "providers:enroll":
-		return providerEnroll(argv)
-	case "providers:list":
-		return providerList()
-	case "providers:info":
-		return providerInfo(argv)
-	case "providers:update":
-		return providerUpdate(argv)
-	default:
-		if printHelp(argv, usage) {
-			return nil
-		}
-
-		PrintUsage()
-		return nil
+func ProvidersCommand() cli.Command {
+	return cli.Command{
+		Name:  "providers",
+		Usage: "Providers Commands",
+		Subcommands: []cli.Command{
+			{
+				Name:      "list",
+				Usage:     "List all Providers",
+				ArgsUsage: " ",
+				Action: func(c *cli.Context) error {
+					err := cmd.ProviderList()
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "info",
+				Usage:     "Get info of a Provider",
+				ArgsUsage: "[provider-name]",
+				Action: func(c *cli.Context) error {
+					if (c.Args().Get(0) == "") {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					err := cmd.GetProviderByName(c.Args().Get(0))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "enroll",
+				Usage:     "Enroll a new Provider",
+				ArgsUsage: "[name] [type]",
+				Flags: []cli.Flag{
+					cli.StringSliceFlag{
+						Name:  "config, c",
+						Usage: "Set provider's configuration. Key \"endpoint\" is required.",
+					},
+					cli.StringFlag{
+						Name:  "for, f",
+						Usage: "Specify an organization for the provider.",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					if c.Args().Get(0) == "" || c.Args().Get(1) == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					configMap, err := enrollConfigConvert(c.StringSlice("config"))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					consumer := c.String("for")
+					err = cmd.ProviderCreate(c.Args().Get(0), c.Args().Get(1), consumer, configMap)
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "update",
+				Usage:     "Update an existing Provider",
+				ArgsUsage: "[name]",
+				Flags: []cli.Flag{
+					cli.StringSliceFlag{
+						Name:  "config, c",
+						Usage: "Set provider's configuration. Key \"endpoint\" is required.",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					if c.Args().Get(0) == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					configMap, err := updateConfigConvert(c.StringSlice("config"))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					err = cmd.ProviderUpdate(c.Args().Get(0), configMap)
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+		},
 	}
-	return nil
 }
 
-func providerEnroll(argv []string) error {
-	usage := `
-Enroll a new provider.
-
-Usage: cde providers:enroll <name> <type> [options] (-c <config>)...
-
-Arguments:
-  <name>
-  	a provider name. No other provider can already exist with this name.
-  <type>
-  	provider type.
-  <config>
-  	provider config. Set config as kay value list. Use -c to set a key value pair.
-
-Options:
-  --for=<for>
-  	specify a organization to use this provider.
-`
-	args, err := docopt.Parse(usage, argv, true, "", false, true)
-
-	if err != nil {
-		return err
-	}
-	name := safeGetValue(args, "<name>")
-	providerType := safeGetValue(args, "<type>")
-	config := safeGetValues(args, "<config>")
-	consumer := safeGetValue(args, "--for")
-
-	if name == "" || providerType == "" || len(config) <= 0 {
-		return errors.New("<name> <type> <config> are essential parameters")
+func updateConfigConvert(config []string) (map[string]interface{}, error) {
+	if len(config) == 0 {
+		return nil, errors.New("please input at least one config")
 	}
 
-	configMap, err := configConvert(config)
-
-	if err != nil {
-		return err
-	}
-
-	for _, v := range configMap {
-		if v == "" {
-			return errors.New("invalid config format")
-		}
-	}
-
-	return cmd.ProviderCreate(name, providerType, consumer, configMap)
-}
-
-func configConvert(config []string) (map[string]interface{}, error) {
 	configMap := map[string]interface{}{}
 	for _, v := range config {
 		pair := strings.Split(v, "=")
-		if len(pair) < 1 {
-			return nil, errors.New("invalid config format")
-		} else if len(pair) >=2 {
-			configMap[pair[0]] = pair[1]
-		} else {
-			configMap[pair[0]] = ""
+		if len(pair) != 2 {
+			pair = append(pair, "")
 		}
+		configMap[pair[0]] = pair[1]
 	}
 	return configMap, nil
 }
 
-func providerList() error {
-	return cmd.ProviderList()
+func enrollConfigConvert(config []string) (map[string]interface{}, error) {
+	if len(config) == 0 {
+		return nil, errors.New("please input at least one config")
+	}
+
+	configMap := map[string]interface{}{}
+	for _, v := range config {
+		pair := strings.Split(v, "=")
+		if len(pair) != 2 {
+			return nil, errors.New("invalid config format")
+		}
+		if pair[1] == "" {
+			return nil, errors.New("config value should not be empty")
+		}
+		configMap[pair[0]] = pair[1]
+	}
+	return configMap, nil
 }
 
-func providerInfo(argv []string) error {
-	usage := `
-View info about a provider.
-
-Usage: cde providers:info <name>
-
-Arguments:
-  <name>
-  	a provider name.
-`
-	args, err := docopt.Parse(usage, argv, true, "", false, true)
-
-	if err != nil {
-		return err
-	}
-	name := safeGetValue(args, "<name>")
-
-	if name == "" {
-		return errors.New("<name> are essential parameters")
-	}
-
-	return cmd.GetProviderByName(name)
-}
-
-func providerUpdate(argv []string) error {
-	usage := `
-Update provider config.
-
-Usage: cde providers:update <name> (-c <config>)...
-
-Arguments:
-  <name>
-  	a provider name.
-  <config>
-  	provider config. Set config as kay value list. Use -c to set a key value pair.
-`
-	args, err := docopt.Parse(usage, argv, true, "", false, true)
-
-	if err != nil {
-		return err
-	}
-	name := safeGetValue(args, "<name>")
-	config := safeGetValues(args, "<config>")
-
-	if name == "" || len(config) <= 0 {
-		return errors.New("<name> <config> are essential parameters")
-	}
-
-	configMap, err := configConvert(config)
-
-	if err != nil {
-		return err
-	}
-
-	return cmd.ProviderUpdate(name, configMap)
-}

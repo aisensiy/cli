@@ -5,7 +5,92 @@ import (
 
 	docopt "github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
+	"github.com/urfave/cli"
 )
+
+func AuthCommand() cli.Command {
+	return cli.Command{
+		Name:  "auth",
+		Usage: "Auth Commands",
+		Subcommands: []cli.Command{
+			{
+				Name:      "register",
+				Usage:     "Register a new user on a specific controller",
+				ArgsUsage: "[controller]",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "email, e",
+						Usage: "Provide email for the new user",
+					},
+					cli.StringFlag{
+						Name:  "password, p",
+						Usage: "Provide password for the new user",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					if c.Args().Get(0) == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					err := cmd.Register(c.Args().First(), c.String("email"), c.String("password"))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "whoami",
+				Usage:     "Display current user.",
+				ArgsUsage: " ",
+				Action: func(c *cli.Context) error {
+					return cmd.Whoami()
+				},
+			},
+			{
+				Name:      "login",
+				Usage:     "Log in on a specific controller.",
+				ArgsUsage: "[controller]",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "email, e",
+						Usage: "Provide user email",
+					},
+					cli.StringFlag{
+						Name:  "password, p",
+						Usage: "Provide user password",
+					},
+					cli.StringFlag{
+						Name:  "ssl-verify, s",
+						Usage: "Disable SSL certificate verification for API requests",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					if c.Args().Get(0) == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					err := cmd.Login(c.Args().First(), c.String("email"), c.String("password"))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "logout",
+				Usage:     "Log out from a controoler",
+				ArgsUsage: " ",
+				Action: func(c *cli.Context) error {
+					err := cmd.Logout()
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+		},
+	}
+}
+
 
 // Auth routes auth commands to the specific function.
 func Auth(argv []string) error {
