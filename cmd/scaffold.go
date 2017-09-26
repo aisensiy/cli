@@ -7,8 +7,7 @@ import (
 	"github.com/sjkyspa/stacks/controller/api/net"
 	launcherApi "github.com/sjkyspa/stacks/launcher/api/api"
 	deploymentNet "github.com/sjkyspa/stacks/launcher/api/net"
-	"io/ioutil"
-	"os/exec"
+	"github.com/sjkyspa/stacks/client/pkg"
 	"os"
 	"errors"
 )
@@ -45,9 +44,7 @@ func ScaffoldCreate(stackName, unifiedProcedure, provider, owner string, directo
 			return fmt.Errorf("git repositry is no valid, please check the definition of stack '%s' to make sure it contains valid template code.", stackName)
 		}
 
-		cmdString := fmt.Sprintf("git clone %s %s; cd %s; git remote remove origin; rm -rf .git; git init", gitRepo, directory, directory)
-
-		err = ExecuteCmd(cmdString)
+		err = git.CloneRepo(gitRepo, directory);
 
 		if err != nil {
 			return err
@@ -80,9 +77,7 @@ func ScaffoldCreate(stackName, unifiedProcedure, provider, owner string, directo
 			return fmt.Errorf("git repositry is no valid, please check the definition of stack '%s' to make sure it contains valid template code.", stackName)
 		}
 
-		cmdString := fmt.Sprintf("git clone %s %s; cd %s; git remote remove origin; rm -rf .git; git init", template.URI, directory, directory)
-
-		err = ExecuteCmd(cmdString)
+		err = git.CloneRepo(template.URI, directory);
 
 		if err != nil {
 			return err
@@ -99,27 +94,6 @@ func ScaffoldCreate(stackName, unifiedProcedure, provider, owner string, directo
 	} else {
 		return errors.New("please use -s to specify stack or use the -p to specify unified procedure")
 	}
-}
-
-func ExecuteCmd(cmdString string) error {
-	cmd := exec.Command("/bin/sh", "-c", cmdString)
-	stderr, err := cmd.StderrPipe()
-
-	if err != nil {
-		return err
-	}
-
-	if err = cmd.Start(); err != nil {
-		return err
-	}
-
-	output, _ := ioutil.ReadAll(stderr)
-	fmt.Print(string(output))
-
-	if err := cmd.Wait(); err != nil {
-		return err
-	}
-	return nil
 }
 
 func getStack(stackName string) (stackObj api.Stack, err error) {

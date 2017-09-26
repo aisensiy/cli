@@ -413,10 +413,13 @@ func AppLocalization(appName string, directory string) error {
 		return fmt.Errorf("directory %s already exists", directory)
 	}
 
-	cmdString := fmt.Sprintf("git clone %s %s;cd %s; git remote remove origin; rm -rf .git; git init", gitRepo, directory, directory)
-	ExecuteCmd(cmdString)
+	if err = git.CloneRepo(gitRepo, directory); err != nil {
+		return err
+	}
 
-	os.Chdir(target)
+	if err = os.Chdir(target); err != nil {
+		return err
+	}
 	git.DeleteCdeRemote()
 
 	if err = git.CreateRemote(host, "cde", appName); err != nil {

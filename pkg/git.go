@@ -7,7 +7,28 @@ import (
 	"os/exec"
 	"strings"
 	"regexp"
+	"os"
 )
+
+func CloneRepo(repository string, directory string) error {
+	cmdString := fmt.Sprintf("git clone %s %s;", repository, directory)
+	if err := ExecuteCmd(cmdString); err != nil {
+		return err
+	}
+
+	currentDir, _ := os.Getwd()
+	target := fmt.Sprintf("%s//%s", currentDir, directory)
+	if err := os.Chdir(target); err != nil {
+		return err
+	}
+
+	cmdString = "git remote remove origin; rm -rf .git; git init"
+	if err := ExecuteCmd(cmdString); err != nil {
+		return err
+	}
+
+	return nil
+}
 
 // CreateRemote adds a git remote in the current directory.
 func CreateRemote(host, remote, appID string) error {
@@ -130,4 +151,25 @@ func DeleteCdeRemote() error {
 func IsGitDirectory() bool {
 	_, err := exec.Command("git", "rev-parse", "--is-inside-work-tree").Output()
 	return err == nil
+}
+
+func ExecuteCmd(cmdString string) error {
+	cmd := exec.Command("/bin/sh", "-c", cmdString)
+	stderr, err := cmd.StderrPipe()
+
+	if err != nil {
+		return err
+	}
+
+	if err = cmd.Start(); err != nil {
+		return err
+	}
+
+	output, _ := ioutil.ReadAll(stderr)
+	fmt.Print(string(output))
+
+	if err := cmd.Wait(); err != nil {
+		return err
+	}
+	return nil
 }
