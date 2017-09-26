@@ -30,6 +30,7 @@ func main() {
 		parser.AppsCommand(),
 		parser.OrgsCommand(),
 		parser.ScaffoldCommands(),
+		parser.DomainsCommands(),
 	}
 
 	commandList := os.Args
@@ -52,6 +53,7 @@ func noneMigrated(commandList []string) bool {
 		!strings.Contains(commandList[1], "auth") &&
 		!strings.Contains(commandList[1], "orgs") &&
 		!strings.Contains(commandList[1], "scaffold") &&
+		!strings.Contains(commandList[1], "domains") &&
 		!strings.Contains(commandList[1], "apps")
 }
 

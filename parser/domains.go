@@ -3,7 +3,72 @@ package parser
 import (
 	docopt "github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
+	"github.com/urfave/cli"
+	"fmt"
 )
+
+func DomainsCommands() cli.Command {
+	return cli.Command{
+		Name: "domains",
+		Usage: "Domains Command",
+		Subcommands: []cli.Command {
+			{
+				Name: "create",
+				Usage: "Binds a domain to an application.",
+				ArgsUsage: "[domain]",
+				Action: func(c *cli.Context) error {
+					if c.Args().Get(0) == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					if err := cmd.DomainsAdd(c.Args().Get(0)); err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name: "list",
+				Usage: "Lists domains bound to an application.",
+				ArgsUsage: " ",
+				Action: func(c *cli.Context) error {
+					if err := cmd.DomainsList(); err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name: "remove",
+				Usage: "Unbinds a domain for an application.",
+				ArgsUsage: "[domain]",
+				Action: func(c *cli.Context) error {
+					if c.Args().Get(0) == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					if err := cmd.DomainsRemove(c.Args().Get(0)); err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name: "cert",
+				Usage: "Attach cert to the domain.",
+				ArgsUsage: "[domain][crt][privite-key]",
+				Action: func(c *cli.Context) error {
+					if c.Args().Get(0) == "" || c.Args().Get(1) == "" || c.Args().Get(2) == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+
+					if err := cmd.DomainsCert(c.Args().Get(0), c.Args().Get(1), c.Args().Get(2)); err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+		},
+	}
+}
 
 // Domains routes domain commands to their specific function.
 func Domains(argv []string) error {
