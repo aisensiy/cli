@@ -5,7 +5,195 @@ import (
 	docopt "github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
 	"regexp"
+	"github.com/urfave/cli"
 )
+
+func OrgsCommand() cli.Command {
+	return cli.Command{
+		Name:  "orgs",
+		Usage: "Orgs Command",
+		Subcommands: []cli.Command{
+			{
+				Name:      "create",
+				Usage:     "Create a new organization",
+				ArgsUsage: "[name]",
+				Action: func(c *cli.Context) error{
+					if c.Args().Get(0) == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					name := c.Args().Get(0)
+
+					regex := regexp.MustCompile(`^[a-z0-9\-]+$`)
+					if !regex.MatchString(name) {
+						return fmt.Errorf("'%s' does not match the pattern '[a-z0-9-]+'\n", name)
+					}
+
+					err := cmd.OrgCreate(name)
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "info",
+				Usage:     "Prints info about the current organization.",
+				ArgsUsage: " ",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "org, o",
+						Usage: "Specify the org with name",
+					},
+				},
+				Action: func(c *cli.Context) error{
+
+					err := cmd.GetOrg(c.String("org"))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "current",
+				Usage:     "Set org as a default org.",
+				ArgsUsage: " ",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "org, o",
+						Usage: "Specify the org with name",
+					},
+				},
+				Action: func(c *cli.Context) error{
+					err := cmd.SetCurrentOrg(c.String("org"))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "members",
+				Usage:     "List members of the organization.",
+				ArgsUsage: " ",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "org, o",
+						Usage: "Specify the org with name",
+					},
+				},
+				Action: func(c *cli.Context) error{
+					err := cmd.ListMembers(c.String("org"))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "add-member",
+				Usage:     "Add member to organization.",
+				ArgsUsage: "[email]",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "org, o",
+						Usage: "Specify the org with name",
+					},
+				},
+				Action: func(c *cli.Context) error{
+					if c.Args().Get(0) == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+
+					err := cmd.AddMember(c.String("org"), c.Args().Get(0))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "rm-member",
+				Usage:     "Remove member from organization.",
+				ArgsUsage: "[email]",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "org, o",
+						Usage: "Specify the org with name",
+					},
+				},
+				Action: func(c *cli.Context) error{
+					if c.Args().Get(0) == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+
+					err := cmd.RemoveMember(c.String("org"), c.Args().Get(0))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "apps",
+				Usage:     "List apps of the organization.",
+				ArgsUsage: " ",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "org, o",
+						Usage: "Specify the org with name",
+					},
+				},
+				Action: func(c *cli.Context) error{
+					err := cmd.ListApps(c.String("org"))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "add-app",
+				Usage:     "Add app to organization.",
+				ArgsUsage: "[app]",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "org, o",
+						Usage: "Specify the org with name",
+					},
+				},
+				Action: func(c *cli.Context) error{
+					if c.Args().Get(0) == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					err := cmd.AddOrgApp(c.String("org"), c.Args().Get(0))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "remove",
+				Usage:     "Destory an organization.",
+				ArgsUsage: " ",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "org, o",
+						Usage: "Specify the org with name",
+					},
+				},
+				Action: func(c *cli.Context) error{
+					err := cmd.DestroyOrg(c.String("org"))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+		},
+	}
+}
 
 func Orgs(argv []string) error {
 	usage := `

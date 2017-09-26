@@ -25,7 +25,12 @@ func OrgCreate(orgName string) error {
 }
 
 func GetOrg(orgName string) error {
-	configRepository := config.NewConfigRepository(func(error) {})
+	configRepository, orgName := loadOrg(orgName)
+
+	if orgName == "" {
+		return errors.New("can not find default org")
+	}
+
 	orgRepo := api.NewOrgRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
 

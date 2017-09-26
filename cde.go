@@ -28,6 +28,7 @@ func main() {
 		parser.ProvidersCommand(),
 		parser.AuthCommand(),
 		parser.AppsCommand(),
+		parser.OrgsCommand(),
 	}
 
 	commandList := os.Args
@@ -48,6 +49,7 @@ func noneMigrated(commandList []string) bool {
 		!strings.Contains(commandList[1], "whoami") &&
 		!strings.Contains(commandList[1], "register") &&
 		!strings.Contains(commandList[1], "auth") &&
+		!strings.Contains(commandList[1], "orgs") &&
 		!strings.Contains(commandList[1], "apps")
 }
 
