@@ -27,6 +27,7 @@ func main() {
 		parser.StacksCommand(),
 		parser.ProvidersCommand(),
 		parser.AuthCommand(),
+		parser.AppsCommand(),
 	}
 
 	commandList := os.Args
@@ -46,7 +47,8 @@ func noneMigrated(commandList []string) bool {
 		!strings.Contains(commandList[1], "logout") &&
 		!strings.Contains(commandList[1], "whoami") &&
 		!strings.Contains(commandList[1], "register") &&
-		!strings.Contains(commandList[1], "auth")
+		!strings.Contains(commandList[1], "auth") &&
+		!strings.Contains(commandList[1], "apps")
 }
 
 func preProcessCommand(args []string) (processedArgs []string) {

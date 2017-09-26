@@ -7,7 +7,289 @@ import (
 	"github.com/sjkyspa/stacks/client/cmd"
 	"os"
 	"strconv"
+	"github.com/urfave/cli"
 )
+
+func AppsCommand() cli.Command {
+	return cli.Command{
+		Name: "apps",
+		Usage: "Apps Command",
+		Subcommands: []cli.Command{
+			{
+				Name:      "create",
+				Usage:     "Create a new application",
+				ArgsUsage: "[name]",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "deploy, d",
+						Usage: "Deploy this app or not, 1 means need, 0 mean no, default 1",
+					},
+					cli.StringFlag{
+						Name:  "stack, s",
+						Usage: "The stack name",
+					},
+					cli.StringFlag{
+						Name:  "unified_procedure, u",
+						Usage: "The unified procedure name",
+					},
+					cli.StringFlag{
+						Name:  "provider, p",
+						Usage: "The provider to provide the app runtime",
+					},
+					cli.StringFlag{
+						Name:  "owner, o",
+						Usage: "The app with be possessed by the owner",
+					},
+				},
+				Action: func(c *cli.Context) error{
+					if c.Args().Get(0) == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					name := c.Args().Get(0)
+					needDeploy := c.String("deploy")
+					if needDeploy == "" {
+						needDeploy = "1"
+					}
+					if !cmd.IsAppNameInvalid(name) {
+						return cli.NewExitError(fmt.Sprintf("'%s' does not match the pattern '[a-z0-9-]+'\n", name), 1)
+					}
+					err := cmd.AppCreate(name, c.String("stack"),  c.String("stack"), c.String("provider"), c.String("owner"), needDeploy)
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "list",
+				Usage:     "List all Apps",
+				ArgsUsage: " ",
+				Action: func(c *cli.Context) error {
+					err := cmd.AppsList()
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "info",
+				Usage:     "View info about an application",
+				ArgsUsage: " ",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "app, a",
+						Usage: "Name of the application",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					err := cmd.GetApp(c.String("app"))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "destroy",
+				Usage:     "Destroy an application and stop application instance in deployment environment",
+				ArgsUsage: " ",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "app, a",
+						Usage: "Name of the application",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					err := cmd.DestroyApp(c.String("app"))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "stack-update",
+				Usage:     "Change to use another stack",
+				ArgsUsage: " ",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "app, a",
+						Usage: "Name of the application",
+					},
+					cli.StringFlag{
+						Name: "stack, s",
+						Usage: "Another existing stack name",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					err := cmd.SwitchStack(c.String("app"), c.String("stack"))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "logs",
+				Usage:     "View logs",
+				ArgsUsage: " ",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "app, a",
+						Usage: "Name of the application",
+					},
+					cli.StringFlag{
+						Name: "lines, n",
+						Usage: "The number of lines to display",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					lines := c.String("lines")
+					if lines == "" {
+						lines = "100"
+					}
+					var lineNum int
+					var err error
+					if lineNum, err = strconv.Atoi(lines); err != nil {
+						return cli.NewExitError(fmt.Sprintf("Error: %v\n", err), 1)
+					}
+
+					err = cmd.AppLog(c.String("app"), lineNum)
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "collaborators",
+				Usage:     "Prints collaborators in app",
+				ArgsUsage: " ",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "app, a",
+						Usage: "Name of the application",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					err := cmd.AppCollaborators(c.String("app"))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "add-collaborator",
+				Usage:     "Add collaborator",
+				ArgsUsage: "[email]",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "app, a",
+						Usage: "Name of the application",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					if c.Args().Get(0) == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					err := cmd.AppAddCollaborator(c.String("app"), c.Args().Get(0))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "rm-collaborator",
+				Usage:     "Remove collaborator",
+				ArgsUsage: "[email]",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "app, a",
+						Usage: "Name of the application",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					if c.Args().Get(0) == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					err := cmd.AppRmCollaborator(c.String("app"), c.Args().Get(0))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "transfer",
+				Usage:     "Transfer app to others, user or organization",
+				ArgsUsage: " ",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "app, a",
+						Usage: "Name of the application",
+					},
+					cli.StringFlag{
+						Name: "org, o",
+						Usage: "Name of the organization transfer to",
+					},
+					cli.StringFlag{
+						Name: "email, e",
+						Usage: "Email of the user transfer to",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					err := cmd.AppTransfer(c.String("app"), c.String("email"), c.String("org"))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "launch",
+				Usage:     "Launch non build app",
+				ArgsUsage: " ",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "app, a",
+						Usage: "Name of the application",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					err := cmd.AppLaunch(c.String("app"))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "localization",
+				Usage:     "Get codebase for an app",
+				ArgsUsage: "[name]",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "directory, d",
+						Usage: "Default sub directory name",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					if c.Args().Get(0) == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					err := cmd.AppLocalization(c.Args().Get(0), c.String("directory"))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+		},
+	}
+}
 
 func Apps(argv []string) error {
 	usage := `

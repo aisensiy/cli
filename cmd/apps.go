@@ -88,7 +88,7 @@ func AppCreate(appId string, stackName string, unifiedProcedure, providerName, o
 	var stackId string
 	var stack api.Stack
 	var unifiedProcedureId string
-	var provider launcherApi.Provider
+	var providerLink api.Link
 
 	if len(stackName) != 0 {
 		stacks, err := stackRepo.GetStackByName(stackName)
@@ -115,7 +115,11 @@ func AppCreate(appId string, stackName string, unifiedProcedure, providerName, o
 
 		unifiedProcedureId = unifiedProcedures.Items()[0].Id()
 
-		provider, err = providers.GetProviderByName(providerName)
+		provider, err := providers.GetProviderByName(providerName)
+		if err != nil {
+			return err
+		}
+		providerLink, err = provider.Links().Link("self")
 		if err != nil {
 			return err
 		}
@@ -127,10 +131,7 @@ func AppCreate(appId string, stackName string, unifiedProcedure, providerName, o
 	} else {
 		needDeployBool = false
 	}
-	providerLink, err := provider.Links().Link("self")
-	if err != nil {
-		return err
-	}
+
 	appParams := api.AppParams{
 		Name:             appId,
 		Stack:            stackId,
