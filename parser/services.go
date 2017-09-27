@@ -7,7 +7,137 @@ import (
 	deployApi "github.com/sjkyspa/stacks/launcher/api/api"
 	"os"
 	"strconv"
+	"github.com/urfave/cli"
 )
+
+func ServicesCommand() cli.Command {
+	return cli.Command {
+		Name: "services",
+		Usage: "Service Command",
+		Subcommands: []cli.Command {
+			{
+				Name: "create",
+				Usage: "Create Service.",
+				ArgsUsage: " ",
+				Action: func(c *cli.Context) error {
+					if err := cmd.ServiceCreate(); err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name: "info",
+				Usage: "View service basic information.",
+				ArgsUsage: "[service-name]",
+				Flags: []cli.Flag {
+					cli.StringFlag{
+						Name: "app, a",
+						Usage: "Specify app with name.",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					if c.Args().Get(0) == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+
+					if err := cmd.ServiceInfo(c.String("app"), c.Args().Get(0)); err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name: "update",
+				Usage: "Update service basic information.",
+				ArgsUsage: "[service-name]",
+				Flags: []cli.Flag {
+					cli.StringFlag{
+						Name: "app, a",
+						Usage: "Specify app with name.",
+					},
+					cli.StringFlag{
+						Name: "mem",
+						Usage: "Specify allocated memory for this service.",
+					},
+					cli.StringFlag{
+						Name: "cpu",
+						Usage: "Specify max allocated cpu size.",
+					},
+					cli.StringFlag{
+						Name: "instances",
+						Usage: "Specify instance number",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					serviceName := c.Args().Get(0)
+					if serviceName == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+
+					instances := c.String("instances")
+					if instances != "" {
+						_, err := strconv.Atoi(instances);
+						if err != nil {
+							return cli.NewExitError(fmt.Sprintf("Error: %v\n", err), 1)
+						}
+					}
+
+					updateParams := make(map[string]string, 0)
+					updateParams["mem"] = c.String("mem")
+					updateParams["cpu"] = c.String("cpu")
+					updateParams["instances"] = instances
+					newServiceParams, err := mergeWithOriginService(c.String("app"), serviceName, updateParams);
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+
+					if err := cmd.ServiceUpdate(c.String("app"), serviceName, newServiceParams); err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name: "logs",
+				Usage: "Prints info about the current service.",
+				ArgsUsage: "[service-name]",
+				Flags: []cli.Flag {
+					cli.StringFlag{
+						Name: "app, a",
+						Usage: "Specify app with name.",
+					},
+					cli.StringFlag{
+						Name: "lines, n",
+						Usage: "Specify the number of lines to display.",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					serviceName := c.Args().Get(0)
+					if serviceName == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+
+					lines := c.String("lines")
+
+					if lines == "" {
+						lines = "100"
+					}
+					var lineNum int
+					var err error
+					if lineNum, err = strconv.Atoi(lines); err != nil {
+						return cli.NewExitError(fmt.Sprintf("Error: %v\n", err), 1)
+					}
+
+					if err := cmd.ServiceLog(c.String("app"), serviceName, lineNum); err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+		},
+	}
+}
 
 func Service(argv []string) error {
 	usage := `
