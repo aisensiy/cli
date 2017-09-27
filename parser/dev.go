@@ -3,7 +3,61 @@ package parser
 import (
 	docopt "github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
+	"github.com/urfave/cli"
 )
+
+func DevCommands() cli.Command {
+	return cli.Command {
+		Name: "dev",
+		Usage: "Dev Commands",
+		Subcommands: []cli.Command {
+			{
+				Name: "up",
+				Usage: "Start up the local dev env.",
+				ArgsUsage: " ",
+				Action: func(c *cli.Context) error {
+					if err := cmd.DevUp(); err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name: "down",
+				Usage: "Shutdown the local dev env.",
+				ArgsUsage: " ",
+				Action: func (c * cli.Context) error {
+					if err := cmd.DevDown(); err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name: "destroy",
+				Usage: "Destroy the local dev env.",
+				ArgsUsage: " ",
+				Action: func (c * cli.Context) error {
+					if err := cmd.DevDestroy(); err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name: "env",
+				Usage: "Display the env variables.",
+				ArgsUsage: " ",
+				Action: func (c * cli.Context) error {
+					if err := cmd.DevEnv(); err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+		},
+	}
+}
 
 // Config routes config commands to their specific function.
 func Dev(argv []string) error {
