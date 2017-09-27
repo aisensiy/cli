@@ -28,7 +28,7 @@ func ProvidersCommand() cli.Command {
 			{
 				Name:      "info",
 				Usage:     "Get info of a Provider",
-				ArgsUsage: "[provider-name]",
+				ArgsUsage: "<provider-name>",
 				Action: func(c *cli.Context) error {
 					if (c.Args().Get(0) == "") {
 						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
@@ -43,7 +43,7 @@ func ProvidersCommand() cli.Command {
 			{
 				Name:      "enroll",
 				Usage:     "Enroll a new Provider",
-				ArgsUsage: "[name] [type]",
+				ArgsUsage: "<name] <type>",
 				Flags: []cli.Flag{
 					cli.StringSliceFlag{
 						Name:  "config, c",
@@ -73,7 +73,7 @@ func ProvidersCommand() cli.Command {
 			{
 				Name:      "update",
 				Usage:     "Update an existing Provider",
-				ArgsUsage: "[name]",
+				ArgsUsage: "<name>",
 				Flags: []cli.Flag{
 					cli.StringSliceFlag{
 						Name:  "config, c",
@@ -81,17 +81,17 @@ func ProvidersCommand() cli.Command {
 					},
 				},
 				Action: func(c *cli.Context) error {
-					if c.Args().Get(0) == "" {
-						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
-					}
-					configMap, err := updateConfigConvert(c.StringSlice("config"))
-					if err != nil {
-						return cli.NewExitError(err, 1)
-					}
-					err = cmd.ProviderUpdate(c.Args().Get(0), configMap)
-					if err != nil {
-						return cli.NewExitError(err, 1)
-					}
+					//if c.Args().Get(0) == "" {
+					//	return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					//}
+					//configMap, err := updateConfigConvert(c.StringSlice("config"))
+					//if err != nil {
+					//	return cli.NewExitError(err, 1)
+					//}
+					//err = cmd.ProviderUpdate(c.Args().Get(0), configMap)
+					//if err != nil {
+					//	return cli.NewExitError(err, 1)
+					//}
 					return nil
 				},
 			},

@@ -16,7 +16,7 @@ func OrgsCommand() cli.Command {
 			{
 				Name:      "create",
 				Usage:     "Create a new organization",
-				ArgsUsage: "[name]",
+				ArgsUsage: "<name>",
 				Action: func(c *cli.Context) error{
 					if c.Args().Get(0) == "" {
 						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
@@ -93,7 +93,7 @@ func OrgsCommand() cli.Command {
 			{
 				Name:      "add-member",
 				Usage:     "Add member to organization.",
-				ArgsUsage: "[email]",
+				ArgsUsage: "<email>",
 				Flags: []cli.Flag{
 					cli.StringFlag{
 						Name:  "org, o",
@@ -115,7 +115,7 @@ func OrgsCommand() cli.Command {
 			{
 				Name:      "rm-member",
 				Usage:     "Remove member from organization.",
-				ArgsUsage: "[email]",
+				ArgsUsage: "<email>",
 				Flags: []cli.Flag{
 					cli.StringFlag{
 						Name:  "org, o",
@@ -155,7 +155,7 @@ func OrgsCommand() cli.Command {
 			{
 				Name:      "add-app",
 				Usage:     "Add app to organization.",
-				ArgsUsage: "[app]",
+				ArgsUsage: "<app>",
 				Flags: []cli.Flag{
 					cli.StringFlag{
 						Name:  "org, o",

@@ -12,7 +12,7 @@ func ScaffoldCommands() cli.Command {
 	return cli.Command{
 		Name: "scaffold",
 		Usage: "Creates a new scaffold in current directory.",
-		ArgsUsage: "[]",
+		ArgsUsage: " ",
 		Flags: []cli.Flag {
 			cli.StringFlag{
 				Name: "stack, s",

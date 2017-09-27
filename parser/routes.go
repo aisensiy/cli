@@ -15,7 +15,7 @@ func RoutesCommand() cli.Command{
 			{
 				Name: "create",
 				Usage: "Create a new routes",
-				ArgsUsage: "[domain] [path]",
+				ArgsUsage: "<domain> <path>",
 				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" || c.Args().Get(1) == "" {
 						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
@@ -40,7 +40,7 @@ func RoutesCommand() cli.Command{
 			{
 				Name: "bind",
 				Usage: "Bind a route with an app",
-				ArgsUsage: "[route] [app]",
+				ArgsUsage: "<route> <app>",
 				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" || c.Args().Get(1) == "" {
 						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
@@ -54,7 +54,7 @@ func RoutesCommand() cli.Command{
 			{
 				Name: "unbind",
 				Usage: "Unbind a route with an app",
-				ArgsUsage: "[route] [app]",
+				ArgsUsage: "<route> <app>",
 				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" || c.Args().Get(1) == "" {
 						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)

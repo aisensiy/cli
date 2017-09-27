@@ -18,7 +18,7 @@ func AppsCommand() cli.Command {
 			{
 				Name:      "create",
 				Usage:     "Create a new application",
-				ArgsUsage: "[name]",
+				ArgsUsage: "<name>",
 				Flags: []cli.Flag{
 					cli.StringFlag{
 						Name:  "deploy, d",
@@ -183,7 +183,7 @@ func AppsCommand() cli.Command {
 			{
 				Name:      "add-collaborator",
 				Usage:     "Add collaborator",
-				ArgsUsage: "[email]",
+				ArgsUsage: "<email>",
 				Flags: []cli.Flag{
 					cli.StringFlag{
 						Name:  "app, a",
@@ -204,7 +204,7 @@ func AppsCommand() cli.Command {
 			{
 				Name:      "rm-collaborator",
 				Usage:     "Remove collaborator",
-				ArgsUsage: "[email]",
+				ArgsUsage: "<email>",
 				Flags: []cli.Flag{
 					cli.StringFlag{
 						Name:  "app, a",
@@ -269,7 +269,7 @@ func AppsCommand() cli.Command {
 			{
 				Name:      "localization",
 				Usage:     "Get codebase for an app",
-				ArgsUsage: "[name]",
+				ArgsUsage: "<name>",
 				Flags: []cli.Flag{
 					cli.StringFlag{
 						Name:  "directory, d",

@@ -26,7 +26,7 @@ func KeysCommands() cli.Command {
 			{
 				Name: "add",
 				Usage: "Add an SSH key",
-				ArgsUsage: "[ssh-file-path]",
+				ArgsUsage: "<ssh-file-path>",
 				Action: func(c *cli.Context) error{
 					if c.Args().Get(0) == "" {
 						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
@@ -40,7 +40,7 @@ func KeysCommands() cli.Command {
 			{
 				Name: "remove",
 				Usage: "Remove an SSH key",
-				ArgsUsage: "[key-id]",
+				ArgsUsage: "<key-id>",
 				Action: func(c *cli.Context) error{
 					if c.Args().Get(0) == "" {
 						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)

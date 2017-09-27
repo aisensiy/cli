@@ -16,7 +16,7 @@ func AuthCommand() cli.Command {
 			{
 				Name:      "register",
 				Usage:     "Register a new user on a specific controller",
-				ArgsUsage: "[controller]",
+				ArgsUsage: "<controller>",
 				Flags: []cli.Flag{
 					cli.StringFlag{
 						Name:  "email, e",
@@ -49,7 +49,7 @@ func AuthCommand() cli.Command {
 			{
 				Name:      "login",
 				Usage:     "Log in on a specific controller.",
-				ArgsUsage: "[controller]",
+				ArgsUsage: "<controller>",
 				Flags: []cli.Flag{
 					cli.StringFlag{
 						Name:  "email, e",

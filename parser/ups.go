@@ -21,7 +21,7 @@ func UpsCommand() cli.Command {
 			{
 				Name:      "info",
 				Usage:     "Get info of an Unified Procedure",
-				ArgsUsage: "[up-name]",
+				ArgsUsage: "<up-name>",
 				Action: func(c *cli.Context) error {
 					return cmd.UpsInfo(c.Args().First())
 				},
@@ -29,7 +29,7 @@ func UpsCommand() cli.Command {
 			{
 				Name:      "draft",
 				Usage:     "Create a new Unified Procedure",
-				ArgsUsage: "[up-file]",
+				ArgsUsage: "<up-file>",
 				Action: func(c *cli.Context) error {
 					return cmd.UpCreate(c.Args().First())
 				},
@@ -37,7 +37,7 @@ func UpsCommand() cli.Command {
 			{
 				Name:      "update",
 				Usage:     "Update an existing Unified Procedure",
-				ArgsUsage: "[up-id] [up-file]",
+				ArgsUsage: "<up-id> <up-file>",
 				Action: func(c *cli.Context) error {
 					return cmd.UpUpdate(c.Args().First(), c.Args().Get(1))
 				},
@@ -45,7 +45,7 @@ func UpsCommand() cli.Command {
 			{
 				Name:      "remove",
 				Usage:     "Delete an Unified Procedure",
-				ArgsUsage: "[up-id]",
+				ArgsUsage: "<up-id>",
 				Action: func(c *cli.Context) error {
 					return cmd.UpRemove(c.Args().First())
 				},

@@ -34,7 +34,7 @@ func PsCommands() cli.Command {
 			{
 				Name: "scale",
 				Usage: "Scale a service process",
-				ArgsUsage: "[service-name] [instance-count]",
+				ArgsUsage: "<service-name> <instance-count>",
 				Flags: []cli.Flag {
 					cli.StringFlag {
 						Name: "app, a",

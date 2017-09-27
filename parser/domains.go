@@ -15,7 +15,7 @@ func DomainsCommands() cli.Command {
 			{
 				Name: "create",
 				Usage: "Binds a domain to an application.",
-				ArgsUsage: "[domain]",
+				ArgsUsage: "<domain>",
 				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" {
 						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
@@ -40,7 +40,7 @@ func DomainsCommands() cli.Command {
 			{
 				Name: "remove",
 				Usage: "Unbinds a domain for an application.",
-				ArgsUsage: "[domain]",
+				ArgsUsage: "<domain>",
 				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" {
 						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
@@ -54,7 +54,7 @@ func DomainsCommands() cli.Command {
 			{
 				Name: "cert",
 				Usage: "Attach cert to the domain.",
-				ArgsUsage: "[domain][crt][privite-key]",
+				ArgsUsage: "<domain> <crt> <privite-key>",
 				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" || c.Args().Get(1) == "" || c.Args().Get(2) == "" {
 						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)

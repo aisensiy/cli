@@ -26,7 +26,7 @@ func StacksCommand() cli.Command {
 			{
 				Name:      "info",
 				Usage:     "Get info of a Stack",
-				ArgsUsage: "[stack-name]",
+				ArgsUsage: "<stack-name>",
 				Action: func(c *cli.Context) error {
 					err := cmd.GetStack(c.Args().First())
 					if err != nil {
@@ -38,7 +38,7 @@ func StacksCommand() cli.Command {
 			{
 				Name:      "create",
 				Usage:     "Create a new Stack",
-				ArgsUsage: "[stack-file]",
+				ArgsUsage: "<stack-file>",
 				Action: func(c *cli.Context) error {
 					err := cmd.StackCreate(c.Args().First())
 					if err != nil {
@@ -50,7 +50,7 @@ func StacksCommand() cli.Command {
 			{
 				Name:      "update",
 				Usage:     "Update an existing Stack",
-				ArgsUsage: "[stack-id] [stack-file]",
+				ArgsUsage: "<stack-id> <stack-file>",
 				Action: func(c *cli.Context) error {
 					err := cmd.StackUpdate(c.Args().First(), c.Args().Get(1))
 					if err != nil {
@@ -62,7 +62,7 @@ func StacksCommand() cli.Command {
 			{
 				Name:      "remove",
 				Usage:     "Delete a Stack",
-				ArgsUsage: "[stack-name]",
+				ArgsUsage: "<stack-name>",
 				Action: func(c *cli.Context) error {
 					err := cmd.StackRemove(c.Args().First())
 					if err != nil {
@@ -74,7 +74,7 @@ func StacksCommand() cli.Command {
 			{
 				Name:      "publish",
 				Usage:     "Publish a Stack",
-				ArgsUsage: "[stack-id]",
+				ArgsUsage: "<stack-id>",
 				Action: func(c *cli.Context) error {
 					err := cmd.StackPublish(c.Args().First())
 					if err != nil {
@@ -86,7 +86,7 @@ func StacksCommand() cli.Command {
 			{
 				Name:      "unpublish",
 				Usage:     "Unpublish a Stack",
-				ArgsUsage: "[stack-id]",
+				ArgsUsage: "<stack-id>",
 				Action: func(c *cli.Context) error {
 					err := cmd.StackUnPublish(c.Args().First())
 					if err != nil {

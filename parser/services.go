@@ -29,7 +29,7 @@ func ServicesCommand() cli.Command {
 			{
 				Name: "info",
 				Usage: "View service basic information.",
-				ArgsUsage: "[service-name]",
+				ArgsUsage: "<service-name>",
 				Flags: []cli.Flag {
 					cli.StringFlag{
 						Name: "app, a",
@@ -50,7 +50,7 @@ func ServicesCommand() cli.Command {
 			{
 				Name: "update",
 				Usage: "Update service basic information.",
-				ArgsUsage: "[service-name]",
+				ArgsUsage: "<service-name>",
 				Flags: []cli.Flag {
 					cli.StringFlag{
 						Name: "app, a",
@@ -101,7 +101,7 @@ func ServicesCommand() cli.Command {
 			{
 				Name: "logs",
 				Usage: "Prints info about the current service.",
-				ArgsUsage: "[service-name]",
+				ArgsUsage: "<service-name>",
 				Flags: []cli.Flag {
 					cli.StringFlag{
 						Name: "app, a",
