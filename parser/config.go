@@ -3,7 +3,81 @@ package parser
 import (
 	docopt "github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
+	"github.com/urfave/cli"
+	"fmt"
 )
+
+func ConfigCommands() cli.Command {
+	return cli.Command {
+		Name: "config",
+		Usage: "Config Commands",
+		Subcommands: []cli.Command {
+			{
+				Name: "list",
+				Usage: "List environment variables for an app.",
+				ArgsUsage: " ",
+				Flags: []cli.Flag {
+					cli.BoolFlag {
+						Name: "oneline",
+						Usage: "Print output on one line",
+					},
+					cli.StringFlag {
+						Name: "app, a",
+						Usage: "Specify app with name",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					if err := cmd.ConfigList(c.String("app"), c.Bool("oneline")); err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name: "set",
+				Usage: "Set environment variables for an app",
+				ArgsUsage: "<key>=<value> [<key>=<value>...]",
+				Flags: []cli.Flag {
+					cli.StringFlag {
+						Name: "app, a",
+						Usage: "Specify app with name",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					if !c.Args().Present() {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					envs := append(c.Args().Tail(), c.Args().First())
+					if err := cmd.ConfigSet(c.String("app"), envs); err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name: "unset",
+				Usage: "Unset environment variables for an app",
+				ArgsUsage: "<key> [<key>...]",
+				Flags: []cli.Flag {
+					cli.StringFlag {
+						Name: "app, a",
+						Usage: "Specify app with name",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					if !c.Args().Present() {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					keys := append(c.Args().Tail(), c.Args().First())
+					if err := cmd.ConfigUnset(c.String("app"), keys); err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+		},
+	}
+}
 
 // Config routes config commands to their specific function.
 func Config(argv []string) error {

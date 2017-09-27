@@ -11,7 +11,7 @@ import (
 func OrgsCommand() cli.Command {
 	return cli.Command{
 		Name:  "orgs",
-		Usage: "Orgs Command",
+		Usage: "Orgs Commands",
 		Subcommands: []cli.Command{
 			{
 				Name:      "create",

@@ -10,7 +10,7 @@ import (
 func DomainsCommands() cli.Command {
 	return cli.Command{
 		Name: "domains",
-		Usage: "Domains Command",
+		Usage: "Domains Commands",
 		Subcommands: []cli.Command {
 			{
 				Name: "create",

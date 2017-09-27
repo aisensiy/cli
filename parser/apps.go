@@ -13,7 +13,7 @@ import (
 func AppsCommand() cli.Command {
 	return cli.Command{
 		Name: "apps",
-		Usage: "Apps Command",
+		Usage: "Apps Commands",
 		Subcommands: []cli.Command{
 			{
 				Name:      "create",
