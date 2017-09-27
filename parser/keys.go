@@ -4,7 +4,56 @@ import (
 	"fmt"
 	docopt "github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
+	"github.com/urfave/cli"
 )
+
+func KeysCommands() cli.Command {
+	return cli.Command {
+		Name: "keys",
+		Usage: "Keys Commands",
+		Subcommands: []cli.Command {
+			{
+				Name: "list",
+				Usage: "List SSH keys for the logged in user",
+				ArgsUsage: " ",
+				Action: func(c *cli.Context) error{
+					if err := cmd.ListKeys(); err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name: "add",
+				Usage: "Add an SSH key",
+				ArgsUsage: "[ssh-file-path]",
+				Action: func(c *cli.Context) error{
+					if c.Args().Get(0) == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					if err := cmd.AddKey(c.Args().Get(0)); err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name: "remove",
+				Usage: "Remove an SSH key",
+				ArgsUsage: "[key-id]",
+				Action: func(c *cli.Context) error{
+					if c.Args().Get(0) == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					if err := cmd.RemoveKey(c.Args().Get(0)); err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+		},
+	}
+}
 
 func Keys(argv []string) error {
 	usage := `
