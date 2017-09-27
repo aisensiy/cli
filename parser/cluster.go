@@ -4,7 +4,106 @@ import (
 	"errors"
 	docopt "github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
+	"github.com/urfave/cli"
+	"fmt"
 )
+
+func ClustersCommands() cli.Command {
+	return cli.Command {
+		Name: "clusters",
+		Usage: "Cluster Commands",
+		Subcommands: []cli.Command {
+			{
+				Name: "list",
+				Usage: "List clusters.",
+				ArgsUsage: " ",
+				Action: func(c *cli.Context) error {
+					if err := cmd.ClusterList(); err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name: "info",
+				Usage: "View info about a cluster",
+				ArgsUsage: "<cluster-id>",
+				Action: func(c *cli.Context) error {
+					if !c.Args().Present() {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					if err := cmd.GetCluster(c.Args().First()); err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name: "create",
+				Usage: "Create a new cluster",
+				ArgsUsage: "<name> <type> <uri>",
+				Action: func(c *cli.Context) error {
+					if c.Args().Get(0) == "" || c.Args().Get(1) == "" || c.Args().Get(2) == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					if err := cmd.ClusterCreate(c.Args().Get(0), c.Args().Get(1), c.Args().Get(2)); err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name: "update",
+				Usage: "Update a cluster",
+				ArgsUsage: "<cluster-id>",
+				Flags: []cli.Flag {
+					cli.StringFlag {
+						Name: "name, n",
+						Usage: "New name for cluster.",
+					},
+					cli.StringFlag {
+						Name: "type, t",
+						Usage: "New type for cluster.",
+					},
+					cli.StringFlag {
+						Name: "uri, u",
+						Usage: "New uri for cluster.",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					if !c.Args().Present() {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					newName := c.String("name")
+					newType := c.String("type")
+					newUri := c.String("uri")
+					if newName == "" && newType == "" && newUri == "" {
+						return cli.NewExitError("name, type or uri should be given", 1)
+					}
+
+					if err := cmd.ClusterUpdate(c.Args().First(), newName, newType, newUri); err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name: "delete",
+				Usage: "Delete a cluster",
+				ArgsUsage: "<cluster-id>",
+				Action: func(c *cli.Context) error {
+					if !c.Args().Present() {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					if err := cmd.ClusterRemove(c.Args().First()); err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+		},
+	}
+}
 
 // Config routes config commands to their specific function.
 func Clusters(argv []string) error {

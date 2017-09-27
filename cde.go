@@ -38,6 +38,7 @@ func main() {
 		parser.GitCommands(),
 		parser.ConfigCommands(),
 		parser.DevCommands(),
+		parser.ClustersCommands(),
 	}
 
 	commandList := os.Args
@@ -68,6 +69,7 @@ func noneMigrated(commandList []string) bool {
 		!strings.Contains(commandList[1], "git") &&
 		!strings.Contains(commandList[1], "config") &&
 		!strings.Contains(commandList[1], "dev") &&
+		!strings.Contains(commandList[1], "clusters") &&
 		!strings.Contains(commandList[1], "apps")
 }
 
