@@ -3,7 +3,34 @@ package parser
 import (
 	"github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
+	"github.com/urfave/cli"
+	"fmt"
 )
+
+func LaunchCommands() cli.Command {
+	return cli.Command {
+		Name: "launch",
+		Usage: "Launch Commands",
+		Subcommands: []cli.Command {
+			{
+				Name: "build",
+				Usage: "Launch a build procedure.",
+				ArgsUsage: "<filename> <app-name>",
+				Action: func(c *cli.Context) error {
+					filename := c.Args().Get(0)
+					appName := c.Args().Get(1)
+					if filename == "" || appName == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					if err := cmd.LaunchBuild(filename, appName); err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					return nil
+				},
+			},
+		},
+	}
+}
 
 func Launch(argv []string) error {
 	usage := `
