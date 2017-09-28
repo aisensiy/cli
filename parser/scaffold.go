@@ -10,51 +10,49 @@ import (
 
 func ScaffoldCommands() cli.Command {
 	return cli.Command{
-		Name: "scaffold",
-		Usage: "Creates a new scaffold in current directory.",
+		Name:      "scaffold",
+		Usage:     "Creates a new scaffold in current directory.",
 		ArgsUsage: " ",
-		Flags: []cli.Flag {
+		Flags: []cli.Flag{
 			cli.StringFlag{
-				Name: "stack, s",
+				Name:  "stack, s",
 				Usage: "Specify stack with name",
 			},
 			cli.StringFlag{
-				Name: "unified_procedure, u",
+				Name:  "unified_procedure, u",
 				Usage: "Specify unified procedure with name",
 			},
 			cli.StringFlag{
-				Name: "provider, p",
+				Name:  "provider, p",
 				Usage: "Specify provider for provide the app runtime",
 			},
 			cli.StringFlag{
-				Name: "owner, o",
+				Name:  "owner, o",
 				Usage: "Specify owner for the app",
 			},
 			cli.StringFlag{
-				Name: "dir, d",
+				Name:  "dir, d",
 				Usage: "Specify default sub directory with name",
 			},
 			cli.StringFlag{
-				Name: "app, a",
+				Name:  "app, a",
 				Usage: "Create a new scaffold and create a new app in sub directory",
 			},
 			cli.StringFlag{
-				Name: "deploy",
+				Name:  "deploy",
+				Value: "1",
 				Usage: "Tell system to deploy this app or not, 1 means need, 0 mean no, default 1",
 			},
 		},
-		Action: func(c *cli.Context) error{
+		Action: func(c *cli.Context) error {
 			appName := c.String("app")
-			if appName!="" && !cmd.IsAppNameInvalid(appName) {
+			if appName != "" && !cmd.IsAppNameInvalid(appName) {
 				return cli.NewExitError(fmt.Errorf("'%s' does not match the pattern '[a-z0-9-]+'\n", appName), 1)
 			}
 
 			needDeploy := c.String("deploy")
-			if needDeploy == "" {
-				needDeploy = "1"
-			}
 
-			if err := cmd.ScaffoldCreate(c.String("stack"), c.String("unified_procedure"),  c.String("provider"), c.String("owner"),  c.String("dir"), appName, needDeploy); err != nil {
+			if err := cmd.ScaffoldCreate(c.String("stack"), c.String("unified_procedure"), c.String("provider"), c.String("owner"), c.String("dir"), appName, needDeploy); err != nil {
 				return cli.NewExitError(err, 1)
 			}
 
@@ -102,11 +100,11 @@ Options:
 
 	needDeploy := safeGetOrDefault(args, "--deploy", "1")
 
-	if appName!="" && !cmd.IsAppNameInvalid(appName) {
+	if appName != "" && !cmd.IsAppNameInvalid(appName) {
 		return fmt.Errorf("'%s' does not match the pattern '[a-z0-9-]+'\n", appName)
 	}
 
-	return cmd.ScaffoldCreate(stackName, unifiedProcedure,  provider, owner,  dir, appName, needDeploy)
+	return cmd.ScaffoldCreate(stackName, unifiedProcedure, provider, owner, dir, appName, needDeploy)
 }
 
 func retrieveGitName(gitUrl string) (string, error) {

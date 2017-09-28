@@ -12,7 +12,7 @@ import (
 
 func AppsCommand() cli.Command {
 	return cli.Command{
-		Name: "apps",
+		Name:  "apps",
 		Usage: "Apps Commands",
 		Subcommands: []cli.Command{
 			{
@@ -22,6 +22,7 @@ func AppsCommand() cli.Command {
 				Flags: []cli.Flag{
 					cli.StringFlag{
 						Name:  "deploy, d",
+						Value: "1",
 						Usage: "Deploy this app or not, 1 means need, 0 mean no, default 1",
 					},
 					cli.StringFlag{
@@ -41,19 +42,16 @@ func AppsCommand() cli.Command {
 						Usage: "The app with be possessed by the owner",
 					},
 				},
-				Action: func(c *cli.Context) error{
+				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" {
 						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
 					name := c.Args().Get(0)
 					needDeploy := c.String("deploy")
-					if needDeploy == "" {
-						needDeploy = "1"
-					}
 					if !cmd.IsAppNameInvalid(name) {
 						return cli.NewExitError(fmt.Sprintf("'%s' does not match the pattern '[a-z0-9-]+'\n", name), 1)
 					}
-					err := cmd.AppCreate(name, c.String("stack"),  c.String("stack"), c.String("provider"), c.String("owner"), needDeploy)
+					err := cmd.AppCreate(name, c.String("stack"), c.String("stack"), c.String("provider"), c.String("owner"), needDeploy)
 					if err != nil {
 						return cli.NewExitError(err, 1)
 					}
@@ -118,7 +116,7 @@ func AppsCommand() cli.Command {
 						Usage: "Name of the application",
 					},
 					cli.StringFlag{
-						Name: "stack, s",
+						Name:  "stack, s",
 						Usage: "Another existing stack name",
 					},
 				},
@@ -140,15 +138,13 @@ func AppsCommand() cli.Command {
 						Usage: "Name of the application",
 					},
 					cli.StringFlag{
-						Name: "lines, n",
+						Name:  "lines, n",
+						Value: "100",
 						Usage: "The number of lines to display",
 					},
 				},
 				Action: func(c *cli.Context) error {
 					lines := c.String("lines")
-					if lines == "" {
-						lines = "100"
-					}
 					var lineNum int
 					var err error
 					if lineNum, err = strconv.Atoi(lines); err != nil {
@@ -232,11 +228,11 @@ func AppsCommand() cli.Command {
 						Usage: "Name of the application",
 					},
 					cli.StringFlag{
-						Name: "org, o",
+						Name:  "org, o",
 						Usage: "Name of the organization transfer to",
 					},
 					cli.StringFlag{
-						Name: "email, e",
+						Name:  "email, e",
 						Usage: "Email of the user transfer to",
 					},
 				},

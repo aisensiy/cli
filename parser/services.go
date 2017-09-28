@@ -11,13 +11,13 @@ import (
 )
 
 func ServicesCommand() cli.Command {
-	return cli.Command {
-		Name: "services",
+	return cli.Command{
+		Name:  "services",
 		Usage: "Service Commands",
-		Subcommands: []cli.Command {
+		Subcommands: []cli.Command{
 			{
-				Name: "create",
-				Usage: "Create Service.",
+				Name:      "create",
+				Usage:     "Create Service.",
 				ArgsUsage: " ",
 				Action: func(c *cli.Context) error {
 					if err := cmd.ServiceCreate(); err != nil {
@@ -27,12 +27,12 @@ func ServicesCommand() cli.Command {
 				},
 			},
 			{
-				Name: "info",
-				Usage: "View service basic information.",
+				Name:      "info",
+				Usage:     "View service basic information.",
 				ArgsUsage: "<service-name>",
-				Flags: []cli.Flag {
+				Flags: []cli.Flag{
 					cli.StringFlag{
-						Name: "app, a",
+						Name:  "app, a",
 						Usage: "Specify app with name.",
 					},
 				},
@@ -48,24 +48,24 @@ func ServicesCommand() cli.Command {
 				},
 			},
 			{
-				Name: "update",
-				Usage: "Update service basic information.",
+				Name:      "update",
+				Usage:     "Update service basic information.",
 				ArgsUsage: "<service-name>",
-				Flags: []cli.Flag {
+				Flags: []cli.Flag{
 					cli.StringFlag{
-						Name: "app, a",
+						Name:  "app, a",
 						Usage: "Specify app with name.",
 					},
 					cli.StringFlag{
-						Name: "mem",
+						Name:  "mem",
 						Usage: "Specify allocated memory for this service.",
 					},
 					cli.StringFlag{
-						Name: "cpu",
+						Name:  "cpu",
 						Usage: "Specify max allocated cpu size.",
 					},
 					cli.StringFlag{
-						Name: "instances",
+						Name:  "instances",
 						Usage: "Specify instance number",
 					},
 				},
@@ -99,16 +99,17 @@ func ServicesCommand() cli.Command {
 				},
 			},
 			{
-				Name: "logs",
-				Usage: "Prints info about the current service.",
+				Name:      "logs",
+				Usage:     "Prints info about the current service.",
 				ArgsUsage: "<service-name>",
-				Flags: []cli.Flag {
+				Flags: []cli.Flag{
 					cli.StringFlag{
-						Name: "app, a",
+						Name:  "app, a",
 						Usage: "Specify app with name.",
 					},
 					cli.StringFlag{
-						Name: "lines, n",
+						Name:  "lines, n",
+						Value: "100",
 						Usage: "Specify the number of lines to display.",
 					},
 				},
@@ -119,10 +120,6 @@ func ServicesCommand() cli.Command {
 					}
 
 					lines := c.String("lines")
-
-					if lines == "" {
-						lines = "100"
-					}
 					var lineNum int
 					var err error
 					if lineNum, err = strconv.Atoi(lines); err != nil {
