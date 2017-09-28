@@ -82,14 +82,22 @@ func preProcessCommand(args []string) (processedArgs []string) {
 
 	args[1] = replaceShortcut(args[1])
 
-	//TODO: filter command name, because only some commands have list subcommands
-	if len(args) == 2 && !strings.Contains(args[1], ":") {
+	if len(args) == 2 && isListShortcutCommand(args) {
 		args[1] = args[1] + ":list"
 	}
 
 	processedArgs = append([]string{args[0]}, strings.Split(args[1], ":")...)
 	processedArgs = append(processedArgs, args[2:]...)
 	return
+}
+
+func isListShortcutCommand(args []string) bool {
+	return args[1] == "stacks" ||
+		args[1] == "apps" ||
+		args[1] == "domains" ||
+		args[1] == "routes" ||
+		args[1] == "clusters" ||
+		args[1] == "providers"
 }
 
 func replaceShortcut(command string) string {
