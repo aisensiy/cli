@@ -91,7 +91,6 @@ func AuthCommand() cli.Command {
 	}
 }
 
-
 // Auth routes auth commands to the specific function.
 func Auth(argv []string) error {
 	usage := `

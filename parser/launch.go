@@ -8,13 +8,13 @@ import (
 )
 
 func LaunchCommands() cli.Command {
-	return cli.Command {
-		Name: "launch",
+	return cli.Command{
+		Name:  "launch",
 		Usage: "Launch Commands",
-		Subcommands: []cli.Command {
+		Subcommands: []cli.Command{
 			{
-				Name: "build",
-				Usage: "Launch a build procedure.",
+				Name:      "build",
+				Usage:     "Launch a build procedure.",
 				ArgsUsage: "<filename> <app-name>",
 				Action: func(c *cli.Context) error {
 					filename := c.Args().Get(0)

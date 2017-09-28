@@ -8,15 +8,15 @@ import (
 )
 
 func KeysCommands() cli.Command {
-	return cli.Command {
-		Name: "keys",
+	return cli.Command{
+		Name:  "keys",
 		Usage: "Keys Commands",
-		Subcommands: []cli.Command {
+		Subcommands: []cli.Command{
 			{
-				Name: "list",
-				Usage: "List SSH keys for the logged in user",
+				Name:      "list",
+				Usage:     "List SSH keys for the logged in user",
 				ArgsUsage: " ",
-				Action: func(c *cli.Context) error{
+				Action: func(c *cli.Context) error {
 					if err := cmd.ListKeys(); err != nil {
 						return cli.NewExitError(err, 1)
 					}
@@ -24,10 +24,10 @@ func KeysCommands() cli.Command {
 				},
 			},
 			{
-				Name: "add",
-				Usage: "Add an SSH key",
+				Name:      "add",
+				Usage:     "Add an SSH key",
 				ArgsUsage: "<ssh-file-path>",
-				Action: func(c *cli.Context) error{
+				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" {
 						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
@@ -38,10 +38,10 @@ func KeysCommands() cli.Command {
 				},
 			},
 			{
-				Name: "remove",
-				Usage: "Remove an SSH key",
+				Name:      "remove",
+				Usage:     "Remove an SSH key",
 				ArgsUsage: "<key-id>",
-				Action: func(c *cli.Context) error{
+				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" {
 						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}

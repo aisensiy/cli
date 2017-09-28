@@ -10,17 +10,17 @@ import (
 )
 
 func PsCommands() cli.Command {
-	return cli.Command {
-		Name: "ps",
+	return cli.Command{
+		Name:  "ps",
 		Usage: "Ps Commands",
-		Subcommands: []cli.Command {
+		Subcommands: []cli.Command{
 			{
-				Name: "restart",
-				Usage: "Restart a service process (without restarting dependent services)",
+				Name:      "restart",
+				Usage:     "Restart a service process (without restarting dependent services)",
 				ArgsUsage: " ",
-				Flags: []cli.Flag {
-					cli.StringFlag {
-						Name: "app, a",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "app, a",
 						Usage: "Sprcify app with name",
 					},
 				},
@@ -32,12 +32,12 @@ func PsCommands() cli.Command {
 				},
 			},
 			{
-				Name: "scale",
-				Usage: "Scale a service process",
+				Name:      "scale",
+				Usage:     "Scale a service process",
 				ArgsUsage: "<service-name> <instance-count>",
-				Flags: []cli.Flag {
-					cli.StringFlag {
-						Name: "app, a",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "app, a",
 						Usage: "Sprcify app with name",
 					},
 				},
@@ -48,9 +48,9 @@ func PsCommands() cli.Command {
 					serviceName := c.Args().Get(0)
 					app := c.String("app")
 					instances, err := strconv.Atoi(c.Args().Get(1));
-						if err != nil {
-							return cli.NewExitError(fmt.Sprintf("Error: %v\n", err), 1)
-						}
+					if err != nil {
+						return cli.NewExitError(fmt.Sprintf("Error: %v\n", err), 1)
+					}
 					originService, err := cmd.GetService(app, serviceName)
 					if err != nil {
 						return cli.NewExitError(err, 1)
@@ -67,12 +67,12 @@ func PsCommands() cli.Command {
 				},
 			},
 			{
-				Name: "list",
-				Usage: "Restart a service process (without restarting dependent services)",
+				Name:      "list",
+				Usage:     "Restart a service process (without restarting dependent services)",
 				ArgsUsage: " ",
-				Flags: []cli.Flag {
-					cli.StringFlag {
-						Name: "app, a",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "app, a",
 						Usage: "Sprcify app with name",
 					},
 				},

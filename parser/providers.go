@@ -81,17 +81,17 @@ func ProvidersCommand() cli.Command {
 					},
 				},
 				Action: func(c *cli.Context) error {
-					//if c.Args().Get(0) == "" {
-					//	return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
-					//}
-					//configMap, err := updateConfigConvert(c.StringSlice("config"))
-					//if err != nil {
-					//	return cli.NewExitError(err, 1)
-					//}
-					//err = cmd.ProviderUpdate(c.Args().Get(0), configMap)
-					//if err != nil {
-					//	return cli.NewExitError(err, 1)
-					//}
+					if c.Args().Get(0) == "" {
+						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					configMap, err := updateConfigConvert(c.StringSlice("config"))
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
+					err = cmd.ProviderUpdate(c.Args().Get(0), configMap)
+					if err != nil {
+						return cli.NewExitError(err, 1)
+					}
 					return nil
 				},
 			},
@@ -133,4 +133,3 @@ func enrollConfigConvert(config []string) (map[string]interface{}, error) {
 	}
 	return configMap, nil
 }
-

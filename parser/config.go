@@ -8,21 +8,21 @@ import (
 )
 
 func ConfigCommands() cli.Command {
-	return cli.Command {
-		Name: "config",
+	return cli.Command{
+		Name:  "config",
 		Usage: "Config Commands",
-		Subcommands: []cli.Command {
+		Subcommands: []cli.Command{
 			{
-				Name: "list",
-				Usage: "List environment variables for an app.",
+				Name:      "list",
+				Usage:     "List environment variables for an app.",
 				ArgsUsage: " ",
-				Flags: []cli.Flag {
-					cli.BoolFlag {
-						Name: "oneline",
+				Flags: []cli.Flag{
+					cli.BoolFlag{
+						Name:  "oneline",
 						Usage: "Print output on one line",
 					},
-					cli.StringFlag {
-						Name: "app, a",
+					cli.StringFlag{
+						Name:  "app, a",
 						Usage: "Specify app with name",
 					},
 				},
@@ -34,12 +34,12 @@ func ConfigCommands() cli.Command {
 				},
 			},
 			{
-				Name: "set",
-				Usage: "Set environment variables for an app",
+				Name:      "set",
+				Usage:     "Set environment variables for an app",
 				ArgsUsage: "<key>=<value> [<key>=<value>...]",
-				Flags: []cli.Flag {
-					cli.StringFlag {
-						Name: "app, a",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "app, a",
 						Usage: "Specify app with name",
 					},
 				},
@@ -55,12 +55,12 @@ func ConfigCommands() cli.Command {
 				},
 			},
 			{
-				Name: "unset",
-				Usage: "Unset environment variables for an app",
+				Name:      "unset",
+				Usage:     "Unset environment variables for an app",
 				ArgsUsage: "<key> [<key>...]",
-				Flags: []cli.Flag {
-					cli.StringFlag {
-						Name: "app, a",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "app, a",
 						Usage: "Specify app with name",
 					},
 				},

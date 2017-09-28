@@ -9,13 +9,13 @@ import (
 )
 
 func ClustersCommands() cli.Command {
-	return cli.Command {
-		Name: "clusters",
+	return cli.Command{
+		Name:  "clusters",
 		Usage: "Cluster Commands",
-		Subcommands: []cli.Command {
+		Subcommands: []cli.Command{
 			{
-				Name: "list",
-				Usage: "List clusters.",
+				Name:      "list",
+				Usage:     "List clusters.",
 				ArgsUsage: " ",
 				Action: func(c *cli.Context) error {
 					if err := cmd.ClusterList(); err != nil {
@@ -25,8 +25,8 @@ func ClustersCommands() cli.Command {
 				},
 			},
 			{
-				Name: "info",
-				Usage: "View info about a cluster",
+				Name:      "info",
+				Usage:     "View info about a cluster",
 				ArgsUsage: "<cluster-id>",
 				Action: func(c *cli.Context) error {
 					if !c.Args().Present() {
@@ -39,8 +39,8 @@ func ClustersCommands() cli.Command {
 				},
 			},
 			{
-				Name: "create",
-				Usage: "Create a new cluster",
+				Name:      "create",
+				Usage:     "Create a new cluster",
 				ArgsUsage: "<name> <type> <uri>",
 				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" || c.Args().Get(1) == "" || c.Args().Get(2) == "" {
@@ -53,20 +53,20 @@ func ClustersCommands() cli.Command {
 				},
 			},
 			{
-				Name: "update",
-				Usage: "Update a cluster",
+				Name:      "update",
+				Usage:     "Update a cluster",
 				ArgsUsage: "<cluster-id>",
-				Flags: []cli.Flag {
-					cli.StringFlag {
-						Name: "name, n",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "name, n",
 						Usage: "New name for cluster.",
 					},
-					cli.StringFlag {
-						Name: "type, t",
+					cli.StringFlag{
+						Name:  "type, t",
 						Usage: "New type for cluster.",
 					},
-					cli.StringFlag {
-						Name: "uri, u",
+					cli.StringFlag{
+						Name:  "uri, u",
 						Usage: "New uri for cluster.",
 					},
 				},
@@ -88,8 +88,8 @@ func ClustersCommands() cli.Command {
 				},
 			},
 			{
-				Name: "delete",
-				Usage: "Delete a cluster",
+				Name:      "delete",
+				Usage:     "Delete a cluster",
 				ArgsUsage: "<cluster-id>",
 				Action: func(c *cli.Context) error {
 					if !c.Args().Present() {
@@ -144,8 +144,6 @@ Use 'cde help [command]' to learn more.
 		return nil
 	}
 }
-
-
 
 func clustersCreate(argv []string) error {
 	usage := `
@@ -238,7 +236,6 @@ Arguments:
 	return cmd.GetCluster(clusterId)
 }
 
-
 func clustersUpdate(argv []string) error {
 	usage := `
 Update cluster info.
@@ -275,4 +272,3 @@ Options:
 
 	return cmd.ClusterUpdate(clusterId, clusterName, clusterType, clusterUri)
 }
-

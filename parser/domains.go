@@ -9,12 +9,12 @@ import (
 
 func DomainsCommands() cli.Command {
 	return cli.Command{
-		Name: "domains",
+		Name:  "domains",
 		Usage: "Domains Commands",
-		Subcommands: []cli.Command {
+		Subcommands: []cli.Command{
 			{
-				Name: "create",
-				Usage: "Binds a domain to an application.",
+				Name:      "create",
+				Usage:     "Binds a domain to an application.",
 				ArgsUsage: "<domain>",
 				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" {
@@ -27,8 +27,8 @@ func DomainsCommands() cli.Command {
 				},
 			},
 			{
-				Name: "list",
-				Usage: "Lists domains bound to an application.",
+				Name:      "list",
+				Usage:     "Lists domains bound to an application.",
 				ArgsUsage: " ",
 				Action: func(c *cli.Context) error {
 					if err := cmd.DomainsList(); err != nil {
@@ -38,8 +38,8 @@ func DomainsCommands() cli.Command {
 				},
 			},
 			{
-				Name: "remove",
-				Usage: "Unbinds a domain for an application.",
+				Name:      "remove",
+				Usage:     "Unbinds a domain for an application.",
 				ArgsUsage: "<domain>",
 				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" {
@@ -52,8 +52,8 @@ func DomainsCommands() cli.Command {
 				},
 			},
 			{
-				Name: "cert",
-				Usage: "Attach cert to the domain.",
+				Name:      "cert",
+				Usage:     "Attach cert to the domain.",
 				ArgsUsage: "<domain> <crt> <privite-key>",
 				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" || c.Args().Get(1) == "" || c.Args().Get(2) == "" {

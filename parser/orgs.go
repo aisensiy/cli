@@ -17,7 +17,7 @@ func OrgsCommand() cli.Command {
 				Name:      "create",
 				Usage:     "Create a new organization",
 				ArgsUsage: "<name>",
-				Action: func(c *cli.Context) error{
+				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" {
 						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
@@ -45,7 +45,7 @@ func OrgsCommand() cli.Command {
 						Usage: "Specify the org with name",
 					},
 				},
-				Action: func(c *cli.Context) error{
+				Action: func(c *cli.Context) error {
 
 					err := cmd.GetOrg(c.String("org"))
 					if err != nil {
@@ -64,7 +64,7 @@ func OrgsCommand() cli.Command {
 						Usage: "Specify the org with name",
 					},
 				},
-				Action: func(c *cli.Context) error{
+				Action: func(c *cli.Context) error {
 					err := cmd.SetCurrentOrg(c.String("org"))
 					if err != nil {
 						return cli.NewExitError(err, 1)
@@ -82,7 +82,7 @@ func OrgsCommand() cli.Command {
 						Usage: "Specify the org with name",
 					},
 				},
-				Action: func(c *cli.Context) error{
+				Action: func(c *cli.Context) error {
 					err := cmd.ListMembers(c.String("org"))
 					if err != nil {
 						return cli.NewExitError(err, 1)
@@ -100,7 +100,7 @@ func OrgsCommand() cli.Command {
 						Usage: "Specify the org with name",
 					},
 				},
-				Action: func(c *cli.Context) error{
+				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" {
 						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
@@ -122,7 +122,7 @@ func OrgsCommand() cli.Command {
 						Usage: "Specify the org with name",
 					},
 				},
-				Action: func(c *cli.Context) error{
+				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" {
 						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
@@ -144,7 +144,7 @@ func OrgsCommand() cli.Command {
 						Usage: "Specify the org with name",
 					},
 				},
-				Action: func(c *cli.Context) error{
+				Action: func(c *cli.Context) error {
 					err := cmd.ListApps(c.String("org"))
 					if err != nil {
 						return cli.NewExitError(err, 1)
@@ -162,7 +162,7 @@ func OrgsCommand() cli.Command {
 						Usage: "Specify the org with name",
 					},
 				},
-				Action: func(c *cli.Context) error{
+				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" {
 						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
@@ -183,7 +183,7 @@ func OrgsCommand() cli.Command {
 						Usage: "Specify the org with name",
 					},
 				},
-				Action: func(c *cli.Context) error{
+				Action: func(c *cli.Context) error {
 					err := cmd.DestroyOrg(c.String("org"))
 					if err != nil {
 						return cli.NewExitError(err, 1)
