@@ -47,7 +47,7 @@ func ProvidersCommand() cli.Command {
 				Flags: []cli.Flag{
 					cli.StringSliceFlag{
 						Name:  "config, c",
-						Usage: "Set provider's configuration. Key \"endpoint\" is required.",
+						Usage: "Set provider's configuration. Key \"endpoint\" is required. (Tips: String \"$$\" needs to be escaped in shell).",
 					},
 					cli.StringFlag{
 						Name:  "for, f",
