@@ -62,13 +62,15 @@ func NewRepositoryFromFilepath(filepath string, errorHandler func(error)) Config
 func NewRepositoryFromPersistor(persistor Persistor, errorHandler func(error)) ConfigRepository {
 	data := NewData()
 
-	return &DefaultConfigRepository{
+	repository := &DefaultConfigRepository{
 		data:      data,
 		mutex:     new(sync.RWMutex),
 		initOnce:  new(sync.Once),
 		persistor: persistor,
 		onError:   errorHandler,
 	}
+	repository.init()
+	return repository
 }
 
 func (c *DefaultConfigRepository) init() {

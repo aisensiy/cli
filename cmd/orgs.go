@@ -47,13 +47,18 @@ func SetCurrentOrg(orgName string) error {
 	orgRepo := api.NewOrgRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
 
-	_, err := orgRepo.GetOrg(orgName)
-	if err != nil {
-		return err
+	message := "set current org empty"
+	if orgName != "" {
+		_, err := orgRepo.GetOrg(orgName)
+		if err != nil {
+			return err
+		}
+		message = fmt.Sprintf("set current org as %s", orgName)
 	}
+
 	configRepository.SetCurrentOrg(orgName)
-	fmt.Println("set current org as", orgName)
-	return err
+	fmt.Println(message)
+	return nil
 }
 
 func ListMembers(orgName string) error {

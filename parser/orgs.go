@@ -61,7 +61,7 @@ func OrgsCommand() cli.Command {
 				Flags: []cli.Flag{
 					cli.StringFlag{
 						Name:  "org, o",
-						Usage: "Specify the org with name",
+						Usage: "Specify the org with name, set default org empty without this flag",
 					},
 				},
 				Action: func(c *cli.Context) error {
