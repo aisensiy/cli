@@ -51,7 +51,15 @@ func AppsCommand() cli.Command {
 					if !cmd.IsAppNameInvalid(name) {
 						return cli.NewExitError(fmt.Sprintf("'%s' does not match the pattern '[a-z0-9-]+'\n", name), 1)
 					}
-					err := cmd.AppCreate(name, c.String("stack"), c.String("stack"), c.String("provider"), c.String("owner"), needDeploy)
+
+					stack := c.String("stack")
+					unified_procedure := c.String("unified_procedure")
+					provider := c.String("provider")
+					if stack == "" && (unified_procedure == "" || provider == "") {
+						return cli.NewExitError(fmt.Sprint("Specify a stack or a unified procedure with provider"), 1)
+					}
+
+					err := cmd.AppCreate(name, stack, unified_procedure, provider, c.String("owner"), needDeploy)
 					if err != nil {
 						return cli.NewExitError(err, 1)
 					}
