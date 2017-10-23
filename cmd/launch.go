@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+	"github.com/fatih/color"
 )
 
 func LaunchBuild(filename, appName string) error {
@@ -70,11 +71,12 @@ func LaunchBuild(filename, appName string) error {
 	}
 	cerr := make(chan error)
 	succeed := make(chan bool)
+	cleaning := make(chan bool)
 
 	go func() {
 		for {
 			select {
-			case <-succeed:
+			case <-cleaning:
 				// todo: should fetch log again
 				return
 			default:
@@ -87,13 +89,14 @@ func LaunchBuild(filename, appName string) error {
 
 	go func() {
 		for {
-			fmt.Println("get build status")
 			if build.IsSuccess() {
 				succeed <- true
+				cleaning <- true
 				return
 			}
 			if build.IsFail() {
 				succeed <- false
+				cleaning <- true
 				cerr <- errors.New("Build is failed")
 			}
 			time.Sleep(time.Second * 5)
@@ -111,6 +114,7 @@ func LaunchBuild(filename, appName string) error {
 			if !succ {
 				return errors.New("Build fail")
 			} else {
+				color.Green("Build Success")
 				return nil
 			}
 		case err := <-cerr:
