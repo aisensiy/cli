@@ -6,42 +6,45 @@ import (
 	"github.com/fatih/color"
 	"github.com/sjkyspa/stacks/client/parser"
 	"github.com/sjkyspa/stacks/version"
+	"gopkg.in/urfave/cli.v2"
 	"os"
 	"strings"
-	"github.com/urfave/cli"
 	"time"
 )
 
 func main() {
-	app := cli.NewApp()
-	app.Name = "CDE"
-	app.Version = "0.1.4"
-	app.Usage = "Cloud Development Environment"
-	app.Description = "CDE command line tool"
-	app.Compiled = time.Now()
-	app.Author = "ThoughtWorks"
-	app.EnableBashCompletion = true
-
-	app.Commands = []cli.Command{
-		parser.UpsCommand(),
-		parser.StacksCommand(),
-		parser.ProvidersCommand(),
-		parser.AuthCommand(),
-		parser.AppsCommand(),
-		parser.OrgsCommand(),
-		parser.ScaffoldCommands(),
-		parser.DomainsCommands(),
-		parser.ServicesCommand(),
-		parser.RoutesCommand(),
-		parser.KeysCommands(),
-		parser.PsCommands(),
-		parser.GitCommands(),
-		parser.ConfigCommands(),
-		parser.DevCommands(),
-		parser.ClustersCommands(),
-		parser.LaunchCommands(),
+	app := &cli.App{
+		Name:        "CDE",
+		Version:     "0.1.4",
+		Usage:       "Cloud Development Environment",
+		Description: "CDE command line tool",
+		Compiled:    time.Now(),
+		Authors: []*cli.Author{
+			&cli.Author{
+				Name: "ThoughtWorks",
+			},
+		},
+		EnableShellCompletion: true,
+		Commands: []*cli.Command{
+			parser.UpsCommand(),
+			parser.StacksCommand(),
+			parser.ProvidersCommand(),
+			parser.AuthCommand(),
+			parser.AppsCommand(),
+			parser.OrgsCommand(),
+			parser.ScaffoldCommands(),
+			parser.DomainsCommands(),
+			parser.ServicesCommand(),
+			parser.RoutesCommand(),
+			parser.KeysCommands(),
+			parser.PsCommands(),
+			parser.GitCommands(),
+			parser.ConfigCommands(),
+			parser.DevCommands(),
+			parser.ClustersCommands(),
+			parser.LaunchCommands(),
+		},
 	}
-
 	commandList := os.Args
 
 	if len(commandList) > 1 && noneMigrated(commandList) {

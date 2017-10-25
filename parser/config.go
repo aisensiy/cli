@@ -3,32 +3,32 @@ package parser
 import (
 	docopt "github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
-	"github.com/urfave/cli"
+	cli "gopkg.in/urfave/cli.v2"
 	"fmt"
 )
 
-func ConfigCommands() cli.Command {
-	return cli.Command{
+func ConfigCommands() *cli.Command {
+	return &cli.Command{
 		Name:  "config",
 		Usage: "Config Commands",
-		Subcommands: []cli.Command{
+		Subcommands: []*cli.Command{
 			{
 				Name:      "list",
 				Usage:     "List environment variables for an app.",
 				ArgsUsage: " ",
 				Flags: []cli.Flag{
-					cli.BoolFlag{
+					&cli.BoolFlag{
 						Name:  "oneline",
 						Usage: "Print output on one line",
 					},
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "app, a",
 						Usage: "Specify app with name",
 					},
 				},
 				Action: func(c *cli.Context) error {
 					if err := cmd.ConfigList(c.String("app"), c.Bool("oneline")); err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -38,18 +38,18 @@ func ConfigCommands() cli.Command {
 				Usage:     "Set environment variables for an app",
 				ArgsUsage: "<key>=<value> [<key>=<value>...]",
 				Flags: []cli.Flag{
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "app, a",
 						Usage: "Specify app with name",
 					},
 				},
 				Action: func(c *cli.Context) error {
 					if !c.Args().Present() {
-						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+						return cli.Exit(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
 					envs := append(c.Args().Tail(), c.Args().First())
 					if err := cmd.ConfigSet(c.String("app"), envs); err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -59,18 +59,18 @@ func ConfigCommands() cli.Command {
 				Usage:     "Unset environment variables for an app",
 				ArgsUsage: "<key> [<key>...]",
 				Flags: []cli.Flag{
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "app, a",
 						Usage: "Specify app with name",
 					},
 				},
 				Action: func(c *cli.Context) error {
 					if !c.Args().Present() {
-						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+						return cli.Exit(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
 					keys := append(c.Args().Tail(), c.Args().First())
 					if err := cmd.ConfigUnset(c.String("app"), keys); err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},

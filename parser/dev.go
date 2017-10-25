@@ -3,21 +3,22 @@ package parser
 import (
 	docopt "github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
-	"github.com/urfave/cli"
+	cli "gopkg.in/urfave/cli.v2"
+	"fmt"
 )
 
-func DevCommands() cli.Command {
-	return cli.Command{
+func DevCommands() *cli.Command {
+	return &cli.Command{
 		Name:  "dev",
 		Usage: "Dev Commands",
-		Subcommands: []cli.Command{
+		Subcommands: []*cli.Command{
 			{
 				Name:      "up",
 				Usage:     "Start up the local dev env.",
 				ArgsUsage: " ",
 				Action: func(c *cli.Context) error {
 					if err := cmd.DevUp(); err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -28,7 +29,7 @@ func DevCommands() cli.Command {
 				ArgsUsage: " ",
 				Action: func(c *cli.Context) error {
 					if err := cmd.DevDown(); err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -39,7 +40,7 @@ func DevCommands() cli.Command {
 				ArgsUsage: " ",
 				Action: func(c *cli.Context) error {
 					if err := cmd.DevDestroy(); err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -50,7 +51,7 @@ func DevCommands() cli.Command {
 				ArgsUsage: " ",
 				Action: func(c *cli.Context) error {
 					if err := cmd.DevEnv(); err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},

@@ -4,15 +4,15 @@ import (
 	"errors"
 	"github.com/sjkyspa/stacks/client/cmd"
 	"strings"
-	"github.com/urfave/cli"
+	cli "gopkg.in/urfave/cli.v2"
 	"fmt"
 )
 
-func ProvidersCommand() cli.Command {
-	return cli.Command{
+func ProvidersCommand() *cli.Command {
+	return &cli.Command{
 		Name:  "providers",
 		Usage: "Providers Commands",
-		Subcommands: []cli.Command{
+		Subcommands: []*cli.Command{
 			{
 				Name:      "list",
 				Usage:     "List all Providers",
@@ -20,7 +20,7 @@ func ProvidersCommand() cli.Command {
 				Action: func(c *cli.Context) error {
 					err := cmd.ProviderList()
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -31,11 +31,11 @@ func ProvidersCommand() cli.Command {
 				ArgsUsage: "<provider-name>",
 				Action: func(c *cli.Context) error {
 					if (c.Args().Get(0) == "") {
-						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+						return cli.Exit(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
 					err := cmd.GetProviderByName(c.Args().Get(0))
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -45,27 +45,27 @@ func ProvidersCommand() cli.Command {
 				Usage:     "Enroll a new Provider",
 				ArgsUsage: "<name] <type>",
 				Flags: []cli.Flag{
-					cli.StringSliceFlag{
+					&cli.StringSliceFlag{
 						Name:  "config, c",
 						Usage: "Set provider's configuration. Key \"endpoint\" is required. (Tips: String \"$$\" needs to be escaped in shell).",
 					},
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "for, f",
 						Usage: "Specify an organization for the provider.",
 					},
 				},
 				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" || c.Args().Get(1) == "" {
-						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+						return cli.Exit(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
 					configMap, err := enrollConfigConvert(c.StringSlice("config"))
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					consumer := c.String("for")
 					err = cmd.ProviderCreate(c.Args().Get(0), c.Args().Get(1), consumer, configMap)
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -75,22 +75,22 @@ func ProvidersCommand() cli.Command {
 				Usage:     "Update an existing Provider",
 				ArgsUsage: "<name>",
 				Flags: []cli.Flag{
-					cli.StringSliceFlag{
+					&cli.StringSliceFlag{
 						Name:  "config, c",
 						Usage: "Set provider's configuration. Key \"endpoint\" is required.",
 					},
 				},
 				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" {
-						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+						return cli.Exit(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
 					configMap, err := updateConfigConvert(c.StringSlice("config"))
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					err = cmd.ProviderUpdate(c.Args().Get(0), configMap)
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},

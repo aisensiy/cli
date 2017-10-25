@@ -5,24 +5,24 @@ import (
 
 	docopt "github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
-	"github.com/urfave/cli"
+	cli "gopkg.in/urfave/cli.v2"
 )
 
-func GitCommands() cli.Command {
-	return cli.Command{
+func GitCommands() *cli.Command {
+	return &cli.Command{
 		Name:  "git",
 		Usage: "Git Commands",
-		Subcommands: []cli.Command{
+		Subcommands: []*cli.Command{
 			{
 				Name:      "remote",
 				Usage:     "Adds git remote of application to repository.",
 				ArgsUsage: " ",
 				Flags: []cli.Flag{
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "app, a",
 						Usage: "Specify app with name",
 					},
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "remote, r",
 						Value: "cde",
 						Usage: "Name of remote to create. [default: cde]",
@@ -31,7 +31,7 @@ func GitCommands() cli.Command {
 				Action: func(c *cli.Context) error {
 					remote := c.String("remote")
 					if err := cmd.GitRemote(c.String("app"), remote); err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},

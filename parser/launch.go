@@ -1,17 +1,18 @@
 package parser
 
 import (
+	"fmt"
+
 	"github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
-	"github.com/urfave/cli"
-	"fmt"
+	"gopkg.in/urfave/cli.v2"
 )
 
-func LaunchCommands() cli.Command {
-	return cli.Command{
+func LaunchCommands() *cli.Command {
+	return &cli.Command{
 		Name:  "launch",
 		Usage: "Launch Commands",
-		Subcommands: []cli.Command{
+		Subcommands: []*cli.Command{
 			{
 				Name:      "build",
 				Usage:     "Launch a build procedure.",
@@ -20,10 +21,10 @@ func LaunchCommands() cli.Command {
 					filename := c.Args().Get(0)
 					appName := c.Args().Get(1)
 					if filename == "" || appName == "" {
-						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+						return cli.Exit(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
 					if err := cmd.LaunchBuild(filename, appName); err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},

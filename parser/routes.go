@@ -3,25 +3,25 @@ package parser
 import (
 	"github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
-	"github.com/urfave/cli"
+	cli "gopkg.in/urfave/cli.v2"
 	"fmt"
 )
 
-func RoutesCommand() cli.Command {
-	return cli.Command{
+func RoutesCommand() *cli.Command {
+	return &cli.Command{
 		Name:  "routes",
 		Usage: "Routes Commands",
-		Subcommands: []cli.Command{
+		Subcommands: []*cli.Command{
 			{
 				Name:      "create",
 				Usage:     "Create a new routes",
 				ArgsUsage: "<domain> <path>",
 				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" || c.Args().Get(1) == "" {
-						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+						return cli.Exit(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
 					if err := cmd.RoutesCreate(c.Args().Get(0), c.Args().Get(1)); err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -32,7 +32,7 @@ func RoutesCommand() cli.Command {
 				ArgsUsage: " ",
 				Action: func(c *cli.Context) error {
 					if err := cmd.RoutesList(); err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -43,10 +43,10 @@ func RoutesCommand() cli.Command {
 				ArgsUsage: "<route> <app>",
 				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" || c.Args().Get(1) == "" {
-						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+						return cli.Exit(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
 					if err := cmd.RouteBindWithApp(c.Args().Get(0), c.Args().Get(1)); err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -57,10 +57,10 @@ func RoutesCommand() cli.Command {
 				ArgsUsage: "<route> <app>",
 				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" || c.Args().Get(1) == "" {
-						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+						return cli.Exit(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
 					if err := cmd.UnbindRouteWithApp(c.Args().Get(0), c.Args().Get(1)); err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},

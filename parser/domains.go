@@ -3,25 +3,25 @@ package parser
 import (
 	docopt "github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
-	"github.com/urfave/cli"
+	cli "gopkg.in/urfave/cli.v2"
 	"fmt"
 )
 
-func DomainsCommands() cli.Command {
-	return cli.Command{
+func DomainsCommands() *cli.Command {
+	return &cli.Command{
 		Name:  "domains",
 		Usage: "Domains Commands",
-		Subcommands: []cli.Command{
+		Subcommands: []*cli.Command{
 			{
 				Name:      "create",
 				Usage:     "Binds a domain to an application.",
 				ArgsUsage: "<domain>",
 				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" {
-						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+						return cli.Exit(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
 					if err := cmd.DomainsAdd(c.Args().Get(0)); err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -32,7 +32,7 @@ func DomainsCommands() cli.Command {
 				ArgsUsage: " ",
 				Action: func(c *cli.Context) error {
 					if err := cmd.DomainsList(); err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -43,10 +43,10 @@ func DomainsCommands() cli.Command {
 				ArgsUsage: "<domain>",
 				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" {
-						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+						return cli.Exit(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
 					if err := cmd.DomainsRemove(c.Args().Get(0)); err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -57,11 +57,11 @@ func DomainsCommands() cli.Command {
 				ArgsUsage: "<domain> <crt> <privite-key>",
 				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" || c.Args().Get(1) == "" || c.Args().Get(2) == "" {
-						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+						return cli.Exit(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
 
 					if err := cmd.DomainsCert(c.Args().Get(0), c.Args().Get(1), c.Args().Get(2)); err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},

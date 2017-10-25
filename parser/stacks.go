@@ -3,14 +3,15 @@ package parser
 import (
 	"github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
-	"github.com/urfave/cli"
+	cli "gopkg.in/urfave/cli.v2"
+	"fmt"
 )
 
-func StacksCommand() cli.Command {
-	return cli.Command{
+func StacksCommand() *cli.Command {
+	return &cli.Command{
 		Name:  "stacks",
 		Usage: "Stacks Commands",
-		Subcommands: []cli.Command{
+		Subcommands: []*cli.Command{
 			{
 				Name:      "list",
 				Usage:     "List all Stacks",
@@ -18,7 +19,7 @@ func StacksCommand() cli.Command {
 				Action: func(c *cli.Context) error {
 					err := cmd.StacksList()
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -30,7 +31,7 @@ func StacksCommand() cli.Command {
 				Action: func(c *cli.Context) error {
 					err := cmd.GetStack(c.Args().First())
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -42,7 +43,7 @@ func StacksCommand() cli.Command {
 				Action: func(c *cli.Context) error {
 					err := cmd.StackCreate(c.Args().First())
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -54,7 +55,7 @@ func StacksCommand() cli.Command {
 				Action: func(c *cli.Context) error {
 					err := cmd.StackUpdate(c.Args().First(), c.Args().Get(1))
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -66,7 +67,7 @@ func StacksCommand() cli.Command {
 				Action: func(c *cli.Context) error {
 					err := cmd.StackRemove(c.Args().First())
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -78,7 +79,7 @@ func StacksCommand() cli.Command {
 				Action: func(c *cli.Context) error {
 					err := cmd.StackPublish(c.Args().First())
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -90,7 +91,7 @@ func StacksCommand() cli.Command {
 				Action: func(c *cli.Context) error {
 					err := cmd.StackUnPublish(c.Args().First())
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 

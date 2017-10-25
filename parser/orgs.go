@@ -2,24 +2,25 @@ package parser
 
 import (
 	"fmt"
+	"regexp"
+
 	docopt "github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
-	"regexp"
-	"github.com/urfave/cli"
+	"gopkg.in/urfave/cli.v2"
 )
 
-func OrgsCommand() cli.Command {
-	return cli.Command{
+func OrgsCommand() *cli.Command {
+	return &cli.Command{
 		Name:  "orgs",
 		Usage: "Orgs Commands",
-		Subcommands: []cli.Command{
+		Subcommands: []*cli.Command{
 			{
 				Name:      "create",
 				Usage:     "Create a new organization",
 				ArgsUsage: "<name>",
 				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" {
-						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+						return cli.Exit(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
 					name := c.Args().Get(0)
 
@@ -30,7 +31,7 @@ func OrgsCommand() cli.Command {
 
 					err := cmd.OrgCreate(name)
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -40,7 +41,7 @@ func OrgsCommand() cli.Command {
 				Usage:     "Prints info about the current organization.",
 				ArgsUsage: " ",
 				Flags: []cli.Flag{
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "org, o",
 						Usage: "Specify the org with name",
 					},
@@ -49,7 +50,7 @@ func OrgsCommand() cli.Command {
 
 					err := cmd.GetOrg(c.String("org"))
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -59,7 +60,7 @@ func OrgsCommand() cli.Command {
 				Usage:     "Set org as a default org.",
 				ArgsUsage: " ",
 				Flags: []cli.Flag{
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "org, o",
 						Usage: "Specify the org with name, set default org empty without this flag",
 					},
@@ -67,7 +68,7 @@ func OrgsCommand() cli.Command {
 				Action: func(c *cli.Context) error {
 					err := cmd.SetCurrentOrg(c.String("org"))
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -77,7 +78,7 @@ func OrgsCommand() cli.Command {
 				Usage:     "List members of the organization.",
 				ArgsUsage: " ",
 				Flags: []cli.Flag{
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "org, o",
 						Usage: "Specify the org with name",
 					},
@@ -85,7 +86,7 @@ func OrgsCommand() cli.Command {
 				Action: func(c *cli.Context) error {
 					err := cmd.ListMembers(c.String("org"))
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -95,19 +96,19 @@ func OrgsCommand() cli.Command {
 				Usage:     "Add member to organization.",
 				ArgsUsage: "<email>",
 				Flags: []cli.Flag{
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "org, o",
 						Usage: "Specify the org with name",
 					},
 				},
 				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" {
-						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+						return cli.Exit(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
 
 					err := cmd.AddMember(c.String("org"), c.Args().Get(0))
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -117,19 +118,19 @@ func OrgsCommand() cli.Command {
 				Usage:     "Remove member from organization.",
 				ArgsUsage: "<email>",
 				Flags: []cli.Flag{
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "org, o",
 						Usage: "Specify the org with name",
 					},
 				},
 				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" {
-						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+						return cli.Exit(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
 
 					err := cmd.RemoveMember(c.String("org"), c.Args().Get(0))
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -139,7 +140,7 @@ func OrgsCommand() cli.Command {
 				Usage:     "List apps of the organization.",
 				ArgsUsage: " ",
 				Flags: []cli.Flag{
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "org, o",
 						Usage: "Specify the org with name",
 					},
@@ -147,7 +148,7 @@ func OrgsCommand() cli.Command {
 				Action: func(c *cli.Context) error {
 					err := cmd.ListApps(c.String("org"))
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -157,18 +158,18 @@ func OrgsCommand() cli.Command {
 				Usage:     "Add app to organization.",
 				ArgsUsage: "<app>",
 				Flags: []cli.Flag{
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "org, o",
 						Usage: "Specify the org with name",
 					},
 				},
 				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" {
-						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+						return cli.Exit(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
 					err := cmd.AddOrgApp(c.String("org"), c.Args().Get(0))
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -178,7 +179,7 @@ func OrgsCommand() cli.Command {
 				Usage:     "Destory an organization.",
 				ArgsUsage: " ",
 				Flags: []cli.Flag{
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "org, o",
 						Usage: "Specify the org with name",
 					},
@@ -186,7 +187,7 @@ func OrgsCommand() cli.Command {
 				Action: func(c *cli.Context) error {
 					err := cmd.DestroyOrg(c.String("org"))
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},

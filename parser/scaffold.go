@@ -1,44 +1,44 @@
 package parser
 
 import (
-	"fmt"
 	docopt "github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
 	"regexp"
-	"github.com/urfave/cli"
+	"gopkg.in/urfave/cli.v2"
+	"fmt"
 )
 
-func ScaffoldCommands() cli.Command {
-	return cli.Command{
+func ScaffoldCommands() *cli.Command {
+	return &cli.Command{
 		Name:      "scaffold",
 		Usage:     "Creates a new scaffold in current directory.",
 		ArgsUsage: " ",
 		Flags: []cli.Flag{
-			cli.StringFlag{
+			&cli.StringFlag{
 				Name:  "stack, s",
 				Usage: "Specify stack with name",
 			},
-			cli.StringFlag{
+			&cli.StringFlag{
 				Name:  "unified_procedure, u",
 				Usage: "Specify unified procedure with name",
 			},
-			cli.StringFlag{
+			&cli.StringFlag{
 				Name:  "provider, p",
 				Usage: "Specify provider for provide the app runtime",
 			},
-			cli.StringFlag{
+			&cli.StringFlag{
 				Name:  "owner, o",
 				Usage: "Specify owner for the app",
 			},
-			cli.StringFlag{
+			&cli.StringFlag{
 				Name:  "dir, d",
 				Usage: "Specify default sub directory with name",
 			},
-			cli.StringFlag{
+			&cli.StringFlag{
 				Name:  "app, a",
 				Usage: "Create a new scaffold and create a new app in sub directory",
 			},
-			cli.StringFlag{
+			&cli.StringFlag{
 				Name:  "deploy",
 				Value: "1",
 				Usage: "Tell system to deploy this app or not, 1 means need, 0 mean no, default 1",
@@ -47,13 +47,13 @@ func ScaffoldCommands() cli.Command {
 		Action: func(c *cli.Context) error {
 			appName := c.String("app")
 			if appName != "" && !cmd.IsAppNameInvalid(appName) {
-				return cli.NewExitError(fmt.Errorf("'%s' does not match the pattern '[a-z0-9-]+'\n", appName), 1)
+				return cli.Exit(fmt.Sprintf("'%s' does not match the pattern '[a-z0-9-]+'\n", appName), 1)
 			}
 
 			needDeploy := c.String("deploy")
 
 			if err := cmd.ScaffoldCreate(c.String("stack"), c.String("unified_procedure"), c.String("provider"), c.String("owner"), c.String("dir"), appName, needDeploy); err != nil {
-				return cli.NewExitError(err, 1)
+				return cli.Exit(fmt.Sprintf("%v", err), 1)
 			}
 
 			return nil

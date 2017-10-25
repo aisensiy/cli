@@ -5,35 +5,35 @@ import (
 
 	docopt "github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
-	"github.com/urfave/cli"
+	cli "gopkg.in/urfave/cli.v2"
 )
 
-func AuthCommand() cli.Command {
-	return cli.Command{
+func AuthCommand() *cli.Command {
+	return &cli.Command{
 		Name:  "auth",
 		Usage: "Auth Commands",
-		Subcommands: []cli.Command{
+		Subcommands: []*cli.Command{
 			{
 				Name:      "register",
 				Usage:     "Register a new user on a specific controller",
 				ArgsUsage: "<controller>",
 				Flags: []cli.Flag{
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "email, e",
 						Usage: "Provide email for the new user",
 					},
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "password, p",
 						Usage: "Provide password for the new user",
 					},
 				},
 				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" {
-						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+						return cli.Exit(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
 					err := cmd.Register(c.Args().First(), c.String("email"), c.String("password"))
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -51,26 +51,26 @@ func AuthCommand() cli.Command {
 				Usage:     "Log in on a specific controller.",
 				ArgsUsage: "<controller>",
 				Flags: []cli.Flag{
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "email, e",
 						Usage: "Provide user email",
 					},
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "password, p",
 						Usage: "Provide user password",
 					},
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "ssl-verify, s",
 						Usage: "Disable SSL certificate verification for API requests",
 					},
 				},
 				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" {
-						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+						return cli.Exit(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
 					err := cmd.Login(c.Args().First(), c.String("email"), c.String("password"))
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -82,7 +82,7 @@ func AuthCommand() cli.Command {
 				Action: func(c *cli.Context) error {
 					err := cmd.Logout()
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},

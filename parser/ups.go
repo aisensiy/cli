@@ -2,14 +2,14 @@ package parser
 
 import (
 	"github.com/sjkyspa/stacks/client/cmd"
-	"github.com/urfave/cli"
+	cli "gopkg.in/urfave/cli.v2"
 )
 
-func UpsCommand() cli.Command {
-	return cli.Command{
+func UpsCommand() *cli.Command {
+	return &cli.Command{
 		Name:  "ups",
 		Usage: "Unified Procedures Commands",
-		Subcommands: []cli.Command{
+		Subcommands: []*cli.Command{
 			{
 				Name:      "list",
 				Usage:     "List all Unified Procedures",

@@ -7,21 +7,21 @@ import (
 	deployApi "github.com/sjkyspa/stacks/launcher/api/api"
 	"os"
 	"strconv"
-	"github.com/urfave/cli"
+	cli "gopkg.in/urfave/cli.v2"
 )
 
-func ServicesCommand() cli.Command {
-	return cli.Command{
+func ServicesCommand() *cli.Command {
+	return &cli.Command{
 		Name:  "services",
 		Usage: "Service Commands",
-		Subcommands: []cli.Command{
+		Subcommands: []*cli.Command{
 			{
 				Name:      "create",
 				Usage:     "Create Service.",
 				ArgsUsage: " ",
 				Action: func(c *cli.Context) error {
 					if err := cmd.ServiceCreate(); err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -31,18 +31,18 @@ func ServicesCommand() cli.Command {
 				Usage:     "View service basic information.",
 				ArgsUsage: "<service-name>",
 				Flags: []cli.Flag{
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "app, a",
 						Usage: "Specify app with name.",
 					},
 				},
 				Action: func(c *cli.Context) error {
 					if c.Args().Get(0) == "" {
-						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+						return cli.Exit(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
 
 					if err := cmd.ServiceInfo(c.String("app"), c.Args().Get(0)); err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -52,19 +52,19 @@ func ServicesCommand() cli.Command {
 				Usage:     "Update service basic information.",
 				ArgsUsage: "<service-name>",
 				Flags: []cli.Flag{
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "app, a",
 						Usage: "Specify app with name.",
 					},
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "mem",
 						Usage: "Specify allocated memory for this service.",
 					},
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "cpu",
 						Usage: "Specify max allocated cpu size.",
 					},
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "instances",
 						Usage: "Specify instance number",
 					},
@@ -72,14 +72,14 @@ func ServicesCommand() cli.Command {
 				Action: func(c *cli.Context) error {
 					serviceName := c.Args().Get(0)
 					if serviceName == "" {
-						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+						return cli.Exit(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
 
 					instances := c.String("instances")
 					if instances != "" {
 						_, err := strconv.Atoi(instances);
 						if err != nil {
-							return cli.NewExitError(fmt.Sprintf("Error: %v\n", err), 1)
+							return cli.Exit(fmt.Sprintf("Error: %v\n", err), 1)
 						}
 					}
 
@@ -89,11 +89,11 @@ func ServicesCommand() cli.Command {
 					updateParams["instances"] = instances
 					newServiceParams, err := mergeWithOriginService(c.String("app"), serviceName, updateParams);
 					if err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 
 					if err := cmd.ServiceUpdate(c.String("app"), serviceName, newServiceParams); err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
@@ -103,11 +103,11 @@ func ServicesCommand() cli.Command {
 				Usage:     "Prints info about the current service.",
 				ArgsUsage: "<service-name>",
 				Flags: []cli.Flag{
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "app, a",
 						Usage: "Specify app with name.",
 					},
-					cli.StringFlag{
+					&cli.StringFlag{
 						Name:  "lines, n",
 						Value: "100",
 						Usage: "Specify the number of lines to display.",
@@ -116,18 +116,18 @@ func ServicesCommand() cli.Command {
 				Action: func(c *cli.Context) error {
 					serviceName := c.Args().Get(0)
 					if serviceName == "" {
-						return cli.NewExitError(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+						return cli.Exit(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
 
 					lines := c.String("lines")
 					var lineNum int
 					var err error
 					if lineNum, err = strconv.Atoi(lines); err != nil {
-						return cli.NewExitError(fmt.Sprintf("Error: %v\n", err), 1)
+						return cli.Exit(fmt.Sprintf("Error: %v\n", err), 1)
 					}
 
 					if err := cmd.ServiceLog(c.String("app"), serviceName, lineNum); err != nil {
-						return cli.NewExitError(err, 1)
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
 				},
