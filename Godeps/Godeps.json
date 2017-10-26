@@ -1,0 +1,120 @@
+{
+	"ImportPath": "github.com/sjkyspa/stacks/client",
+	"GoVersion": "go1.8",
+	"GodepVersion": "v79",
+	"Deps": [
+		{
+			"ImportPath": "github.com/docopt/docopt-go",
+			"Comment": "0.6.2",
+			"Rev": "784ddc588536785e7299f7272f39101f7faccc3f"
+		},
+		{
+			"ImportPath": "github.com/donovanhide/eventsource",
+			"Rev": "b8f31a59085e69dd2678cf51840db2ac625cb741"
+		},
+		{
+			"ImportPath": "github.com/fatih/color",
+			"Comment": "v1.5.0-8-g5df930a",
+			"Rev": "5df930a27be2502f99b292b7cc09ebad4d0891f4"
+		},
+		{
+			"ImportPath": "github.com/gambol99/go-marathon",
+			"Comment": "v0.7.1-44-gec4a501",
+			"Rev": "ec4a50170df729be7380d2797177dea832f41013"
+		},
+		{
+			"ImportPath": "github.com/ghodss/yaml",
+			"Comment": "v1.0.0",
+			"Rev": "0ca9ea5df5451ffdf184b4428c902747c2c11cd7"
+		},
+		{
+			"ImportPath": "github.com/google/go-querystring/query",
+			"Rev": "53e6ce116135b80d037921a7fdd5138cf32d7a8a"
+		},
+		{
+			"ImportPath": "github.com/kr/pty",
+			"Comment": "v1.0.1",
+			"Rev": "95d05c1eef33a45bd58676b6ce28d105839b8d0b"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-colorable",
+			"Comment": "v0.0.9-6-gad5389d",
+			"Rev": "ad5389df28cdac544c99bd7b9161a0b5b6ca9d1b"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-isatty",
+			"Comment": "v0.0.3-1-ga5cdd64",
+			"Rev": "a5cdd64afdee435007ee3e9f6ed4684af949d568"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-runewidth",
+			"Comment": "v0.0.2-3-g97311d9",
+			"Rev": "97311d9f7767e3d6f422ea06661bc2c7a19e8a5d"
+		},
+		{
+			"ImportPath": "github.com/olekukonko/tablewriter",
+			"Rev": "a7a4c189eb47ed33ce7b35f2880070a0c82a67d4"
+		},
+		{
+			"ImportPath": "github.com/sjkyspa/stacks/controller/api/api",
+			"Comment": "0.1.2-812-gb8bd4a52",
+			"Rev": "b8bd4a5285370c8dfd29c644929215ed03b68815"
+		},
+		{
+			"ImportPath": "github.com/sjkyspa/stacks/controller/api/config",
+			"Comment": "0.1.2-812-gb8bd4a52",
+			"Rev": "b8bd4a5285370c8dfd29c644929215ed03b68815"
+		},
+		{
+			"ImportPath": "github.com/sjkyspa/stacks/controller/api/net",
+			"Comment": "0.1.2-812-gb8bd4a52",
+			"Rev": "b8bd4a5285370c8dfd29c644929215ed03b68815"
+		},
+		{
+			"ImportPath": "github.com/sjkyspa/stacks/controller/api/util",
+			"Comment": "0.1.2-812-gb8bd4a52",
+			"Rev": "b8bd4a5285370c8dfd29c644929215ed03b68815"
+		},
+		{
+			"ImportPath": "github.com/sjkyspa/stacks/launcher/api/api",
+			"Comment": "0.1.2-812-gb8bd4a52",
+			"Rev": "b8bd4a5285370c8dfd29c644929215ed03b68815"
+		},
+		{
+			"ImportPath": "github.com/sjkyspa/stacks/launcher/api/config",
+			"Comment": "0.1.2-812-gb8bd4a52",
+			"Rev": "b8bd4a5285370c8dfd29c644929215ed03b68815"
+		},
+		{
+			"ImportPath": "github.com/sjkyspa/stacks/launcher/api/net",
+			"Comment": "0.1.2-812-gb8bd4a52",
+			"Rev": "b8bd4a5285370c8dfd29c644929215ed03b68815"
+		},
+		{
+			"ImportPath": "github.com/sjkyspa/stacks/version",
+			"Comment": "0.1.2-812-gb8bd4a52",
+			"Rev": "b8bd4a5285370c8dfd29c644929215ed03b68815"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/ssh/terminal",
+			"Rev": "2509b142fb2b797aa7587dad548f113b2c0f20ce"
+		},
+		{
+			"ImportPath": "golang.org/x/sys/unix",
+			"Rev": "176de7413414c01569163271c745672ff04a7267"
+		},
+		{
+			"ImportPath": "golang.org/x/sys/windows",
+			"Rev": "176de7413414c01569163271c745672ff04a7267"
+		},
+		{
+			"ImportPath": "gopkg.in/urfave/cli.v2",
+			"Comment": "v1.19.1-266-gb2bf3c5",
+			"Rev": "b2bf3c5abeb90da407891aecd1df2c5a1f6170c1"
+		},
+		{
+			"ImportPath": "gopkg.in/yaml.v2",
+			"Rev": "eb3733d160e74a9c7e442f435eb3bea458e1d19f"
+		}
+	]
+}

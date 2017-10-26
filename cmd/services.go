@@ -24,7 +24,12 @@ func ServiceCreate() error {
 
 	application := marathon.NewDockerApplication()
 	application.Name("gocd111").CPU(1).Memory(441).Storage(0)
-	application.Container.Docker.Container("registry.tw.com:80/gocd-server").Bridged().ExposePort(8153, 0, 0, "tcp")
+	application.Container.Docker.Container("registry.tw.com:80/gocd-server").Bridged().ExposePort(marathon.PortMapping{
+		ContainerPort: 8153,
+		HostPort:      0,
+		Protocol:      "tcp",
+		ServicePort:   0,
+	})
 	applicationCreated, err := client.CreateApplication(application)
 
 	if err != nil {
