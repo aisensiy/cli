@@ -2,10 +2,10 @@ package parser
 
 import (
 	"errors"
-	"github.com/sjkyspa/stacks/client/cmd"
-	"strings"
-	cli "gopkg.in/urfave/cli.v2"
 	"fmt"
+	"github.com/sjkyspa/stacks/client/cmd"
+	cli "gopkg.in/urfave/cli.v2"
+	"strings"
 )
 
 func ProvidersCommand() *cli.Command {
@@ -30,7 +30,7 @@ func ProvidersCommand() *cli.Command {
 				Usage:     "Get info of a Provider",
 				ArgsUsage: "<provider-name>",
 				Action: func(c *cli.Context) error {
-					if (c.Args().Get(0) == "") {
+					if c.Args().Get(0) == "" {
 						return cli.Exit(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
 					err := cmd.GetProviderByName(c.Args().Get(0))

@@ -3,10 +3,10 @@ package cmd
 import (
 	"fmt"
 	"github.com/olekukonko/tablewriter"
-	"os"
+	"github.com/sjkyspa/stacks/client/config"
 	launcherApi "github.com/sjkyspa/stacks/launcher/api/api"
 	deploymentNet "github.com/sjkyspa/stacks/launcher/api/net"
-	"github.com/sjkyspa/stacks/client/config"
+	"os"
 )
 
 func ClusterList() error {
@@ -25,7 +25,7 @@ func ClusterList() error {
 	return nil
 }
 
-func GetCluster(clusterId string) error{
+func GetCluster(clusterId string) error {
 	configRepository := config.NewConfigRepository(func(error) {})
 	clusterRepository := launcherApi.NewClusterRepository(configRepository, deploymentNet.NewCloudControllerGateway(configRepository))
 	cluster, err := clusterRepository.GetClusterById(clusterId)
@@ -37,7 +37,7 @@ func GetCluster(clusterId string) error{
 	return nil
 }
 
-func outputClusterDescription(cluster launcherApi.ClusterRef){
+func outputClusterDescription(cluster launcherApi.ClusterRef) {
 	fmt.Printf("--- %s Cluster\n", cluster.Name())
 	data := make([][]string, 3)
 	data[0] = []string{"NAME", cluster.Name()}
@@ -58,9 +58,9 @@ func ClusterCreate(clusterName string, clusterType string, clusterUri string) er
 	configRepository := config.NewConfigRepository(func(error) {})
 	clusterRepository := launcherApi.NewClusterRepository(configRepository, deploymentNet.NewCloudControllerGateway(configRepository))
 	clusterParams := launcherApi.ClusterParams{
-		Name:	clusterName,
-		Type:	clusterType,
-		Uri:	clusterUri,
+		Name: clusterName,
+		Type: clusterType,
+		Uri:  clusterUri,
 	}
 
 	createdCluster, err := clusterRepository.CreateCluster(clusterParams)
@@ -102,9 +102,9 @@ func ClusterUpdate(clusterId string, clusterName string, clusterType string, clu
 		clusterUri = cluster.Uri()
 	}
 	clusterParams := launcherApi.ClusterParams{
-		Name:	clusterName,
-		Type:	clusterType,
-		Uri:	clusterUri,
+		Name: clusterName,
+		Type: clusterType,
+		Uri:  clusterUri,
 	}
 
 	updateErr := clusterRepository.UpdateCluster(clusterId, clusterParams)

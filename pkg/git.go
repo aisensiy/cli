@@ -4,10 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"os/exec"
-	"strings"
-	"regexp"
 	"os"
+	"os/exec"
+	"regexp"
+	"strings"
 )
 
 func CloneRepo(repository string, directory string) error {

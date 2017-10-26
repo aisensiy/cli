@@ -1,11 +1,11 @@
 package parser
 
 import (
+	"fmt"
 	docopt "github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
-	"regexp"
 	"gopkg.in/urfave/cli.v2"
-	"fmt"
+	"regexp"
 )
 
 func ScaffoldCommands() *cli.Command {

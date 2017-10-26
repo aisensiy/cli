@@ -3,6 +3,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"github.com/fatih/color"
 	"github.com/sjkyspa/stacks/client/config"
 	"github.com/sjkyspa/stacks/controller/api/api"
 	"github.com/sjkyspa/stacks/controller/api/net"
@@ -12,7 +13,6 @@ import (
 	"os"
 	"path/filepath"
 	"time"
-	"github.com/fatih/color"
 )
 
 func LaunchBuild(filename, appName string) error {

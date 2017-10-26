@@ -2,15 +2,15 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/olekukonko/tablewriter"
 	"github.com/sjkyspa/stacks/client/config"
 	"github.com/sjkyspa/stacks/launcher/api/api"
 	"github.com/sjkyspa/stacks/launcher/api/net"
-	"github.com/olekukonko/tablewriter"
 	"os"
 
-	"io/ioutil"
-	"github.com/ghodss/yaml"
 	"encoding/json"
+	"github.com/ghodss/yaml"
+	"io/ioutil"
 )
 
 func createUpsRepoository() (upsRepository api.UpsRepository) {
@@ -80,7 +80,7 @@ func UpRemove(idOrName string) error {
 	upsRepository := createUpsRepoository()
 
 	err := upsRepository.RemoveUp(idOrName)
-	if (err != nil) {
+	if err != nil {
 		fmt.Println(err)
 		fmt.Printf("failed")
 		return err
@@ -104,7 +104,7 @@ func UpUpdate(idOrName string, fileName string) error {
 	}
 
 	err = upsRepository.UpdateUp(idOrName, upParams)
-	if (err != nil) {
+	if err != nil {
 		fmt.Println(err)
 		fmt.Printf("failed")
 		return err

@@ -3,15 +3,15 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"os"
-	"strconv"
-	"reflect"
 	"github.com/ghodss/yaml"
 	"github.com/olekukonko/tablewriter"
 	"github.com/sjkyspa/stacks/client/config"
 	"github.com/sjkyspa/stacks/controller/api/api"
 	"github.com/sjkyspa/stacks/controller/api/net"
 	"io/ioutil"
+	"os"
+	"reflect"
+	"strconv"
 )
 
 func StackCreate(filename string) error {
@@ -52,7 +52,7 @@ func StacksList() error {
 	stackRepository := api.NewStackRepository(configRepository,
 		net.NewCloudControllerGateway(configRepository))
 	stacks, err := stackRepository.GetStacks()
-	if err != nil || stacks.Count() == 0{
+	if err != nil || stacks.Count() == 0 {
 		err = fmt.Errorf("no stack found")
 		return err
 	}
@@ -86,7 +86,7 @@ func GetStack(stackName string) error {
 	return nil
 }
 
-func outputStackDescription(stack api.Stack){
+func outputStackDescription(stack api.Stack) {
 	fmt.Printf("--- %s Stack\n", stack.Name())
 	data := make([][]string, 3)
 	data[0] = []string{"Type", stack.Type()}
@@ -102,7 +102,7 @@ func outputStackDescription(stack api.Stack){
 	table.Render()
 }
 
-func outputStackTemplate(template api.Template){
+func outputStackTemplate(template api.Template) {
 	fmt.Printf("--- Template\n")
 	data := make([][]string, 2)
 	data[0] = []string{"Type", template.Type}
@@ -117,7 +117,7 @@ func outputStackTemplate(template api.Template){
 	table.Render()
 }
 
-func outputStackLanguages(languages []api.Language){
+func outputStackLanguages(languages []api.Language) {
 	fmt.Printf("--- Languages\n")
 	data := make([][]string, len(languages))
 	for index, language := range languages {
@@ -134,7 +134,7 @@ func outputStackLanguages(languages []api.Language){
 	table.Render()
 }
 
-func outputStackFrameworks(frameworks []api.Framework){
+func outputStackFrameworks(frameworks []api.Framework) {
 	fmt.Printf("--- Frameworks\n")
 	data := make([][]string, len(frameworks))
 	for index, framework := range frameworks {
@@ -151,11 +151,11 @@ func outputStackFrameworks(frameworks []api.Framework){
 	table.Render()
 }
 
-func outputStackServices(services map[string]api.Service){
+func outputStackServices(services map[string]api.Service) {
 	fmt.Println("--- Services")
 	keys := reflect.ValueOf(services).MapKeys()
 
-	for _,key := range keys{
+	for _, key := range keys {
 		var data [][]string
 		service := services[key.String()]
 		data = append(data, []string{key.String(), "name", service.GetName()})
@@ -175,7 +175,7 @@ func outputStackServices(services map[string]api.Service){
 			data = append(data, []string{key.String(), "verify", fmt.Sprintf("cpus:%f", service.GetVerify().Cpus)})
 		}
 		healthChecks := service.GetHealthChecks()
-		for index, healthcheck := range healthChecks{
+		for index, healthcheck := range healthChecks {
 			data = append(data, []string{key.String(), fmt.Sprintf("healthcheck %d", index), fmt.Sprintf("protocol:%s", healthcheck.Protocol)})
 			data = append(data, []string{key.String(), fmt.Sprintf("healthcheck %d", index), fmt.Sprintf("command:%s", healthcheck.Command)})
 			data = append(data, []string{key.String(), fmt.Sprintf("healthcheck %d", index), fmt.Sprintf("path:%s", healthcheck.Path)})

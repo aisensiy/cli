@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
+	cli "gopkg.in/urfave/cli.v2"
 	"os"
 	"strconv"
-	cli "gopkg.in/urfave/cli.v2"
 )
 
 func AppsCommand() *cli.Command {

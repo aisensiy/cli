@@ -20,7 +20,7 @@ func main() {
 		Description: "CDE command line tool",
 		Compiled:    time.Now(),
 		Authors: []*cli.Author{
-			&cli.Author{
+			{
 				Name: "ThoughtWorks",
 			},
 		},

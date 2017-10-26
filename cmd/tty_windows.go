@@ -2,10 +2,10 @@
 package cmd
 
 import (
-	"io/ioutil"
-	"os/exec"
-	"os"
 	"fmt"
+	"io/ioutil"
+	"os"
+	"os/exec"
 )
 
 func CmdStart(cmd *exec.Cmd) (*os.File, error) {

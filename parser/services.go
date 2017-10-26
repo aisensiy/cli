@@ -5,9 +5,9 @@ import (
 	"github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
 	deployApi "github.com/sjkyspa/stacks/launcher/api/api"
+	cli "gopkg.in/urfave/cli.v2"
 	"os"
 	"strconv"
-	cli "gopkg.in/urfave/cli.v2"
 )
 
 func ServicesCommand() *cli.Command {
@@ -77,7 +77,7 @@ func ServicesCommand() *cli.Command {
 
 					instances := c.String("instances")
 					if instances != "" {
-						_, err := strconv.Atoi(instances);
+						_, err := strconv.Atoi(instances)
 						if err != nil {
 							return cli.Exit(fmt.Sprintf("Error: %v\n", err), 1)
 						}
@@ -87,7 +87,7 @@ func ServicesCommand() *cli.Command {
 					updateParams["mem"] = c.String("mem")
 					updateParams["cpu"] = c.String("cpu")
 					updateParams["instances"] = instances
-					newServiceParams, err := mergeWithOriginService(c.String("app"), serviceName, updateParams);
+					newServiceParams, err := mergeWithOriginService(c.String("app"), serviceName, updateParams)
 					if err != nil {
 						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}

@@ -1,10 +1,10 @@
 package parser
 
 import (
+	"fmt"
 	"github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
 	cli "gopkg.in/urfave/cli.v2"
-	"fmt"
 )
 
 func StacksCommand() *cli.Command {

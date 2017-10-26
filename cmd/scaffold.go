@@ -1,15 +1,15 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"github.com/sjkyspa/stacks/client/config"
+	"github.com/sjkyspa/stacks/client/pkg"
 	"github.com/sjkyspa/stacks/controller/api/api"
 	"github.com/sjkyspa/stacks/controller/api/net"
 	launcherApi "github.com/sjkyspa/stacks/launcher/api/api"
 	deploymentNet "github.com/sjkyspa/stacks/launcher/api/net"
-	"github.com/sjkyspa/stacks/client/pkg"
 	"os"
-	"errors"
 )
 
 func ScaffoldCreate(stackName, unifiedProcedure, provider, owner string, directory string, appName string, needDeploy string) error {
@@ -29,7 +29,7 @@ func ScaffoldCreate(stackName, unifiedProcedure, provider, owner string, directo
 	currentDir, _ := os.Getwd()
 	target := fmt.Sprintf("%s//%s", currentDir, directory)
 	if IsDirectoryExist(target) {
-		return fmt.Errorf("directory %s already exists", directory);
+		return fmt.Errorf("directory %s already exists", directory)
 	}
 
 	if stackName != "" {
@@ -44,7 +44,7 @@ func ScaffoldCreate(stackName, unifiedProcedure, provider, owner string, directo
 			return fmt.Errorf("git repositry is no valid, please check the definition of stack '%s' to make sure it contains valid template code.", stackName)
 		}
 
-		err = git.CloneRepo(gitRepo, directory);
+		err = git.CloneRepo(gitRepo, directory)
 
 		if err != nil {
 			return err
@@ -77,7 +77,7 @@ func ScaffoldCreate(stackName, unifiedProcedure, provider, owner string, directo
 			return fmt.Errorf("git repositry is no valid, please check the definition of stack '%s' to make sure it contains valid template code.", stackName)
 		}
 
-		err = git.CloneRepo(template.URI, directory);
+		err = git.CloneRepo(template.URI, directory)
 
 		if err != nil {
 			return err
@@ -112,7 +112,7 @@ func getStack(stackName string) (stackObj api.Stack, err error) {
 	return
 }
 
-func IsDirectoryExist(directory string) (bool) {
+func IsDirectoryExist(directory string) bool {
 	if _, notExistErr := os.Stat(directory); notExistErr != nil {
 		return false
 	}

@@ -5,8 +5,8 @@ import (
 	docopt "github.com/docopt/docopt-go"
 	"github.com/sjkyspa/stacks/client/cmd"
 	"github.com/sjkyspa/stacks/launcher/api/api"
-	"strconv"
 	cli "gopkg.in/urfave/cli.v2"
+	"strconv"
 )
 
 func PsCommands() *cli.Command {
@@ -47,7 +47,7 @@ func PsCommands() *cli.Command {
 					}
 					serviceName := c.Args().Get(0)
 					app := c.String("app")
-					instances, err := strconv.Atoi(c.Args().Get(1));
+					instances, err := strconv.Atoi(c.Args().Get(1))
 					if err != nil {
 						return cli.Exit(fmt.Sprintf("Error: %v\n", err), 1)
 					}

@@ -70,7 +70,7 @@ func (cb ComposeBackend) ToComposeFile(s api.Stack) string {
 				fmt.Println(link)
 				env[fmt.Sprintf("%s_HOST", strings.ToUpper(link))] = link
 				env[fmt.Sprintf("%s_PORT", strings.ToUpper(link))] = fmt.Sprintf("%d", services[link].GetExpose()[0])
-				for envName, envValue := range services[link].GetEnv(){
+				for envName, envValue := range services[link].GetEnv() {
 					env[fmt.Sprintf("%s_%s", strings.ToUpper(link), strings.ToUpper(envName))] = envValue
 				}
 			}
@@ -102,7 +102,7 @@ func (cb ComposeBackend) ToComposeFile(s api.Stack) string {
 			for _, link := range links {
 				env[fmt.Sprintf("%s_HOST", strings.ToUpper(link))] = link
 				env[fmt.Sprintf("%s_PORT", strings.ToUpper(link))] = fmt.Sprintf("%d", services[link].GetExpose()[0])
-				for envName, envValue := range services[link].GetEnv(){
+				for envName, envValue := range services[link].GetEnv() {
 					env[fmt.Sprintf("%s_%s", strings.ToUpper(link), strings.ToUpper(envName))] = envValue
 				}
 			}

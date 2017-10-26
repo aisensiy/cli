@@ -1,14 +1,14 @@
 package cmd
 
 import (
+	"errors"
+	"fmt"
+	"github.com/olekukonko/tablewriter"
 	"github.com/sjkyspa/stacks/client/config"
 	"github.com/sjkyspa/stacks/launcher/api/api"
 	"github.com/sjkyspa/stacks/launcher/api/net"
-	"fmt"
-	"github.com/olekukonko/tablewriter"
 	"os"
 	"time"
-	"errors"
 )
 
 func ProviderCreate(providerName string, providerType string, consumer string, configMap map[string]interface{}) error {
@@ -115,7 +115,7 @@ func ProviderUpdate(providerName string, updateConfigMap map[string]interface{})
 			_, ok := configMap[k]
 			if ok {
 				delete(configMap, k)
-			}else {
+			} else {
 				return errors.New(fmt.Sprintf("could not remove not existed key %s in config", k))
 			}
 		} else {
