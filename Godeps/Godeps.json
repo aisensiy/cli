@@ -1,6 +1,6 @@
 {
 	"ImportPath": "github.com/sjkyspa/stacks/client",
-	"GoVersion": "go1.8",
+	"GoVersion": "go1.9",
 	"GodepVersion": "v79",
 	"Deps": [
 		{
@@ -58,42 +58,42 @@
 		{
 			"ImportPath": "github.com/sjkyspa/stacks/controller/api/api",
 			"Comment": "0.1.2-812-gb8bd4a52",
-			"Rev": "b8bd4a5285370c8dfd29c644929215ed03b68815"
+			"Rev": "58062f61340826b3a65c5a029ce7a6550f1449c3"
 		},
 		{
 			"ImportPath": "github.com/sjkyspa/stacks/controller/api/config",
 			"Comment": "0.1.2-812-gb8bd4a52",
-			"Rev": "b8bd4a5285370c8dfd29c644929215ed03b68815"
+			"Rev": "58062f61340826b3a65c5a029ce7a6550f1449c3"
 		},
 		{
 			"ImportPath": "github.com/sjkyspa/stacks/controller/api/net",
 			"Comment": "0.1.2-812-gb8bd4a52",
-			"Rev": "b8bd4a5285370c8dfd29c644929215ed03b68815"
+			"Rev": "58062f61340826b3a65c5a029ce7a6550f1449c3"
 		},
 		{
 			"ImportPath": "github.com/sjkyspa/stacks/controller/api/util",
 			"Comment": "0.1.2-812-gb8bd4a52",
-			"Rev": "b8bd4a5285370c8dfd29c644929215ed03b68815"
+			"Rev": "58062f61340826b3a65c5a029ce7a6550f1449c3"
 		},
 		{
 			"ImportPath": "github.com/sjkyspa/stacks/launcher/api/api",
 			"Comment": "0.1.2-812-gb8bd4a52",
-			"Rev": "b8bd4a5285370c8dfd29c644929215ed03b68815"
+			"Rev": "58062f61340826b3a65c5a029ce7a6550f1449c3"
 		},
 		{
 			"ImportPath": "github.com/sjkyspa/stacks/launcher/api/config",
 			"Comment": "0.1.2-812-gb8bd4a52",
-			"Rev": "b8bd4a5285370c8dfd29c644929215ed03b68815"
+			"Rev": "58062f61340826b3a65c5a029ce7a6550f1449c3"
 		},
 		{
 			"ImportPath": "github.com/sjkyspa/stacks/launcher/api/net",
 			"Comment": "0.1.2-812-gb8bd4a52",
-			"Rev": "b8bd4a5285370c8dfd29c644929215ed03b68815"
+			"Rev": "58062f61340826b3a65c5a029ce7a6550f1449c3"
 		},
 		{
 			"ImportPath": "github.com/sjkyspa/stacks/version",
 			"Comment": "0.1.2-812-gb8bd4a52",
-			"Rev": "b8bd4a5285370c8dfd29c644929215ed03b68815"
+			"Rev": "58062f61340826b3a65c5a029ce7a6550f1449c3"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/ssh/terminal",
