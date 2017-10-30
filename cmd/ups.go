@@ -40,6 +40,7 @@ func UpsInfo(upName string) error {
 	ups, err := upsRepository.GetUPByName(upName)
 
 	if err != nil || ups.Count() == 0 {
+		fmt.Printf("UP not found\n")
 		err = fmt.Errorf("up not found")
 		return err
 	}
@@ -68,6 +69,7 @@ func UpCreate(filename string) error {
 	}
 	upModel, err := upsRepository.CreateUp(upParams)
 	if err != nil {
+		fmt.Printf("creating failure")
 		return err
 	}
 
