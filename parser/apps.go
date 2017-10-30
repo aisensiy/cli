@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/docopt/docopt-go"
-	"github.com/sjkyspa/cde/cmd"
+	"github.com/sjkyspa/cde-client/cmd"
 	cli "gopkg.in/urfave/cli.v2"
 	"os"
 	"strconv"

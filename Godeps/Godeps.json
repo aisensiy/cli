@@ -1,5 +1,5 @@
 {
-	"ImportPath": "github.com/sjkyspa/cde",
+	"ImportPath": "github.com/sjkyspa/cde-client",
 	"GoVersion": "go1.9",
 	"GodepVersion": "v79",
 	"Deps": [

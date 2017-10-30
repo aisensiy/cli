@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 	"time"
-	"github.com/sjkyspa/cde/parser"
+	"github.com/sjkyspa/cde-client/parser"
 )
 
 func main() {

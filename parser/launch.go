@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/docopt/docopt-go"
-	"github.com/sjkyspa/cde/cmd"
+	"github.com/sjkyspa/cde-client/cmd"
 	"gopkg.in/urfave/cli.v2"
 )
 

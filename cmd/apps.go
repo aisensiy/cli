@@ -10,8 +10,8 @@ import (
 	"strings"
 
 	"github.com/olekukonko/tablewriter"
-	"github.com/sjkyspa/cde/config"
-	"github.com/sjkyspa/cde/pkg"
+	"github.com/sjkyspa/cde-client/config"
+	"github.com/sjkyspa/cde-client/pkg"
 	"github.com/sjkyspa/stacks/controller/api/api"
 	"github.com/sjkyspa/stacks/controller/api/net"
 	launcherApi "github.com/sjkyspa/stacks/launcher/api/api"

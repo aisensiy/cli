@@ -3,7 +3,7 @@ package parser
 import (
 	"fmt"
 	"github.com/docopt/docopt-go"
-	"github.com/sjkyspa/cde/cmd"
+	"github.com/sjkyspa/cde-client/cmd"
 	deployApi "github.com/sjkyspa/stacks/launcher/api/api"
 	cli "gopkg.in/urfave/cli.v2"
 	"os"
