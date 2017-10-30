@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/sjkyspa/stacks/controller/api/config"
 	"github.com/sjkyspa/stacks/controller/api/net"
 )
@@ -17,6 +18,7 @@ type BuildMapper interface {
 	Fail(build Build) (apiErr error)
 	VerifySuccess(build Build) (apiErr error)
 	VerifyFail(build Build) (apiErr error)
+	CreateVerify(build Build, params VerifyParams) (verify Verify, apiErr error)
 }
 
 type DefaultBuildMapper struct {
@@ -82,7 +84,7 @@ func (bm DefaultBuildMapper) GetBuild(app App, id string) (build Build, apiErr e
 	return
 }
 
-func (bm DefaultBuildMapper) Success(build Build) (error) {
+func (bm DefaultBuildMapper) Success(build Build) error {
 	return bm.gateway.PUT(fmt.Sprintf("/apps/%s/builds/%s/success", build.GetApp().Id(), build.Id()), nil)
 }
 
@@ -100,4 +102,33 @@ func (bm DefaultBuildMapper) VerifySuccess(build Build) (apiErr error) {
 
 func (bm DefaultBuildMapper) VerifyFail(build Build) (apiErr error) {
 	return bm.gateway.PUT(fmt.Sprintf("/apps/%s/builds/%s/verify/fail", build.GetApp().Id(), build.Id()), nil)
+}
+
+func (bm DefaultBuildMapper) CreateVerify(build Build, params VerifyParams) (verify Verify, apiErr error) {
+	data, err := json.Marshal(params)
+	if err != nil {
+		apiErr = fmt.Errorf("Can not serilize the data")
+		return
+	}
+	url := fmt.Sprintf("/apps/%s/builds/%s/verifies", build.GetApp().Id(), build.Id())
+	res, err := bm.gateway.Request("POST", url, data)
+	if err != nil {
+		fmt.Println("error hanppend when request ", url, err)
+		apiErr = err
+		return
+	}
+
+	location := res.Header.Get("Location")
+
+	var createdVerify Verify
+	apiErr = bm.gateway.Get(location, &createdVerify)
+	if apiErr != nil {
+		return
+	}
+
+	createdVerify.BuildField = build
+	createdVerify.BuildMapper = NewBuildMapper(bm.config, bm.gateway)
+	verify = createdVerify
+
+	return
 }

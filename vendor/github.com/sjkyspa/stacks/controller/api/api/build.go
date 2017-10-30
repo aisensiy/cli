@@ -18,6 +18,11 @@ type Build interface {
 	IsVerifySuccess() bool
 	VerifyFail() error
 	IsVerifyFail() bool
+	CreateVerify(VerifyParams) (Verify, error)
+}
+
+type VerifyParams struct {
+	PlaceHolder string `json:"-"`
 }
 
 type BuildParams struct {
@@ -27,7 +32,9 @@ type BuildParams struct {
 }
 
 type Verify struct {
-	StatusField string `json:"status"`
+	StatusField string      `json:"status"`
+	BuildField  Build       `json:"-"`
+	BuildMapper BuildMapper `json:"-"`
 }
 
 type BuildModel struct {
@@ -118,7 +125,7 @@ func (bm BuildModel) Links() Links {
 	}
 }
 
-func (bm BuildModel) Success() (error) {
+func (bm BuildModel) Success() error {
 	return bm.BuildMapper.Success(bm)
 }
 
@@ -154,6 +161,10 @@ func (bm BuildModel) IsVerifySuccess() bool {
 	return bm.VerifyField.StatusField == "SUCCESS"
 }
 
+func (bm BuildModel) CreateVerify(params VerifyParams) (Verify, error) {
+	return bm.BuildMapper.CreateVerify(bm, params)
+}
+
 func (bm BuildModel) VerifyFail() error {
 	return bm.BuildMapper.VerifyFail(bm)
 }
@@ -173,14 +184,14 @@ type Builds interface {
 }
 
 type BuildsModel struct {
-	CountField  int        `json:"count"`
-	SelfField   string     `json:"self"`
-	FirstField  string     `json:"first"`
-	LastField   string     `json:"last"`
-	PrevField   string     `json:"prev"`
-	NextField   string     `json:"next"`
-	ItemsField  []BuildRef `json:"items"`
-	BuildMapper BuildMapper
+	CountField  int         `json:"count"`
+	SelfField   string      `json:"self"`
+	FirstField  string      `json:"first"`
+	LastField   string      `json:"last"`
+	PrevField   string      `json:"prev"`
+	NextField   string      `json:"next"`
+	ItemsField  []BuildRef  `json:"items"`
+	BuildMapper BuildMapper `json:"-"`
 }
 
 func (bsm BuildsModel) Count() int {

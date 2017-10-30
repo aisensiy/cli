@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/sjkyspa/stacks/client/pkg"
+	"github.com/sjkyspa/cde/pkg"
 )
 
 func GitRemote(appID, remote string) error {

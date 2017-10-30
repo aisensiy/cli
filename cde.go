@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"github.com/docopt/docopt-go"
 	"github.com/fatih/color"
-	"github.com/sjkyspa/stacks/client/parser"
 	"github.com/sjkyspa/stacks/version"
 	"gopkg.in/urfave/cli.v2"
 	"os"
 	"strings"
 	"time"
+	"github.com/sjkyspa/cde/parser"
 )
 
 func main() {

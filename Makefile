@@ -1,4 +1,4 @@
-include ../includes.mk
+include ./includes.mk
 
 BINARY_DEST_DIR=.
 INSTALL_DIR=$$GOPATH/bin

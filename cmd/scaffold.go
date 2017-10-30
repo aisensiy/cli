@@ -3,8 +3,8 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"github.com/sjkyspa/stacks/client/config"
-	"github.com/sjkyspa/stacks/client/pkg"
+	"github.com/sjkyspa/cde/config"
+	"github.com/sjkyspa/cde/pkg"
 	"github.com/sjkyspa/stacks/controller/api/api"
 	"github.com/sjkyspa/stacks/controller/api/net"
 	launcherApi "github.com/sjkyspa/stacks/launcher/api/api"

@@ -3,7 +3,7 @@ package parser
 import (
 	"errors"
 	"fmt"
-	"github.com/sjkyspa/stacks/client/cmd"
+	"github.com/sjkyspa/cde/cmd"
 	cli "gopkg.in/urfave/cli.v2"
 	"strings"
 )

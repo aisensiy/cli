@@ -15,9 +15,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/sjkyspa/stacks/client/backend/compose"
-	"github.com/sjkyspa/stacks/client/config"
-	"github.com/sjkyspa/stacks/client/pkg"
+	"github.com/sjkyspa/cde/backend/compose"
+	"github.com/sjkyspa/cde/config"
+	"github.com/sjkyspa/cde/pkg"
 	"github.com/sjkyspa/stacks/controller/api/api"
 	"github.com/sjkyspa/stacks/controller/api/net"
 )
