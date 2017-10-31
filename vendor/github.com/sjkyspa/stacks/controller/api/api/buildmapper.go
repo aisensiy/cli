@@ -19,6 +19,7 @@ type BuildMapper interface {
 	VerifySuccess(build Build) (apiErr error)
 	VerifyFail(build Build) (apiErr error)
 	CreateVerify(build Build, params VerifyParams) (verify Verify, apiErr error)
+	GetVerify(app App, build Build, id string) (verify Verify, apiErr error)
 }
 
 type DefaultBuildMapper struct {
@@ -78,9 +79,23 @@ func (bm DefaultBuildMapper) GetBuild(app App, id string) (build Build, apiErr e
 	if apiErr != nil {
 		return
 	}
+	buildModel.AppField = app
 	buildModel.BuildMapper = NewBuildMapper(bm.config, bm.gateway)
 	buildModel.Resource = NewResource(bm.config, bm.gateway)
 	build = buildModel
+	return
+}
+
+func (bm DefaultBuildMapper) GetVerify(app App, build Build, id string) (verify Verify, apiErr error) {
+	var verifyModel VerifyModel
+	apiErr = bm.gateway.Get(fmt.Sprintf("/apps/%s/builds/%s/verifies/%s", app.Id(), build.Id(), id), &verifyModel)
+	if apiErr != nil {
+		return
+	}
+	verifyModel.BuildMapper = NewBuildMapper(bm.config, bm.gateway)
+	verifyModel.Resource = NewResource(bm.config, bm.gateway)
+	verifyModel.BuildField = build
+	verify = verifyModel
 	return
 }
 
@@ -120,7 +135,7 @@ func (bm DefaultBuildMapper) CreateVerify(build Build, params VerifyParams) (ver
 
 	location := res.Header.Get("Location")
 
-	var createdVerify Verify
+	var createdVerify VerifyModel
 	apiErr = bm.gateway.Get(location, &createdVerify)
 	if apiErr != nil {
 		return
@@ -128,6 +143,7 @@ func (bm DefaultBuildMapper) CreateVerify(build Build, params VerifyParams) (ver
 
 	createdVerify.BuildField = build
 	createdVerify.BuildMapper = NewBuildMapper(bm.config, bm.gateway)
+	createdVerify.Resource = NewResource(bm.config, bm.gateway)
 	verify = createdVerify
 
 	return

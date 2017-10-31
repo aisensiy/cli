@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"github.com/docopt/docopt-go"
 	"github.com/fatih/color"
+	"github.com/sjkyspa/cde-client/parser"
 	"github.com/sjkyspa/stacks/version"
 	"gopkg.in/urfave/cli.v2"
 	"os"
 	"strings"
 	"time"
-	"github.com/sjkyspa/cde-client/parser"
 )
 
 func main() {
@@ -45,6 +45,7 @@ func main() {
 			parser.LaunchCommands(),
 		},
 	}
+
 	commandList := os.Args
 
 	if len(commandList) > 1 && noneMigrated(commandList) {

@@ -125,6 +125,91 @@ func LaunchBuild(filename, appName string) error {
 	}
 }
 
+func LaunchVerify(buildId, appName string) error {
+	configRepository := config.NewConfigRepository(func(err error) {
+
+	})
+	gateway := net.NewCloudControllerGateway(configRepository)
+	apps := api.NewAppRepository(configRepository, gateway)
+
+	if appName == "" {
+		_, appId, err := load("")
+		if err != nil {
+			return err
+		}
+		appName = appId
+	}
+
+	app, err := apps.GetApp(appName)
+	if err != nil {
+		return err
+	}
+	build, err := app.GetBuild(buildId)
+	if err != nil {
+		return err
+	}
+
+	verify, err := build.CreateVerify(api.VerifyParams{})
+	if err != nil {
+		return err
+	}
+
+	cerr := make(chan error)
+	succeed := make(chan bool)
+	cleaning := make(chan bool)
+
+	go func() {
+		for {
+			select {
+			case <-cleaning:
+				// todo: should fetch log again
+				return
+			default:
+				// todo: fetch log
+				fmt.Println("fetch log")
+				time.Sleep(time.Second * 5)
+			}
+		}
+	}()
+
+	go func() {
+		for {
+			if verify.IsSuccess() {
+				succeed <- true
+				cleaning <- true
+				return
+			}
+			if verify.IsFail() {
+				succeed <- false
+				cleaning <- true
+				cerr <- errors.New("Verify is failed")
+			}
+			time.Sleep(time.Second * 5)
+			verify, err = build.GetVerify(verify.Id())
+			if err != nil {
+				cerr <- err
+				return
+			}
+		}
+	}()
+
+	for {
+		select {
+		case succ := <-succeed:
+			if !succ {
+				return errors.New("Verify fail")
+			} else {
+				color.Green("Verify Success")
+				return nil
+			}
+		case err := <-cerr:
+			return err
+		default:
+			time.Sleep(time.Second * 5)
+		}
+	}
+}
+
 func toRequest(file *os.File, entrypoint string) (*http.Request, chan error, error) {
 	reader, writer := io.Pipe()
 	newWriter := multipart.NewWriter(writer)

@@ -19,6 +19,15 @@ type Build interface {
 	VerifyFail() error
 	IsVerifyFail() bool
 	CreateVerify(VerifyParams) (Verify, error)
+	GetVerify(id string) (Verify, error)
+}
+
+type Verify interface {
+	Id() string
+	Status() string
+	Build() Build
+	IsSuccess() bool
+	IsFail() bool
 }
 
 type VerifyParams struct {
@@ -31,17 +40,19 @@ type BuildParams struct {
 	Source string `json:"source"`
 }
 
-type Verify struct {
+type VerifyModel struct {
+	IDField     string      `json:"id"`
 	StatusField string      `json:"status"`
 	BuildField  Build       `json:"-"`
 	BuildMapper BuildMapper `json:"-"`
+	Resource    Resource    `json:"-"`
 }
 
 type BuildModel struct {
 	GitShaField string      `json:"git_sha"`
 	IDField     string      `json:"id"`
 	StatusField string      `json:"status"`
-	VerifyField Verify      `json:"verify"`
+	VerifyField VerifyModel `json:"verify"`
 	LinksField  []Link      `json:"links"`
 	AppField    App         `json:"-"`
 	BuildMapper BuildMapper `json:"-"`
@@ -171,6 +182,30 @@ func (bm BuildModel) VerifyFail() error {
 
 func (bm BuildModel) IsVerifyFail() bool {
 	return bm.VerifyField.StatusField == "FAIL"
+}
+
+func (bm BuildModel) GetVerify(id string) (Verify, error) {
+	return bm.BuildMapper.GetVerify(bm.AppField, bm, id)
+}
+
+func (vm VerifyModel) IsSuccess() bool {
+	return vm.StatusField == "SUCCESS"
+}
+
+func (vm VerifyModel) IsFail() bool {
+	return vm.StatusField == "FAIL"
+}
+
+func (vm VerifyModel) Id() string {
+	return vm.IDField
+}
+
+func (vm VerifyModel) Build() Build {
+	return vm.BuildField
+}
+
+func (vm VerifyModel) Status() string {
+	return vm.StatusField
 }
 
 type Builds interface {
