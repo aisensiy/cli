@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/sjkyspa/cde-client/config"
-	"github.com/sjkyspa/cde-client/pkg"
+	"github.com/cnupp/cli/config"
+	"github.com/cnupp/cli/pkg"
 )
 
 func load(appID string) (config.ConfigRepository, string, error) {

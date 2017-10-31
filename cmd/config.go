@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/sjkyspa/cde-client/pkg/prettyprint"
+	"github.com/cnupp/cli/pkg/prettyprint"
 	"github.com/sjkyspa/stacks/controller/api/api"
 	"github.com/sjkyspa/stacks/controller/api/net"
 )

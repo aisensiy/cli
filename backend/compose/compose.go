@@ -2,7 +2,7 @@ package compose
 
 import (
 	"fmt"
-	"github.com/sjkyspa/cde-client/backend"
+	"github.com/cnupp/cli/backend"
 	"github.com/sjkyspa/stacks/controller/api/api"
 	"gopkg.in/yaml.v2"
 	"os"

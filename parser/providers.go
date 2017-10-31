@@ -3,7 +3,7 @@ package parser
 import (
 	"errors"
 	"fmt"
-	"github.com/sjkyspa/cde-client/cmd"
+	"github.com/cnupp/cli/cmd"
 	cli "gopkg.in/urfave/cli.v2"
 	"strings"
 )

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/docopt/docopt-go"
 	"github.com/fatih/color"
-	"github.com/sjkyspa/cde-client/parser"
+	"github.com/cnupp/cli/parser"
 	"github.com/sjkyspa/stacks/version"
 	"gopkg.in/urfave/cli.v2"
 	"os"

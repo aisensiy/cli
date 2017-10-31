@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/olekukonko/tablewriter"
-	"github.com/sjkyspa/cde-client/config"
+	"github.com/cnupp/cli/config"
 	launcherApi "github.com/sjkyspa/stacks/launcher/api/api"
 	deploymentNet "github.com/sjkyspa/stacks/launcher/api/net"
 	"os"

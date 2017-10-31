@@ -5,7 +5,7 @@ import (
 	"regexp"
 
 	docopt "github.com/docopt/docopt-go"
-	"github.com/sjkyspa/cde-client/cmd"
+	"github.com/cnupp/cli/cmd"
 	"gopkg.in/urfave/cli.v2"
 )
 
