@@ -12,10 +12,10 @@ import (
 	"github.com/olekukonko/tablewriter"
 	"github.com/cnupp/cli/config"
 	"github.com/cnupp/cli/pkg"
-	"github.com/sjkyspa/stacks/controller/api/api"
-	"github.com/sjkyspa/stacks/controller/api/net"
-	launcherApi "github.com/sjkyspa/stacks/launcher/api/api"
-	deploymentNet "github.com/sjkyspa/stacks/launcher/api/net"
+	"github.com/cnupp/cnup/controller/api/api"
+	"github.com/cnupp/cnup/controller/api/net"
+	launcherApi "github.com/cnupp/cnup/launcher/api/api"
+	deploymentNet "github.com/cnupp/cnup/launcher/api/net"
 )
 
 func askForOverrideExistingApp() bool {

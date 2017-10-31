@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/olekukonko/tablewriter"
 	"github.com/cnupp/cli/config"
-	launcherApi "github.com/sjkyspa/stacks/launcher/api/api"
-	deploymentNet "github.com/sjkyspa/stacks/launcher/api/net"
+	launcherApi "github.com/cnupp/cnup/launcher/api/api"
+	deploymentNet "github.com/cnupp/cnup/launcher/api/net"
 	"os"
 )
 

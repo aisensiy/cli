@@ -3,7 +3,7 @@ package compose
 import (
 	"fmt"
 	"github.com/cnupp/cli/backend"
-	"github.com/sjkyspa/stacks/controller/api/api"
+	"github.com/cnupp/cnup/controller/api/api"
 	"gopkg.in/yaml.v2"
 	"os"
 	"path/filepath"

@@ -1,6 +1,6 @@
 package backend
 
-import "github.com/sjkyspa/stacks/controller/api/api"
+import "github.com/cnupp/cnup/controller/api/api"
 
 type Runtime interface {
 	Up()

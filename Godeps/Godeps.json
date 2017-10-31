@@ -2,7 +2,50 @@
 	"ImportPath": "github.com/cnupp/cli",
 	"GoVersion": "go1.9",
 	"GodepVersion": "v79",
+	"Packages": [
+		"./..."
+	],
 	"Deps": [
+		{
+			"ImportPath": "github.com/cnupp/cnup/controller/api/api",
+			"Comment": "0.1.2-831-gfff6aa91",
+			"Rev": "fff6aa91e8ba9cf80cc6787bef93c63eb8b593a3"
+		},
+		{
+			"ImportPath": "github.com/cnupp/cnup/controller/api/config",
+			"Comment": "0.1.2-831-gfff6aa91",
+			"Rev": "fff6aa91e8ba9cf80cc6787bef93c63eb8b593a3"
+		},
+		{
+			"ImportPath": "github.com/cnupp/cnup/controller/api/net",
+			"Comment": "0.1.2-831-gfff6aa91",
+			"Rev": "fff6aa91e8ba9cf80cc6787bef93c63eb8b593a3"
+		},
+		{
+			"ImportPath": "github.com/cnupp/cnup/controller/api/util",
+			"Comment": "0.1.2-831-gfff6aa91",
+			"Rev": "fff6aa91e8ba9cf80cc6787bef93c63eb8b593a3"
+		},
+		{
+			"ImportPath": "github.com/cnupp/cnup/launcher/api/api",
+			"Comment": "0.1.2-831-gfff6aa91",
+			"Rev": "fff6aa91e8ba9cf80cc6787bef93c63eb8b593a3"
+		},
+		{
+			"ImportPath": "github.com/cnupp/cnup/launcher/api/config",
+			"Comment": "0.1.2-831-gfff6aa91",
+			"Rev": "fff6aa91e8ba9cf80cc6787bef93c63eb8b593a3"
+		},
+		{
+			"ImportPath": "github.com/cnupp/cnup/launcher/api/net",
+			"Comment": "0.1.2-831-gfff6aa91",
+			"Rev": "fff6aa91e8ba9cf80cc6787bef93c63eb8b593a3"
+		},
+		{
+			"ImportPath": "github.com/cnupp/cnup/version",
+			"Comment": "0.1.2-831-gfff6aa91",
+			"Rev": "fff6aa91e8ba9cf80cc6787bef93c63eb8b593a3"
+		},
 		{
 			"ImportPath": "github.com/docopt/docopt-go",
 			"Comment": "0.6.2",
@@ -56,46 +99,6 @@
 			"Rev": "a7a4c189eb47ed33ce7b35f2880070a0c82a67d4"
 		},
 		{
-			"ImportPath": "github.com/sjkyspa/stacks/controller/api/api",
-			"Comment": "0.1.2-830-g646764a1",
-			"Rev": "646764a19daf605e657e78c1ecf5bcbdffaadd8d"
-		},
-		{
-			"ImportPath": "github.com/sjkyspa/stacks/controller/api/config",
-			"Comment": "0.1.2-830-g646764a1",
-			"Rev": "646764a19daf605e657e78c1ecf5bcbdffaadd8d"
-		},
-		{
-			"ImportPath": "github.com/sjkyspa/stacks/controller/api/net",
-			"Comment": "0.1.2-830-g646764a1",
-			"Rev": "646764a19daf605e657e78c1ecf5bcbdffaadd8d"
-		},
-		{
-			"ImportPath": "github.com/sjkyspa/stacks/controller/api/util",
-			"Comment": "0.1.2-830-g646764a1",
-			"Rev": "646764a19daf605e657e78c1ecf5bcbdffaadd8d"
-		},
-		{
-			"ImportPath": "github.com/sjkyspa/stacks/launcher/api/api",
-			"Comment": "0.1.2-830-g646764a1",
-			"Rev": "646764a19daf605e657e78c1ecf5bcbdffaadd8d"
-		},
-		{
-			"ImportPath": "github.com/sjkyspa/stacks/launcher/api/config",
-			"Comment": "0.1.2-830-g646764a1",
-			"Rev": "646764a19daf605e657e78c1ecf5bcbdffaadd8d"
-		},
-		{
-			"ImportPath": "github.com/sjkyspa/stacks/launcher/api/net",
-			"Comment": "0.1.2-830-g646764a1",
-			"Rev": "646764a19daf605e657e78c1ecf5bcbdffaadd8d"
-		},
-		{
-			"ImportPath": "github.com/sjkyspa/stacks/version",
-			"Comment": "0.1.2-830-g646764a1",
-			"Rev": "646764a19daf605e657e78c1ecf5bcbdffaadd8d"
-		},
-		{
 			"ImportPath": "golang.org/x/crypto/ssh/terminal",
 			"Rev": "2509b142fb2b797aa7587dad548f113b2c0f20ce"
 		},
@@ -115,26 +118,6 @@
 		{
 			"ImportPath": "gopkg.in/yaml.v2",
 			"Rev": "eb3733d160e74a9c7e442f435eb3bea458e1d19f"
-		},
-		{
-			"ImportPath": "github.com/sjkyspa/stacks/launcher/api/vendor/github.com/sjkyspa/stacks/controller/api/api",
-			"Comment": "0.1.2-830-g646764a1",
-			"Rev": "646764a19daf605e657e78c1ecf5bcbdffaadd8d"
-		},
-		{
-			"ImportPath": "github.com/sjkyspa/stacks/launcher/api/vendor/github.com/sjkyspa/stacks/controller/api/config",
-			"Comment": "0.1.2-830-g646764a1",
-			"Rev": "646764a19daf605e657e78c1ecf5bcbdffaadd8d"
-		},
-		{
-			"ImportPath": "github.com/sjkyspa/stacks/launcher/api/vendor/github.com/sjkyspa/stacks/controller/api/net",
-			"Comment": "0.1.2-830-g646764a1",
-			"Rev": "646764a19daf605e657e78c1ecf5bcbdffaadd8d"
-		},
-		{
-			"ImportPath": "github.com/sjkyspa/stacks/launcher/api/vendor/github.com/sjkyspa/stacks/controller/api/util",
-			"Comment": "0.1.2-830-g646764a1",
-			"Rev": "646764a19daf605e657e78c1ecf5bcbdffaadd8d"
 		}
 	]
 }

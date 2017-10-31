@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/cnupp/cli/config"
-	"github.com/sjkyspa/stacks/controller/api/api"
-	"github.com/sjkyspa/stacks/controller/api/net"
+	"github.com/cnupp/cnup/controller/api/api"
+	"github.com/cnupp/cnup/controller/api/net"
 )
 
 func OrgCreate(orgName string) error {

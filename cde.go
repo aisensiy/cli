@@ -5,7 +5,7 @@ import (
 	"github.com/docopt/docopt-go"
 	"github.com/fatih/color"
 	"github.com/cnupp/cli/parser"
-	"github.com/sjkyspa/stacks/version"
+	"github.com/cnupp/cnup/version"
 	"gopkg.in/urfave/cli.v2"
 	"os"
 	"strings"

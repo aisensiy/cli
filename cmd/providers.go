@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/olekukonko/tablewriter"
 	"github.com/cnupp/cli/config"
-	"github.com/sjkyspa/stacks/launcher/api/api"
-	"github.com/sjkyspa/stacks/launcher/api/net"
+	"github.com/cnupp/cnup/launcher/api/api"
+	"github.com/cnupp/cnup/launcher/api/net"
 	"os"
 	"time"
 )

@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	deployApi "github.com/sjkyspa/stacks/launcher/api/api"
-	"github.com/sjkyspa/stacks/launcher/api/net"
+	deployApi "github.com/cnupp/cnup/launcher/api/api"
+	"github.com/cnupp/cnup/launcher/api/net"
 )
 
 func RestartApp(appId string) error {
