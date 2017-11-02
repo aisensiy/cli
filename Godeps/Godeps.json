@@ -7,44 +7,21 @@
 	],
 	"Deps": [
 		{
-			"ImportPath": "github.com/cnupp/cnup/controller/api/api",
-			"Comment": "0.1.2-831-gfff6aa91",
-			"Rev": "fff6aa91e8ba9cf80cc6787bef93c63eb8b593a3"
+			"ImportPath": "github.com/cnupp/runtimesdk/api",
+			"Rev": "06064f22c3501a757bc520fe28815c0a825fd5d8"
 		},
 		{
-			"ImportPath": "github.com/cnupp/cnup/controller/api/config",
-			"Comment": "0.1.2-831-gfff6aa91",
-			"Rev": "fff6aa91e8ba9cf80cc6787bef93c63eb8b593a3"
+			"ImportPath": "github.com/cnupp/runtimesdk/config",
+			"Rev": "06064f22c3501a757bc520fe28815c0a825fd5d8"
 		},
 		{
-			"ImportPath": "github.com/cnupp/cnup/controller/api/net",
-			"Comment": "0.1.2-831-gfff6aa91",
-			"Rev": "fff6aa91e8ba9cf80cc6787bef93c63eb8b593a3"
-		},
-		{
-			"ImportPath": "github.com/cnupp/cnup/controller/api/util",
-			"Comment": "0.1.2-831-gfff6aa91",
-			"Rev": "fff6aa91e8ba9cf80cc6787bef93c63eb8b593a3"
-		},
-		{
-			"ImportPath": "github.com/cnupp/cnup/launcher/api/api",
-			"Comment": "0.1.2-831-gfff6aa91",
-			"Rev": "fff6aa91e8ba9cf80cc6787bef93c63eb8b593a3"
-		},
-		{
-			"ImportPath": "github.com/cnupp/cnup/launcher/api/config",
-			"Comment": "0.1.2-831-gfff6aa91",
-			"Rev": "fff6aa91e8ba9cf80cc6787bef93c63eb8b593a3"
-		},
-		{
-			"ImportPath": "github.com/cnupp/cnup/launcher/api/net",
-			"Comment": "0.1.2-831-gfff6aa91",
-			"Rev": "fff6aa91e8ba9cf80cc6787bef93c63eb8b593a3"
+			"ImportPath": "github.com/cnupp/runtimesdk/net",
+			"Rev": "06064f22c3501a757bc520fe28815c0a825fd5d8"
 		},
 		{
 			"ImportPath": "github.com/cnupp/cnup/version",
-			"Comment": "0.1.2-831-gfff6aa91",
-			"Rev": "fff6aa91e8ba9cf80cc6787bef93c63eb8b593a3"
+			"Comment": "0.1.2-835-gce850aba",
+			"Rev": "ce850abad4267c5ecee0e87f2b4a90da0d4bd6ae"
 		},
 		{
 			"ImportPath": "github.com/docopt/docopt-go",
@@ -118,6 +95,37 @@
 		{
 			"ImportPath": "gopkg.in/yaml.v2",
 			"Rev": "eb3733d160e74a9c7e442f435eb3bea458e1d19f"
+		},
+		{
+			"ImportPath": "github.com/cnupp/runtimesdk/vendor/github.com/cnupp/appssdk/api",
+			"Rev": "06064f22c3501a757bc520fe28815c0a825fd5d8"
+		},
+		{
+			"ImportPath": "github.com/cnupp/runtimesdk/vendor/github.com/cnupp/appssdk/config",
+			"Rev": "06064f22c3501a757bc520fe28815c0a825fd5d8"
+		},
+		{
+			"ImportPath": "github.com/cnupp/runtimesdk/vendor/github.com/cnupp/appssdk/net",
+			"Rev": "06064f22c3501a757bc520fe28815c0a825fd5d8"
+		},
+		{
+			"ImportPath": "github.com/cnupp/runtimesdk/vendor/github.com/cnupp/appssdk/util",
+			"Rev": "06064f22c3501a757bc520fe28815c0a825fd5d8"
+		},
+		{
+			"ImportPath": "github.com/fatih/color/vendor/github.com/mattn/go-colorable",
+			"Comment": "v1.5.0-8-g5df930a",
+			"Rev": "5df930a27be2502f99b292b7cc09ebad4d0891f4"
+		},
+		{
+			"ImportPath": "github.com/fatih/color/vendor/github.com/mattn/go-isatty",
+			"Comment": "v1.5.0-8-g5df930a",
+			"Rev": "5df930a27be2502f99b292b7cc09ebad4d0891f4"
+		},
+		{
+			"ImportPath": "github.com/fatih/color/vendor/golang.org/x/sys/unix",
+			"Comment": "v1.5.0-8-g5df930a",
+			"Rev": "5df930a27be2502f99b292b7cc09ebad4d0891f4"
 		}
 	]
 }

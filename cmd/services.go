@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/gambol99/go-marathon"
 	"github.com/olekukonko/tablewriter"
-	deployApi "github.com/cnupp/cnup/launcher/api/api"
-	deployNet "github.com/cnupp/cnup/launcher/api/net"
+	deployApi "github.com/cnupp/runtimesdk/api"
+	deployNet "github.com/cnupp/runtimesdk/net"
 	"os"
 )
 

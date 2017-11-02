@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	deployApi "github.com/cnupp/cnup/launcher/api/api"
-	"github.com/cnupp/cnup/launcher/api/net"
+	deployApi "github.com/cnupp/runtimesdk/api"
+	"github.com/cnupp/runtimesdk/net"
 )
 
 func RestartApp(appId string) error {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	docopt "github.com/docopt/docopt-go"
 	"github.com/cnupp/cli/cmd"
-	"github.com/cnupp/cnup/launcher/api/api"
+	"github.com/cnupp/runtimesdk/api"
 	cli "gopkg.in/urfave/cli.v2"
 	"strconv"
 )

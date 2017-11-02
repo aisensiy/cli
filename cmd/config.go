@@ -5,8 +5,8 @@ import (
 	"regexp"
 
 	"github.com/cnupp/cli/pkg/prettyprint"
-	"github.com/cnupp/cnup/controller/api/api"
-	"github.com/cnupp/cnup/controller/api/net"
+	"github.com/cnupp/appssdk/api"
+	"github.com/cnupp/appssdk/net"
 )
 
 // ConfigList lists an app's config.

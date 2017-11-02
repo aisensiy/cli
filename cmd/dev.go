@@ -18,8 +18,8 @@ import (
 	"github.com/cnupp/cli/backend/compose"
 	"github.com/cnupp/cli/config"
 	"github.com/cnupp/cli/pkg"
-	"github.com/cnupp/cnup/controller/api/api"
-	"github.com/cnupp/cnup/controller/api/net"
+	"github.com/cnupp/appssdk/api"
+	"github.com/cnupp/appssdk/net"
 )
 
 func DevUp() error {

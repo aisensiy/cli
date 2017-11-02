@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/olekukonko/tablewriter"
 	"github.com/cnupp/cli/config"
-	"github.com/cnupp/cnup/launcher/api/api"
-	"github.com/cnupp/cnup/launcher/api/net"
+	"github.com/cnupp/runtimesdk/api"
+	"github.com/cnupp/runtimesdk/net"
 	"os"
 
 	"encoding/json"

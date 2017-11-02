@@ -2,9 +2,9 @@ package api
 
 import (
 	"fmt"
-	"github.com/cnupp/cnup/controller/api/api"
-	"github.com/cnupp/cnup/launcher/api/config"
-	"github.com/cnupp/cnup/launcher/api/net"
+	"github.com/cnupp/appssdk/api"
+	"github.com/cnupp/runtimesdk/config"
+	"github.com/cnupp/runtimesdk/net"
 )
 
 type ServiceMapper interface {

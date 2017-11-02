@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 	"github.com/cnupp/cli/config"
-	"github.com/cnupp/cnup/controller/api/api"
-	"github.com/cnupp/cnup/controller/api/net"
+	"github.com/cnupp/appssdk/api"
+	"github.com/cnupp/appssdk/net"
 	"io/ioutil"
 )
 

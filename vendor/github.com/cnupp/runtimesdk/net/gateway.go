@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/cnupp/cnup/launcher/api/config"
+	"github.com/cnupp/runtimesdk/config"
 	"io"
 	"io/ioutil"
 	"net/http"

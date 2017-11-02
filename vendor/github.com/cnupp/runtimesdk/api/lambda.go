@@ -2,7 +2,7 @@ package api
 
 import (
 	"encoding/json"
-	. "github.com/cnupp/cnup/controller/api/api"
+	. "github.com/cnupp/appssdk/api"
 )
 
 type Lambda interface {

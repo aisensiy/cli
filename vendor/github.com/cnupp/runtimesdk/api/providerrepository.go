@@ -1,8 +1,8 @@
 package api
 
 import (
-	"github.com/cnupp/cnup/launcher/api/config"
-	"github.com/cnupp/cnup/launcher/api/net"
+	"github.com/cnupp/runtimesdk/config"
+	"github.com/cnupp/runtimesdk/net"
 	"encoding/json"
 	"fmt"
 )
