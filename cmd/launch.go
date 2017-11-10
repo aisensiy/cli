@@ -281,8 +281,8 @@ func LaunchDeployment(releaseId, appName string, providerName string) error {
 	procedureParam["runtime"] = procedureRuntimeParam
 
 	ownerParam := make(map[string]interface{})
-	ownerParam["id"] = app.AppId()
-	ownerParam["name"] = app.Id()
+	ownerParam["id"] = app.Id()
+	ownerParam["name"] = app.Name()
 
 	params := make(map[string]interface{})
 	params["provider"] = providerParam

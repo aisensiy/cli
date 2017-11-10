@@ -59,6 +59,7 @@ type Procedure interface {
 	Links() []LinkModel
 	App() ProcedureAppModel
 	Runtime() ProcedureRuntimeModel
+	CreateInstance(params map[string]interface{}) (ProcedureInstance, error)
 }
 
 type ProcedureModel struct {
@@ -67,6 +68,8 @@ type ProcedureModel struct {
 	LinksField   []LinkModel           `json:"links"`
 	AppField     ProcedureAppModel     `json:"app"`
 	RuntimeField ProcedureRuntimeModel `json:"runtime"`
+	UpIdField    string
+	UpsMapper    UpsRepository
 }
 
 func (p ProcedureModel) Id() string {
@@ -87,6 +90,10 @@ func (p ProcedureModel) App() ProcedureAppModel {
 
 func (p ProcedureModel) Runtime() ProcedureRuntimeModel {
 	return p.RuntimeField
+}
+
+func (p ProcedureModel) CreateInstance(params map[string]interface{}) (ProcedureInstance, error) {
+	return p.UpsMapper.CreateProcedureInstance(p.UpIdField, p.IdField, params)
 }
 
 type ProcedureAppModel struct {
@@ -177,4 +184,53 @@ func (u UpsModel) Self() string {
 
 func (u UpsModel) Items() []UpModel {
 	return u.ItemsField
+}
+
+type ProcedureInstance interface {
+	Id() 		string
+	Status() 	string
+	Owner() 	ProcedureInstanceOwnerModel
+	Procedure() 	ProcedureModel
+	Links() 	[]LinkModel
+
+}
+
+type ProcedureInstanceModel struct {
+	IdField      	string                		`json:"id"`
+	StatusField    	string              		`json:"status"`
+	OwnerField	ProcedureInstanceOwnerModel 	`json:"owner"`
+	ProcedureField	ProcedureModel 			`json:"procedure"`
+	LinksField   	[]LinkModel           		`json:"links"`
+}
+
+type ProcedureInstanceOwner interface {
+	Id()	string
+}
+
+type ProcedureInstanceOwnerModel struct {
+	IdField		string 		`json:"id"`
+}
+
+func (o ProcedureInstanceOwnerModel) Id() string {
+	return o.IdField
+}
+
+func (i ProcedureInstanceModel) Id() string {
+	return i.IdField
+}
+
+func (i ProcedureInstanceModel) Status() string {
+	return i.StatusField
+}
+
+func (i ProcedureInstanceModel) Owner() ProcedureInstanceOwnerModel {
+	return i.OwnerField
+}
+
+func (i ProcedureInstanceModel) Procedure() ProcedureModel {
+	return i.ProcedureField
+}
+
+func (i ProcedureInstanceModel) Links() []LinkModel {
+	return i.LinksField
 }

@@ -53,7 +53,7 @@ func DevUp() error {
 		return err
 	}
 
-	dockerComposeCreate := exec.Command("docker-compose", "-f", f, "-p", app.Id(), "up", "-d")
+	dockerComposeCreate := exec.Command("docker-compose", "-f", f, "-p", app.Name(), "up", "-d")
 	startOutput, err := CmdStart(dockerComposeCreate)
 	if err != nil {
 		fmt.Println(err)
@@ -68,8 +68,8 @@ func DevUp() error {
 
 	for i := 0; i < 100; i++ {
 		_, err := Pipe(
-			exec.Command("docker-compose", "-f", f, "-p", app.Id(), "ps"),
-			exec.Command("grep", "-E", app.Id()),
+			exec.Command("docker-compose", "-f", f, "-p", app.Name(), "ps"),
+			exec.Command("grep", "-E", app.Name()),
 			exec.Command("/bin/sh", "-c", "grep -v Up"))
 
 		// All the containers are started (All containers is Up, all the lines is with Up, so the grep return error.)
@@ -82,7 +82,7 @@ func DevUp() error {
 	}
 
 	containerId := func() string {
-		psOutput, err := exec.Command("docker-compose", "-f", f, "-p", app.Id(), "ps", "-q", "runtime").Output()
+		psOutput, err := exec.Command("docker-compose", "-f", f, "-p", app.Name(), "ps", "-q", "runtime").Output()
 		if err != nil {
 			panic(fmt.Sprintf("Can not find the proper container id: cause %v", err))
 		}
@@ -149,7 +149,7 @@ func DevDown() error {
 		return err
 	}
 
-	dockerComposeUp := exec.Command("docker-compose", "-f", f, "-p", app.Id(), "stop")
+	dockerComposeUp := exec.Command("docker-compose", "-f", f, "-p", app.Name(), "stop")
 
 	var out bytes.Buffer
 	var errout bytes.Buffer
@@ -196,7 +196,7 @@ func DevDestroy() error {
 		return err
 	}
 
-	dockerComposeUp := exec.Command("docker-compose", "-f", f, "-p", app.Id(), "down", "-v", "--remove-orphans", "--rmi", "all")
+	dockerComposeUp := exec.Command("docker-compose", "-f", f, "-p", app.Name(), "down", "-v", "--remove-orphans", "--rmi", "all")
 
 	var out bytes.Buffer
 	var errout bytes.Buffer

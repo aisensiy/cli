@@ -150,7 +150,7 @@ func ListApps(orgName string) error {
 	fmt.Printf("=== Apps: [%d]\n", len(apps))
 
 	for _, app := range apps {
-		fmt.Printf("email: %s\n", app.Id())
+		fmt.Printf("email: %s\n", app.Name())
 	}
 	return nil
 }

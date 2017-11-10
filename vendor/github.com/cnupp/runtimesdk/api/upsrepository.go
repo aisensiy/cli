@@ -11,10 +11,14 @@ import (
 type UpsRepository interface {
 	GetUP(id string) (Up, error)
 	GetUPByName(name string) (Ups, error)
+	GetUpByUri(uri string) (Up, error)
 	GetUps() (Ups, error)
 	CreateUp(params map[string]interface{}) (Up, error)
 	RemoveUp(id string) (error)
 	UpdateUp(id string, params map[string]interface{}) (error)
+	CreateProcedureInstance (upId string, procedureId string, params map[string]interface{}) (ProcedureInstance, error)
+	GetProcedureInstanceByUri (uri string) (ProcedureInstance, error)
+	GetProcedureInstance (id string) (ProcedureInstance, error)
 	PublishUp(id string) (error)
 	DeprecateUp(id string) (error)
 }
@@ -34,6 +38,11 @@ func (upsRepo DefaultUpsRepository) GetUP(id string) (Up, error){
 	if err != nil {
 		return nil, err
 	}
+	for index := range upModel.ProceduresField {
+		upModel.ProceduresField[index].UpIdField = upModel.IdField
+		upModel.ProceduresField[index].UpsMapper = NewUpsRepository(upsRepo.config, upsRepo.gateway)
+	}
+
 
 	return upModel, nil
 }
@@ -57,8 +66,26 @@ func (upsRepo DefaultUpsRepository) GetUPByName(name string) (Ups, error){
 	if err != nil {
 		return nil, err
 	}
-
+	for n := range upsModel.ItemsField {
+		for index := range upsModel.ItemsField[n].ProceduresField {
+			upsModel.ItemsField[n].ProceduresField[index].UpIdField = upsModel.ItemsField[n].IdField
+			upsModel.ItemsField[n].ProceduresField[index].UpsMapper = NewUpsRepository(upsRepo.config, upsRepo.gateway)
+		}
+	}
 	return upsModel, nil
+}
+
+func (upsRepo DefaultUpsRepository) GetUpByUri(uri string) (Up, error){
+	upModel := UpModel{}
+	err := upsRepo.gateway.Get(uri, &upModel)
+	if err != nil {
+		return nil, err
+	}
+	for index := range upModel.ProceduresField {
+		upModel.ProceduresField[index].UpIdField = upModel.IdField
+		upModel.ProceduresField[index].UpsMapper = NewUpsRepository(upsRepo.config, upsRepo.gateway)
+	}
+	return upModel, nil
 }
 
 func (upsRepo DefaultUpsRepository) GetUps() (Ups, error) {
@@ -67,7 +94,12 @@ func (upsRepo DefaultUpsRepository) GetUps() (Ups, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	for n := range upsModel.ItemsField {
+		for index := range upsModel.ItemsField[n].ProceduresField {
+			upsModel.ItemsField[n].ProceduresField[index].UpIdField = upsModel.ItemsField[n].IdField
+			upsModel.ItemsField[n].ProceduresField[index].UpsMapper = NewUpsRepository(upsRepo.config, upsRepo.gateway)
+		}
+	}
 	return upsModel, nil
 }
 
@@ -88,7 +120,10 @@ func (upsRepo DefaultUpsRepository) CreateUp(params map[string]interface{}) (Up,
 	if err != nil {
 		return nil, err
 	}
-
+	for index := range upModel.ProceduresField {
+		upModel.ProceduresField[index].UpIdField = upModel.IdField
+		upModel.ProceduresField[index].UpsMapper = NewUpsRepository(upsRepo.config, upsRepo.gateway)
+	}
 	return upModel, nil
 }
 
@@ -108,6 +143,45 @@ func (upsRepo DefaultUpsRepository) RemoveUp(id string) (error) {
 		return err
 	}
 	return nil
+}
+
+func (upsRepo DefaultUpsRepository) CreateProcedureInstance(upId string, procedureId string, params map[string]interface{}) (ProcedureInstance, error) {
+	data, err := json.Marshal(params)
+	if err != nil {
+		return nil, fmt.Errorf("Can not serilize the data")
+	}
+
+	res, err := upsRepo.gateway.Request("POST", "/ups/" + upId + "/procedures/" + procedureId +"/instances", data)
+	if err != nil {
+		return nil, err
+	}
+
+	location := res.Header.Get("Location")
+	var procedureInstanceModel ProcedureInstanceModel
+	err = upsRepo.gateway.Get(location, &procedureInstanceModel)
+	if err != nil {
+		return nil, err
+	}
+
+	return procedureInstanceModel, nil
+}
+
+func (upsRepo DefaultUpsRepository) GetProcedureInstanceByUri (uri string) (ProcedureInstance, error) {
+	var procedureInstance ProcedureInstanceModel
+	err := upsRepo.gateway.Get(uri, &procedureInstance)
+	if err != nil {
+		return nil, err
+	}
+	return procedureInstance, nil
+}
+
+func (upsRepo DefaultUpsRepository) GetProcedureInstance (id string) (ProcedureInstance, error) {
+	var procedureInstance ProcedureInstanceModel
+	err := upsRepo.gateway.Get("/procedures/" + id, &procedureInstance)
+	if err != nil {
+		return nil, err
+	}
+	return procedureInstance, nil
 }
 
 func (upsRepo DefaultUpsRepository) PublishUp(id string) (error) {

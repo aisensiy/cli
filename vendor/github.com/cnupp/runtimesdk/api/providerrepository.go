@@ -11,6 +11,7 @@ type ProviderRepository interface {
 	Enroll(params ProviderParams) (Provider, error)
 	GetProviders() (Providers, error)
 	GetProviderByName(name string) (Provider, error)
+	GetProviderByUri(uri string) (Provider, error)
 	UpdateProvider(id string, config map[string]interface{}) (error)
 	GetProvidersByURL(uri string) (Providers, error)
 }
@@ -97,6 +98,17 @@ func (dpr DefaultProviderRepository) GetProviderByName(name string) (provider Pr
 
 	var providerModel ProviderModel
 	err = dpr.gateway.Get(fmt.Sprintf("/providers/%s", providersModel.Items()[0].ID()), &providerModel)
+	if err != nil {
+		return
+	}
+	provider = providerModel
+	return
+}
+
+func (dpr DefaultProviderRepository) GetProviderByUri(uri string) (provider Provider, err error) {
+	var providerModel ProviderModel
+
+	err = dpr.gateway.Get(uri, &providerModel)
 	if err != nil {
 		return
 	}

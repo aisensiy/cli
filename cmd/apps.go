@@ -60,7 +60,7 @@ func AppLaunch(appId string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("create %s release successfully\n", app.Id())
+	fmt.Printf("create %s release successfully\n", app.Name())
 	return nil
 }
 
@@ -155,15 +155,15 @@ func AppCreate(appId string, stackName string, unifiedProcedure, providerName, o
 	}
 	git.DeleteCdeRemote()
 	host = configRepository.GitHost()
-	if err = git.CreateRemote(host, "cde", createdApp.Id()); err != nil {
+	if err = git.CreateRemote(host, "cde", createdApp.Name()); err != nil {
 		if err.Error() == "exit status 128" {
 			fmt.Println("To replace the existing git remote entry, run:")
-			fmt.Printf("  git remote rename cde cde.old && cde git:remote -a %s\n", createdApp.Id())
+			fmt.Printf("  git remote rename cde cde.old && cde git:remote -a %s\n", createdApp.Name())
 		}
 		return err
 	}
 
-	fmt.Println("remote available at", git.RemoteURL(host, createdApp.Id()))
+	fmt.Println("remote available at", git.RemoteURL(host, createdApp.Name()))
 
 	if stack != nil && stack.Type() == "NON_BUILD_STACK" {
 		releaseMapper := api.NewReleaseMapper(configRepository, net.NewCloudControllerGateway(configRepository))
@@ -189,7 +189,7 @@ func AppsList() error {
 	fmt.Printf("=== Apps [%d]\n", len(apps.Items()))
 
 	for _, app := range apps.Items() {
-		fmt.Printf("id: %s\n", app.Id())
+		fmt.Printf("id: %s\n", app.Name())
 	}
 	return nil
 }
@@ -213,9 +213,9 @@ func GetApp(appId string) error {
 }
 
 func outputDescription(app api.App) {
-	fmt.Printf("--- %s Application\n", app.Id())
+	fmt.Printf("--- %s Application\n", app.Name())
 	data := make([][]string, 2)
-	data[0] = []string{"ID", app.Id()}
+	data[0] = []string{"ID", app.Name()}
 	stack, _ := app.GetStack()
 	data[1] = []string{"Stack Name", stack.Name()}
 
@@ -295,7 +295,7 @@ func DestroyApp(appId string) error {
 	deployRepo := launcherApi.NewDeploymentRepository(configRepository, deploymentNet.NewCloudControllerGateway(configRepository))
 	err = deployRepo.Destroy(appId)
 	if err != nil {
-		fmt.Printf("failed to destroy %s deployment\n", app.Id())
+		fmt.Printf("failed to destroy %s deployment\n", app.Name())
 	}
 
 	err = appRepository.Delete(appId)
@@ -550,13 +550,13 @@ func AppTransfer(appId string, email string, org string) error {
 		if err != nil {
 			return err
 		}
-		fmt.Printf("Finish transfer %s to %s\n", app.Id(), email)
+		fmt.Printf("Finish transfer %s to %s\n", app.Name(), email)
 	} else {
 		err = app.TransferToOrg(org)
 		if err != nil {
 			return err
 		}
-		fmt.Printf("Finish transfer %s to %s\n", app.Id(), org)
+		fmt.Printf("Finish transfer %s to %s\n", app.Name(), org)
 	}
 
 	return nil
