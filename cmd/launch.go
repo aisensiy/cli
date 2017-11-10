@@ -289,12 +289,64 @@ func LaunchDeployment(releaseId, appName string, providerName string) error {
 	params["procedure"] = procedureParam
 	params["owner"] = ownerParam
 
-	_, err = procedure.CreateInstance(params)
+	instance, err := procedure.CreateInstance(params)
 	if err != nil {
 		return err
 	}
+	cerr := make(chan error)
+	succeed := make(chan bool)
+	cleaning := make(chan bool)
 
-	return nil
+	go func() {
+		for {
+			select {
+			case <-cleaning:
+				// todo: should fetch log again
+				return
+			default:
+				// todo: fetch log
+				fmt.Println("fetch log")
+				time.Sleep(time.Second * 5)
+			}
+		}
+	}()
+
+	go func() {
+		for {
+			if instance.Status() == "SUCCEED" {
+				succeed <- true
+				cleaning <- true
+				return
+			}
+			if instance.Status() == "FAILED" {
+				succeed <- false
+				cleaning <- true
+				cerr <- errors.New("Deployment is failed")
+			}
+			time.Sleep(time.Second * 5)
+			instance, err = upsRepository.GetProcedureInstance(instance.Id())
+			if err != nil {
+				cerr <- err
+				return
+			}
+		}
+	}()
+
+	for {
+		select {
+		case succ := <-succeed:
+			if !succ {
+				return errors.New("Deployment Fail")
+			} else {
+				color.Green("Deployment Success")
+				return nil
+			}
+		case err := <-cerr:
+			return err
+		default:
+			time.Sleep(time.Second * 5)
+		}
+	}
 }
 
 func toRequest(file *os.File, entrypoint string) (*http.Request, chan error, error) {
