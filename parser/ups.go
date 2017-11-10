@@ -50,6 +50,22 @@ func UpsCommand() *cli.Command {
 					return cmd.UpRemove(c.Args().First())
 				},
 			},
+			{
+				Name:      "publish",
+				Usage:     "Publish an Unified Procedure",
+				ArgsUsage: "<up-id>",
+				Action: func(c *cli.Context) error {
+					return cmd.UpPublish(c.Args().First())
+				},
+			},
+			{
+				Name:      "deprecate",
+				Usage:     "Deprecate an Unified Procedure",
+				ArgsUsage: "<up-id>",
+				Action: func(c *cli.Context) error {
+					return cmd.UpDeprecate(c.Args().First())
+				},
+			},
 		},
 	}
 }

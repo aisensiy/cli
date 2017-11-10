@@ -87,9 +87,38 @@ func UpRemove(idOrName string) error {
 		fmt.Printf("failed")
 		return err
 	}
-	fmt.Printf("success")
+	fmt.Printf("success\n")
 	return nil
 }
+
+func UpPublish(idOrName string) error {
+	fmt.Println(idOrName)
+	upsRepository := createUpsRepoository()
+
+	err := upsRepository.PublishUp(idOrName)
+	if err != nil {
+		fmt.Println(err)
+		fmt.Printf("failed")
+		return err
+	}
+	fmt.Printf("success\n")
+	return nil
+}
+
+func UpDeprecate(idOrName string) error {
+	fmt.Println(idOrName)
+	upsRepository := createUpsRepoository()
+
+	err := upsRepository.DeprecateUp(idOrName)
+	if err != nil {
+		fmt.Println(err)
+		fmt.Printf("failed")
+		return err
+	}
+	fmt.Printf("success\n")
+	return nil
+}
+
 
 func UpUpdate(idOrName string, fileName string) error {
 	upsRepository := createUpsRepoository()
@@ -126,9 +155,10 @@ func getUpFileContent(filename string) (content []byte, err error) {
 func outputUpDescription(up api.Up) {
 	fmt.Println("--- Unified Procedures Detail\n")
 
-	data := make([][]string, 2)
+	data := make([][]string, 3)
 	data[0] = []string{"id", up.Id()}
 	data[1] = []string{"name", up.Name()}
+	data[2] = []string{"status", up.Status()}
 
 	table := tablewriter.NewWriter(os.Stdout)
 	table.AppendBulk(data)

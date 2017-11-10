@@ -15,6 +15,8 @@ type UpsRepository interface {
 	CreateUp(params map[string]interface{}) (Up, error)
 	RemoveUp(id string) (error)
 	UpdateUp(id string, params map[string]interface{}) (error)
+	PublishUp(id string) (error)
+	DeprecateUp(id string) (error)
 }
 
 type DefaultUpsRepository struct {
@@ -102,6 +104,23 @@ func (upsRepo DefaultUpsRepository) UpdateUp(id string, params map[string]interf
 
 func (upsRepo DefaultUpsRepository) RemoveUp(id string) (error) {
 	_, err := upsRepo.gateway.Request("DELETE", fmt.Sprintf("/ups/%s", id), nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (upsRepo DefaultUpsRepository) PublishUp(id string) (error) {
+	err := upsRepo.gateway.PUT(fmt.Sprintf("/ups/%s/publish", id), nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+
+func (upsRepo DefaultUpsRepository) DeprecateUp(id string) (error) {
+	err := upsRepo.gateway.PUT(fmt.Sprintf("/ups/%s/deprecate", id), nil)
 	if err != nil {
 		return err
 	}

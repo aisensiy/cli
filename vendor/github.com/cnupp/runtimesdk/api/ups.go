@@ -11,6 +11,7 @@ type Up interface {
 	Id() string
 	Template() TemplateModel
 	Name() string
+	Status() string
 	Procedures() []ProcedureModel
 	GetProcedureByType(typeName string) (ProcedureModel, error)
 }
@@ -18,6 +19,7 @@ type Up interface {
 type UpModel struct {
 	IdField         string           `json:"id"`
 	NameField       string           `json:"name"`
+	StatusField       string           `json:"status"`
 	TemplateFiled   TemplateModel         `json:"template"`
 	ProceduresField []ProcedureModel `json:"procedures"`
 }
@@ -28,6 +30,10 @@ func (u UpModel) Id() string {
 
 func (u UpModel) Name() string {
 	return u.NameField
+}
+
+func (u UpModel) Status() string {
+	return u.StatusField
 }
 
 func (u UpModel) Template() TemplateModel {
