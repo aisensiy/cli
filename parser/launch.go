@@ -52,6 +52,29 @@ func LaunchCommands() *cli.Command {
 					return nil
 				},
 			},
+			{
+				Name:  "run",
+				Usage: "Launch a deployment procedure.",
+				ArgsUsage: "<release-id>",
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:    "app",
+						Aliases: []string{"a"},
+						Usage: "Which app to launch the verify procedure",
+					},
+				},
+				Action: func(c *cli.Context) error {
+					appName := c.String("app")
+					releaseId := c.Args().Get(0)
+					if releaseId == "" {
+						return cli.Exit(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
+					}
+					if err := cmd.LaunchDeployment(releaseId, appName); err != nil {
+						return cli.Exit(fmt.Sprintf("%v", err), 1)
+					}
+					return nil
+				},
+			},
 		},
 	}
 }

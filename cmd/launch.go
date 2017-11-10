@@ -7,6 +7,8 @@ import (
 	"github.com/cnupp/cli/config"
 	"github.com/cnupp/appssdk/api"
 	"github.com/cnupp/appssdk/net"
+	runtimeApi "github.com/cnupp/runtimesdk/api"
+	runtimeNet "github.com/cnupp/runtimesdk/net"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -208,6 +210,87 @@ func LaunchVerify(buildId, appName string) error {
 			time.Sleep(time.Second * 5)
 		}
 	}
+}
+
+func LaunchDeployment(releaseId, appName string) error {
+	configRepository := config.NewConfigRepository(func(err error) {
+
+	})
+	gateway := net.NewCloudControllerGateway(configRepository)
+	apps := api.NewAppRepository(configRepository, gateway)
+
+	if appName == "" {
+		_, appId, err := load("")
+		if err != nil {
+			return err
+		}
+		appName = appId
+	}
+
+	app, err := apps.GetApp(appName)
+	if err != nil {
+		return err
+	}
+	release, err := app.GetRelease(releaseId)
+	if err != nil {
+		return err
+	}
+
+	runtimeGateway := runtimeNet.NewCloudControllerGateway(configRepository)
+	upsRepository := runtimeApi.NewUpsRepository(configRepository, runtimeGateway)
+	upLink, err := app.Links().Link("unified_procedure")
+	if err != nil {
+		return err
+	}
+	up, err := upsRepository.GetUpByUri(upLink.URI)
+	if err != nil {
+		return err
+	}
+
+	var procedure runtimeApi.Procedure
+	procedure, err = up.GetProcedureByType("RUN")
+	if err != nil {
+		return err
+	}
+
+	providerLink, err := app.Links().Link("provider")
+	if err != nil {
+		return err
+	}
+
+	providerRepository := runtimeApi.NewProviderRepository(configRepository, runtimeGateway)
+	provider, err := providerRepository.GetProviderByUri(providerLink.URI)
+	if err != nil {
+		return err
+	}
+
+	providerParam := make(map[string]interface{})
+	providerParam["id"] = provider.ID()
+
+	procedureAppParam := make(map[string]interface{})
+	procedureAppParam["image"] = release.ImageName() + ":" + release.Version()
+
+	procedureRuntimeParam := make(map[string]interface{})
+
+	procedureParam := make(map[string]interface{})
+	procedureParam["app"] = procedureAppParam
+	procedureParam["runtime"] = procedureRuntimeParam
+
+	ownerParam := make(map[string]interface{})
+	ownerParam["id"] = app.AppId()
+	ownerParam["name"] = app.Id()
+
+	params := make(map[string]interface{})
+	params["provider"] = providerParam
+	params["procedure"] = procedureParam
+	params["owner"] = ownerParam
+
+	_, err = procedure.CreateInstance(params)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func toRequest(file *os.File, entrypoint string) (*http.Request, chan error, error) {
