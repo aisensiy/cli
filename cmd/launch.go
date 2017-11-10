@@ -212,7 +212,7 @@ func LaunchVerify(buildId, appName string) error {
 	}
 }
 
-func LaunchDeployment(releaseId, appName string) error {
+func LaunchDeployment(releaseId, appName string, providerName string) error {
 	configRepository := config.NewConfigRepository(func(err error) {
 
 	})
@@ -253,13 +253,17 @@ func LaunchDeployment(releaseId, appName string) error {
 		return err
 	}
 
-	providerLink, err := app.Links().Link("provider")
-	if err != nil {
-		return err
-	}
-
 	providerRepository := runtimeApi.NewProviderRepository(configRepository, runtimeGateway)
-	provider, err := providerRepository.GetProviderByUri(providerLink.URI)
+	var provider runtimeApi.Provider
+	if providerName == "" {
+		providerLink, err := app.Links().Link("provider")
+		if err != nil {
+			return err
+		}
+		provider, err = providerRepository.GetProviderByUri(providerLink.URI)
+	} else {
+		provider, err = providerRepository.GetProviderByName(providerName)
+	}
 	if err != nil {
 		return err
 	}

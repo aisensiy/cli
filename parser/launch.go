@@ -60,16 +60,22 @@ func LaunchCommands() *cli.Command {
 					&cli.StringFlag{
 						Name:    "app",
 						Aliases: []string{"a"},
-						Usage: "Which app to launch the verify procedure",
+						Usage: "Which app to launch the deployment procedure",
+					},
+					&cli.StringFlag{
+						Name:    "provider",
+						Aliases: []string{"p"},
+						Usage: "Which provider to launch the deployment procedure",
 					},
 				},
 				Action: func(c *cli.Context) error {
 					appName := c.String("app")
+					providerName := c.String("provider")
 					releaseId := c.Args().Get(0)
 					if releaseId == "" {
 						return cli.Exit(fmt.Sprintf("USAGE: %s %s", c.Command.HelpName, c.Command.ArgsUsage), 1)
 					}
-					if err := cmd.LaunchDeployment(releaseId, appName); err != nil {
+					if err := cmd.LaunchDeployment(releaseId, appName, providerName); err != nil {
 						return cli.Exit(fmt.Sprintf("%v", err), 1)
 					}
 					return nil
